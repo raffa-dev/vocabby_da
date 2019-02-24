@@ -75,6 +75,10 @@ class Net(object):
                        (root1,
                         root2,
                         self.similarity_mat[i][j]))
+            if self.roots[root1].children:
+                weighted_adj_list.extend(
+                        [(root1, c.word.text, 1)
+                         for c in self.roots[root1].children])
 
         self.vocab_net.add_weighted_edges_from(weighted_adj_list)
 
