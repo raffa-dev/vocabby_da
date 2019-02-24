@@ -3,12 +3,8 @@
 import logging
 
 import spacy
-# import networkx as nx
 from tqdm import tqdm
 logging.basicConfig(level='INFO')
-
-
-# Initialize the whole text with spacy
 
 
 # Sentence class
@@ -30,15 +26,16 @@ class Word(object):
     Complexity score:
     Dictionary reference:
     """
-    def __init__(self, word, pos_tag):
+    def __init__(self, word):
         self.word = word
-        self.pos = pos_tag
         self.sentences = []
-        self.frequency = 0
 
     def include_sentence(self, sentence):
         self.sentences.append(sentence)
-        self.frequency += 1
+
+    @property
+    def frequency(self):
+        return len(self.sentences)
 
 
 class Vocab:
@@ -75,11 +72,16 @@ class Vocab:
         logging.info(
             "Total number of words tokens {}:".format(above_freq10))
 
+    def get_word(self, word, pos_tag):
+        """Get the object wrt chosen word."""
+        key = word.lower() + ' ; ' + pos_tag.upper()
+        return self.words.get(key, None)
+
     def build(self):
         """Build the vocabulary."""
         nlp = spacy.load("en_core_web_sm")
         nlp.max_length = len(self.text)
-        text_obj = nlp(str(self.text.lower()), disable=['tagger', 'NER' ])
+        text_obj = nlp(str(self.text.lower()), disable=['tagger', 'NER'])
         prev_sent = Sentence('', None)
         self.clean()
         for sent in tqdm(text_obj.sents):
@@ -89,7 +91,7 @@ class Vocab:
                     continue
                 key = token.text + ' ; ' + token.pos_
                 if key not in self.words:
-                    self.words[key] = Word(token.text, token.pos_)
+                    self.words[key] = Word(token)
                 self.words[key].include_sentence(curr_sent)
         self._stats()
 
