@@ -37,6 +37,14 @@ class Word(object):
     def frequency(self):
         return len(self.sentences)
 
+    @property
+    def pos(self):
+        return self.word.pos_
+
+    @property
+    def text(self):
+        return self.word.text
+
 
 class Vocab:
     def __init__(self, filename):
@@ -52,7 +60,7 @@ class Vocab:
         Total number of words > frequency 5
         Total number of words > frequency 10
         """
-        freq_list = sorted([(w.frequency, w.word, w.pos)
+        freq_list = sorted([(w.frequency, w.text, w.pos)
                             for w in self.words.values()])[::-1]
 
         logging.info("Most frequent 15 word tokens:")
@@ -81,13 +89,14 @@ class Vocab:
         """Build the vocabulary."""
         nlp = spacy.load("en_core_web_sm")
         nlp.max_length = len(self.text)
-        text_obj = nlp(str(self.text.lower()), disable=['tagger', 'NER'])
+        text_obj = nlp(str(self.text.lower()), disable=['NER'])
         prev_sent = Sentence('', None)
         self.clean()
         for sent in tqdm(text_obj.sents):
             curr_sent = Sentence(sent, prev_sent)
             for token in tqdm(sent):
-                if token.is_stop or token.pos_ in ['PUNCT', 'SPACE']:
+                if token.is_stop or\
+                        token.pos_ in ['PUNCT', 'SPACE', 'NUM', 'SYM']:
                     continue
                 key = token.text + ' ; ' + token.pos_
                 if key not in self.words:
