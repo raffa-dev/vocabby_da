@@ -41,8 +41,9 @@ class Net(object):
         self.build()
 
         filename = os.path.splitext(os.path.split(text_path)[-1])[0]
-        result_path = ('../results/graph_' + filename + '.gpickle')
-        self.save(result_path)
+        # result_path = ('../results/graph_' + filename + '.gpickle')
+        result_path_gexf = ('../results/graph_' + filename + '.gexf')
+        self.save(result_path_gexf)
 
     def unite_family(self):
         """"""
@@ -71,10 +72,11 @@ class Net(object):
         for i, root1 in tqdm(enumerate(roots), total=len(roots)):
             for j, root2 in tqdm(enumerate(roots[i:]), total=len(roots)-i):
                 j = i + j
-                weighted_adj_list.append(
-                       (root1,
-                        root2,
-                        self.similarity_mat[i][j]))
+                if self.similarity_mat[i][j] > 0.90:
+                    weighted_adj_list.append(
+                           (root1,
+                            root2,
+                            self.similarity_mat[i][j]))
             if self.roots[root1].children:
                 weighted_adj_list.extend(
                         [(root1, c.word.text, 1)
@@ -83,4 +85,5 @@ class Net(object):
         self.vocab_net.add_weighted_edges_from(weighted_adj_list)
 
     def save(self, result_path):
-        nx.write_gpickle(self.vocab_net, result_path)
+        # nx.write_gpickle(self.vocab_net, result_path)
+        nx.write_gexf(self.vocab_net, result_path)
