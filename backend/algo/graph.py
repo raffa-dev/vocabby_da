@@ -43,11 +43,13 @@ class Net(object):
         filename = os.path.splitext(os.path.split(text_path)[-1])[0]
         # result_path = ('../results/graph_' + filename + '.gpickle')
         result_path_gexf = ('../results/graph_' + filename + '.gexf')
-        self.save(result_path_gexf)
+        # self.save(result_path_gexf)
 
     def unite_family(self):
         """"""
         for word in self.vocab.words.values():
+            if word.frequency < 4:
+                continue
             key = word.word.lemma_
             if key not in self.roots:
                 self.roots[key] = Root(key)
@@ -72,7 +74,7 @@ class Net(object):
         for i, root1 in tqdm(enumerate(roots), total=len(roots)):
             for j, root2 in tqdm(enumerate(roots[i:]), total=len(roots)-i):
                 j = i + j
-                if self.similarity_mat[i][j] > 0.90:
+                if self.similarity_mat[i][j] > 0.60:
                     weighted_adj_list.append(
                            (root1,
                             root2,

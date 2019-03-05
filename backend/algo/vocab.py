@@ -14,6 +14,7 @@ class Sentence(object):
         self.text = sentence_text
         self.next_sent = None
 
+        # TODO: Fix sentence repetition
         if previous_sentence:
             self.prev_sent = previous_sentence
             self.prev_sent.next_sent = self

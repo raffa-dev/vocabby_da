@@ -44,8 +44,22 @@ class Session(object):
     def __init__(self, tutor, tokens):
         self.tutor = tutor
         self.book = self.tutor.book
+        self.graph = self.book.net.vocab_net
         self.tokens = tokens
 
-    def create_activity(self, token):
-        self.book.vocab_net[token]
-        return {"sentences": ["sentences with blanks ______", "with _____ blanks"], "options": ["a", "b"], "ActivityType": 0}
+    def create_activity(self, root, activity_type):
+        word = np.random.choice(root.children)
+        sentences = list(set(s.text.text.replace(word.text, '______')
+                        for s in word.sentences))[:3]
+        distractors = self.get_distractors(root) + [word.text]
+        np.random.shuffle(distractors)
+        return {"sentences": sentences,
+                "options": distractors,
+                "answer": word.text,
+                "ActivityType": activity_type}
+
+    def get_distractors(self, root):
+        # return [np.random.choice(self.book.roots[w])
+        return [w
+                for w, wt in self.graph[root.word].items()
+                if wt['weight'] < 0.8][:3]
