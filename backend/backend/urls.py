@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from algorithms import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/v1/posttext$', views.PostText.as_view(), name='post text file'),
 ]
