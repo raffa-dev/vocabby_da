@@ -11,7 +11,7 @@ logging.basicConfig(level='INFO')
 class Sentence(object):
     """"""
     def __init__(self, sentence_text, previous_sentence):
-        self.text = sentence_text
+        self.text = sentence_text.text
         self.next_sent = None
 
         # TODO: Fix sentence repetition
@@ -28,7 +28,10 @@ class Word(object):
     Dictionary reference:
     """
     def __init__(self, word):
-        self.word = word
+        self.text = word.text
+        self.pos = word.pos_
+        self.lemma = word.lemma_
+        self.vector = word.vector
         self.sentences = []
 
     def include_sentence(self, sentence):
@@ -37,14 +40,6 @@ class Word(object):
     @property
     def frequency(self):
         return len(self.sentences)
-
-    @property
-    def pos(self):
-        return self.word.pos_
-
-    @property
-    def text(self):
-        return self.word.text
 
 
 class Vocab:
@@ -91,7 +86,7 @@ class Vocab:
         nlp = spacy.load("en_core_web_sm")
         nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
-        prev_sent = Sentence('', None)
+        prev_sent = Sentence(nlp(''), None)
         self.clean()
         for sent in tqdm(text_obj.sents):
             curr_sent = Sentence(sent, prev_sent)

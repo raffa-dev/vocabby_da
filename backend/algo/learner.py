@@ -59,7 +59,7 @@ class Session(object):
         if activity_type == 0:
             word = np.random.choice(root.children)
             sentences = list(
-                    set(s.text.text.replace(word.text, '______')
+                    set(s.text.replace(word.text, '______')
                         for s in word.sentences))[:3]
             distractors = self._get_distractors(root) + [word.text]
             np.random.shuffle(distractors)
