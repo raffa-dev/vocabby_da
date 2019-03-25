@@ -30,6 +30,8 @@ class Tutor(object):
         self.learner = learner
         self.book = book
         self.sessions = []
+        # self.mastery = {w: 0.5 for w in self.book.vocab.words}
+        self.graph = self.book.net.vocab_net
 
     def new_session(self):
         critical_nodes = self.get_critical_nodes()
@@ -37,6 +39,16 @@ class Tutor(object):
 
     def update(self, token, response):
         sign = 1 if response else -1
+        step = 0.3
+        factor = 1 + (sign * step)
+        self.graph.node[token.word]['mastery'] = min(
+                0.99,  self.graph.node[token.word]['mastery'] * factor)
+
+        for neigh in self.graph.neighbors(token.word):
+            weight = self.graph[token.word][neigh]['weight']
+            factor = 1 + (sign * step * 0.5 * weight)
+            self.graph.node[neigh]['mastery'] = min(
+                0.99,  self.graph.node[neigh]['mastery'] * factor)
 
     def get_critical_nodes(self):
         # TODO: Update with proper implementation
@@ -53,6 +65,7 @@ class Session(object):
         self.tokens = {t.word: t for t in tokens}
         self.queue = list(self.tokens.keys())
         self.answers = {}
+        self.activity_cache = {}  # Prevent regeneration of new activity
 
     def _create_activity(self, root, activity_type):
         """"""
@@ -82,21 +95,27 @@ class Session(object):
         return 0
 
     def next_acitivity(self):
+        if self.activity_cache:
+            return self.activity_cache
+
         if self.queue:
             word = self.queue[0]
             activity_type = self._activity_selector()
-            return self._create_activity(
+            self.activity_cache = self._create_activity(
                  self.tokens[word], activity_type)
+            return self.activity_cache
         else:
             return {'activityType': '-1'}
 
     def update(self, root, response):
-        word = self.queue.pop(0)
-        if not response:
-            self.queue.append(word)
-        self.tutor.update(root, response)
+        if root.word == self.queue[0]:
+            word = self.queue.pop(0)
+            if not response:
+                self.queue.append(word)
+            self.tutor.update(root, response)
 
     def evaluate(self, activity_id, selection):
+        self.activity_cache = {}
         is_correct = self.answers[activity_id]['index'] == selection
         self.update(self.answers[activity_id]['root'], is_correct)
         return {'isCorrect': is_correct}

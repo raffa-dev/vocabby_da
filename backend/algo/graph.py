@@ -79,12 +79,14 @@ class Net(object):
                            (root1,
                             root2,
                             self.similarity_mat[i][j]))
-            if self.roots[root1].children:
-                weighted_adj_list.extend(
-                        [(root1, c.text, 1)
-                         for c in self.roots[root1].children])
+            # Add children to the graph
+            # if self.roots[root1].children:
+            #     weighted_adj_list.extend(
+            #             [(root1, c.text, 1)
+            #              for c in self.roots[root1].children])
 
         self.vocab_net.add_weighted_edges_from(weighted_adj_list)
+        nx.set_node_attributes(self.vocab_net, 0.5, 'mastery')
 
     def save(self, result_path):
         # nx.write_gpickle(self.vocab_net, result_path)
