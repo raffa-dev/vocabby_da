@@ -22,7 +22,7 @@ class Root(object):
 
     @property
     def vector(self):
-        return np.mean([child.word.vector for child in self.children], axis=0)
+        return np.mean([child.vector for child in self.children], axis=0)
 
     def similarity(self, neighbour):
         numerator = np.dot(self.vector, neighbour.vector)
@@ -50,7 +50,7 @@ class Net(object):
         for word in self.vocab.words.values():
             if word.frequency < 4:
                 continue
-            key = word.word.lemma_
+            key = word.lemma
             if key not in self.roots:
                 self.roots[key] = Root(key)
             self.roots[key].include_children(word)
@@ -79,12 +79,14 @@ class Net(object):
                            (root1,
                             root2,
                             self.similarity_mat[i][j]))
-            if self.roots[root1].children:
-                weighted_adj_list.extend(
-                        [(root1, c.word.text, 1)
-                         for c in self.roots[root1].children])
+            # Add children to the graph
+            # if self.roots[root1].children:
+            #     weighted_adj_list.extend(
+            #             [(root1, c.text, 1)
+            #              for c in self.roots[root1].children])
 
         self.vocab_net.add_weighted_edges_from(weighted_adj_list)
+        nx.set_node_attributes(self.vocab_net, 0.5, 'mastery')
 
     def save(self, result_path):
         # nx.write_gpickle(self.vocab_net, result_path)
