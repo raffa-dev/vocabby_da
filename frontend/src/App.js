@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import './App.css';
 import axios from 'axios';
+import FileBase64 from 'react-file-base64';
 
 class App extends Component {
   constructor(props) {
@@ -17,42 +17,26 @@ class App extends Component {
   handleChange = evt => {
     this.setState({ [evt.target.name]: evt.target.value });
   }
-  uploadText = event => {
-    event.preventDefault();
-    let stateData = this.state;
-    if (stateData.email !== "" && stateData.password !== "") {
-      const user = {
-        user: stateData.user,
-        author: stateData.author,
-        file: stateData.file,
-        bookname: stateData.bookname,
-      };
-      let config = { "Content-Type": "application/json" };
-      axios.post('http://localhost:8000/api/v1/posttext', user, config)
-        .then(response => {
-          console.log(response.data)
-        })
-    }
-  }
 
   uploadText = event => {
     event.preventDefault();
     let stateData = this.state;
-    if (stateData.email !== "" && stateData.password !== "") {
-      const user = {
-        user: stateData.user,
-        author: stateData.author,
-        file: stateData.file,
-        bookname: stateData.bookname,
-      };
-      let config = { "Content-Type": "application/json" };
-      axios.post('http://localhost:8000/api/v1/posttext', user, config)
-        .then(response => {
-          console.log(response.data)
-        })
-    }
+    const user = {
+      user: stateData.user,
+      author: stateData.author,
+      file: stateData.file,
+      bookname: stateData.bookname,
+    };
+    let config = { "Content-Type": "application/json" };
+    axios.post('http://localhost:8000/api/v1/posttext', user, config)
+      .then(response => {
+        console.log(response.data)
+      })
   }
 
+  getFiles(files){
+    this.setState({ file: files })
+  }
   render() {
     return (
       <div>
@@ -68,9 +52,9 @@ class App extends Component {
             <div >
               <input type="text" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
             </div>
-            <div >
-              <input type="textarea" onChange={this.handleChange} name="file" placeholder="Text" />
-            </div>
+            <FileBase64
+              multiple={false}
+              onDone={this.getFiles.bind(this)} />
             <div>
               <button type="submit">
                 Submit
@@ -81,13 +65,13 @@ class App extends Component {
 
 
         {/* Stats */}
-        <form onSubmit={this.handleSession}>
-        <div>
-          <button type="submit">
-            Learn
+        {/* <form onSubmit={this.handleSession}>
+          <div>
+            <button type="submit">
+              Learn
           </button>
-        </div>
-        </form>
+          </div>
+        </form> */}
       </div>
     );
   }

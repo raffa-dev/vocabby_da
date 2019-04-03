@@ -14,8 +14,14 @@ from haversine import haversine
 
 class PostText(APIView):
     def post(self, req):
-        print(json.loads(req.body))
-        #Get stats
+        text = json.loads(req.body)['file']['base64'].split(",")[1].decode('base64')
+        username = json.loads(req.body)['user']
+        author = json.loads(req.body)['author']
+        bookname = json.loads(req.body)['bookname']
+        print (text)
+        print (username)
+        print (author)
+        print (bookname)
         return Response(data={"stats": "Stats Detail"}, status=status.HTTP_200_OK)
 
 class SessionStart(APIView):
