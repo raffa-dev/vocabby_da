@@ -18,15 +18,32 @@ class PostText(APIView):
         username = json.loads(req.body)['user']
         author = json.loads(req.body)['author']
         bookname = json.loads(req.body)['bookname']
-        print (text)
-        print (username)
-        print (author)
-        print (bookname)
-        return Response(data={"stats": "Stats Detail"}, status=status.HTTP_200_OK)
+
+        # print (text)
+        # print (username)
+        # print (author)
+        # print (bookname)
+
+        stats = {
+            "wordCount": 100,
+            "difficult": 20,
+            "level": 2,
+            "textQuality": "normal"
+        }
+        return Response(data={"stats": stats}, status=status.HTTP_200_OK)
 
 class SessionStart(APIView):
     def post(self, req):
-        print(json.loads(req.body))
+        text = json.loads(req.body)['file']['base64'].split(",")[1].decode('base64')
+        username = json.loads(req.body)['user']
+        author = json.loads(req.body)['author']
+        bookname = json.loads(req.body)['bookname']
+        
+        # print (text)
+        # print (username)
+        # print (author)
+        # print (bookname)
+
         return Response(data={
 		"words": ['dragon',
  			  'appalling',
@@ -52,7 +69,16 @@ class SessionStart(APIView):
 
 class GetActivity(APIView):
     def post(self, req):
-        print(json.loads(req.body))
+        text = json.loads(req.body)['file']['base64'].split(",")[1].decode('base64')
+        username = json.loads(req.body)['user']
+        author = json.loads(req.body)['author']
+        bookname = json.loads(req.body)['bookname']
+        
+        # print (text)
+        # print (username)
+        # print (author)
+        # print (bookname)
+
         return Response(data={
             "activity": {
                 'sentences': ['but our readers already know that we may identify the\nterrible celestial ______ with our gentle friend the moon, who would not\nbe greatly flattered by the comparison.\n\n',
@@ -62,13 +88,24 @@ class GetActivity(APIView):
                             'translator',
                             'astronomy',
                             'dragon'],
-                'activityType': 0,
+                'activityType': 1,
                 'activityId': 6671}}, status=status.HTTP_200_OK)
 
 class PostActivity(APIView):
     def post(self, req):
-        print(json.loads(req.body))
-        return Response(data={"isCorrect": "response to activity"}, status=status.HTTP_200_OK)
+        text = json.loads(req.body)['file']['base64'].split(",")[1].decode('base64')
+        username = json.loads(req.body)['user']
+        author = json.loads(req.body)['author']
+        bookname = json.loads(req.body)['bookname']
+        answer = json.loads(req.body)['answer']
+        previousActivity = json.loads(req.body)['activity']
+        # print (text)
+        # print (username)
+        # print (author)
+        # print (bookname)
+        # print (answer)
+        # print (previousActivity)
+        return Response(data={"isCorrect": True}, status=status.HTTP_200_OK)
 
 
 
