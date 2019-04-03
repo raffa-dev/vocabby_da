@@ -1,8 +1,12 @@
-"""Module to prepare and maintain book for vocabulary learning."""
-import pickle
+"""
+Module to prepare and maintain book for vocabulary learning.
 
-from vocab_builder import Vocab
+:author: Haemanth Santhi Ponnusamy <haemanthsp@gmail.com>
+"""
+import pickle
 from random import randint
+
+from vocabby.vocab_builder import Vocab
 
 
 class Book:
@@ -29,13 +33,13 @@ class Book:
     @staticmethod
     def load(book_code):
         """Loads the processed book from shelf."""
-        with open('books/' + book_code + '.p', 'rb') as book_file:
+        with open('data/books/' + book_code + '.p', 'rb') as book_file:
             book = pickle.load(book_file)
         return book
 
     def save(self):
         """Save the book for future use."""
-        with open('books/' + self.code + '.p', 'wb') as book_file:
+        with open('data/books/' + self.code + '.p', 'wb') as book_file:
             pickle.dump(self, book_file)
 
 
@@ -50,8 +54,10 @@ class Bookshelf:
         """Add a new book to the shelf."""
         code = self._generate_code(title, author, year)
 
-        if self.find_book(self, text, title, author, gener, year, publisher):
-            return
+        matching_code = self.find_book(
+                self, text, title, author, gener, year, publisher)
+        if matching_code:
+            return matching_code
 
         self.book_codes.update(
                 {code: {'title': title,
@@ -61,6 +67,8 @@ class Bookshelf:
                         'publisher': publisher}})
         book = Book(text, title, author, gener, year, publisher, code)
         book.save()
+
+        return code
 
     def _generate_code(self, title, author, year):
         """Generate a unique code for the book."""
@@ -81,11 +89,11 @@ class Bookshelf:
     @staticmethod
     def load(shelf_name):
         """Loads the processed book from shelf."""
-        with open('books/' + shelf_name + '.p', 'rb') as shelf_file:
+        with open('data/books/' + shelf_name + '.p', 'rb') as shelf_file:
             book = pickle.load(shelf_file)
         return book
 
     def save(self):
         """Save the book for future use."""
-        with open('books/' + self.name + '.p', 'wb') as shelf_file:
+        with open('data/books/' + self.name + '.p', 'wb') as shelf_file:
             pickle.dump(self, shelf_file)

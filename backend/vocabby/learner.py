@@ -1,39 +1,42 @@
-"""Module to model the user learning and logic around it."""
+"""
+Module to model the user learning and logic around it.
+
+:author: Haemanth Santhi Ponnusamy <haemanthsp@gmail.com>
+"""
 
 import pickle
 import random
 import numpy as np
 
-from bookshelf import Book
+from vocabby.bookshelf import Book
 
 
 class Learner(object):
     def __init__(self, name):
         self.name = name
-        self.tutors = []
+        self.tutors = {}
 
     def add_book(self, book):
-        self.tutors.append(Tutor(self, book))
+        self.tutors.update({book.code: Tutor(self, book)})
 
     @staticmethod
     def load(learner_id):
-        with open(learner_id + '.p', 'rb') as learner_file:
+        with open('data/learner/' + learner_id + '.p', 'rb') as learner_file:
             learner = pickle.load(learner_file)
         return learner
 
     def save(self):
-        with open(self.name + '.p', 'wb') as learner_file:
+        with open('data/learner/' + self.name + '.p', 'wb') as learner_file:
             pickle.dump(self, learner_file)
 
     def get_tutor(self, book_code):
         """Return the tutors corresponding to book or hire one."""
-        matched_tutor = [t for t in self.tutors if t.book.code == book_code]
-        if matched_tutor:
-            return matched_tutor[0]
-        else:
+
+        if book_code not in self.tutors:
             book = Book.load(book_code)
             self.add_book(book)
-            return self.tutors[-1]
+
+        return self.tutors[book_code]
 
 
 class Tutor(object):
