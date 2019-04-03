@@ -21,6 +21,12 @@ class App extends Component {
       answer: ""
     }
   }
+
+
+
+
+
+
   handleChange = evt => {
     this.setState({ [evt.target.name]: evt.target.value });
   }
@@ -98,32 +104,53 @@ class App extends Component {
   render() {
     return (
       <div>
+        <header>
+          <section>
+            <a href="#" id="logo" target="_blank">Vocabby</a>
+
+            <label for="toggle-1" class="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
+
+            <nav>
+              <ul>
+                <li><a href="#logo"><i class="icon-home"></i>Home</a></li>
+                <li><a href="#services"><i class="icon-gear"></i>Books</a></li>
+                <li><a href="#about"><i class="icon-user"></i>About</a></li>
+                <li><a href="#gallery"><i class="icon-picture"></i>Papers</a></li>
+              </ul>
+            </nav>
+          </section>
+        </header>
+
         {
           this.state.index === true ?
-            <form onSubmit={this.uploadText}>
-              <div>
-                Upload textfile:
-                <div>
-                  <input type="text" onChange={this.handleChange} name="user" placeholder="Name of User" />
-                </div>
-                <div >
-                  <input type="text" onChange={this.handleChange} name="author" placeholder="Author" />
-                </div>
-                <div >
-                  <input type="text" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
-                </div>
-                <FileBase64
-                  multiple={false}
-                  onDone={this.getFiles.bind(this)} />
-                <div>
-                  <button type="submit">
-                    Submit
-              </button>
-                </div>
-              </div>
-            </form>
+            <div className="container">
+              <section id="content">
+                <form onSubmit={this.uploadText}>
+                  <h1>Upload Text File:</h1>
+                  <div>
+                    <input type="text" id="password" onChange={this.handleChange} name="user" placeholder="Name of User" />
+                  </div>
+                  <div >
+                    <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" />
+                  </div>
+                  <div >
+                    <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
+                  </div>
+                  <FileBase64
+                    multiple={false}
+                    onDone={this.getFiles.bind(this)}
+                  />
+                  <div>
+                    <input type="submit" value="Submit" />
+                  </div>
+                </form>
+              </section>
+            </div>
+
             : this.state.stats === true ?
               <div>
+                <h1>Word Statistics</h1>
+
                 Difficult words: {this.state.statsResponse.difficult} <br />
                 Number of words: {this.state.statsResponse.wordCount} <br />
                 Level: {this.state.statsResponse.level} <br />
@@ -160,28 +187,28 @@ class App extends Component {
                   <div>
                     Sentences: <br />
                     {this.state.activity.sentences.map((value, index) => {
-                      return <p key={index}>{index + 1} : {value}<br/></p>
+                      return <p key={index}>{index + 1} : {value}<br /></p>
                     })}
                     Options: <br />
                     {this.state.activity.options.map((value, index) => {
-                      return <button key={index} name="answer" onClick={ () => {this.setState({answer: value})}}
-                      style={this.state.answer === value? {color: "blue"}:{color:"red"}}
+                      return <button key={index} name="answer" onClick={() => { this.setState({ answer: value }) }}
+                        style={this.state.answer === value ? { color: "blue" } : { color: "red" }}
                       >
                         {value}
                       </button>
                     })}
                     <br />
                     <form onSubmit={this.answerCheck}>
-                    <div>
                       <div>
-                        <button type="submit">
-                          Submit Answer
+                        <div>
+                          <button type="submit">
+                            Submit Answer
                         </button>
+                        </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
                   </div>
-                  
+
                   :
                   <div>Feature Coming Soon</div>
         }
