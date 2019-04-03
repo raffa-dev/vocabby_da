@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
 
-from algo.learner import Learner
-from algo.bookshelf import Bookshelf, Book
+from vocabby.learner import Learner
+from vocabby.bookshelf import Bookshelf, Book
 
 
 class PostText(APIView):
