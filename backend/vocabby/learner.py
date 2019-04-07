@@ -139,4 +139,5 @@ class Session(object):
         self.activity_cache = {}
         is_correct = self.answers[activity_id]['index'] == selection
         self.update(self.answers[activity_id]['family'], is_correct)
-        return {'isCorrect': is_correct}
+        return {'isCorrect': is_correct,
+                'remaining': len(self.queue)}

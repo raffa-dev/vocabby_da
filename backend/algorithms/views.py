@@ -29,11 +29,11 @@ class PostText(APIView):
         new_book = Book.load(book_code)
         learner = Learner(username)
         learner.add_book(new_book)
-        learner.save()
 
         data = {'username': username,
                 'bookCode': book_code,
                 'stats': new_book.get_stats()}
+        learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -49,6 +49,7 @@ class SessionStart(APIView):
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys())}
+        learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -63,6 +64,7 @@ class GetActivity(APIView):
         data = {'username': username,
                 'bookCode': book_code,
                 'activity': session.next_acitivity()}
+        learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -81,4 +83,5 @@ class PostActivity(APIView):
         data = {'username': username,
                 'bookCode': book_code,
                 'result': session.evaluate(activity_id, selection)}
+        learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
