@@ -21,7 +21,8 @@ class App extends Component {
       answer: "",
       username: "",
       bookCode: "",
-      isLoading: false
+      isLoading: false,
+      event : ""
     }
   }
 
@@ -87,18 +88,32 @@ class App extends Component {
 
   answerCheck = event => {
     event.preventDefault();
+    this.setState({event: event})
     let stateData = this.state;
+    let selection;
+    if (stateData.answer == ""){
+      selection = 0
+    }else{
+      selection = stateData.answer
+    }
     const user = {
       username: stateData.user,
       bookCode: stateData.bookCode,
-      selection: stateData.answer,
+      selection: selection,
       activityId: stateData.activity
     };
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/postactivity', user, config)
       .then(response => {
-        console.log(response.data.isCorrect)
-        console.log("New Activity Waiting and then change previous one with new one in loop")
+        this.setState({answer: ""})
+        alert ("Hey you have given " + response.data.result.isCorrect + " answer for previous question")
+        console.log(response.data.result)
+        if (response.data.result.remaining > 0){
+          this.getActivity(event)
+        }
+        else{
+         alert("Hey you answered all questions for day 1")
+        }
       })
   }
   render() {
@@ -233,8 +248,8 @@ class App extends Component {
                     <h3>Options:</h3> <br />
                     <section>
                       {this.state.activity.options.map((value, index) => {
-                        return <button key={index} name="answer" onClick={() => { this.setState({ answer: value }) }}
-                          style={this.state.answer === value ? { color: "blue", background:'olive' } : { color: "red" }}
+                        return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
+                          style={this.state.answer === index ? { color: "blue", background:'olive' } : { color: "red" }}
                         >
                           {value}
                         </button>
