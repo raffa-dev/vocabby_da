@@ -21,12 +21,12 @@ class Learner(object):
 
     @staticmethod
     def load(learner_id):
-        with open('data/learner/' + learner_id + '.p', 'rb') as learner_file:
+        with open('data/learners/' + learner_id + '.p', 'rb') as learner_file:
             learner = pickle.load(learner_file)
         return learner
 
     def save(self):
-        with open('data/learner/' + self.name + '.p', 'wb') as learner_file:
+        with open('data/learners/' + self.name + '.p', 'wb') as learner_file:
             pickle.dump(self, learner_file)
 
     def get_tutor(self, book_code):
@@ -71,7 +71,7 @@ class Tutor(object):
         n_choice = np.random.choice(len(families), 20)
         return [self.book.families[families[i]] for i in n_choice]
 
-    def get_seesion(self):
+    def get_session(self):
         """Returns a active/incomplete session or a new session."""
         if not(self.sessions and len(self.sessions[-1].queue)):
             self.new_session()

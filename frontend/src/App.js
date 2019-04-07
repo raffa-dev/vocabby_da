@@ -18,14 +18,12 @@ class App extends Component {
       wordList: [],
       activityPage: false,
       activity: {},
-      answer: ""
+      answer: "",
+      username: "",
+      bookCode: "",
+      isLoading: false
     }
   }
-
-
-
-
-
 
   handleChange = evt => {
     this.setState({ [evt.target.name]: evt.target.value });
@@ -40,10 +38,15 @@ class App extends Component {
       file: stateData.file,
       bookname: stateData.bookname,
     };
+    this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/posttext', user, config)
       .then(response => {
-        this.setState({ index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats })
+        console.log(response.data)
+        this.setState({
+          index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
+          bookCode: response.data.bookCode, isLoading: false
+        })
       })
   }
 
@@ -54,16 +57,16 @@ class App extends Component {
   getWordList = event => {
     event.preventDefault();
     let stateData = this.state;
+    console.log(stateData.bookCode)
     const user = {
-      user: stateData.user,
-      author: stateData.author,
-      file: stateData.file,
-      bookname: stateData.bookname,
+      username: stateData.user,
+      bookCode: stateData.bookCode,
     };
+    this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words })
+        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false })
       })
   }
 
@@ -71,15 +74,14 @@ class App extends Component {
     event.preventDefault();
     let stateData = this.state;
     const user = {
-      user: stateData.user,
-      author: stateData.author,
-      file: stateData.file,
-      bookname: stateData.bookname,
+      username: stateData.user,
+      bookCode: stateData.bookCode,
     };
+    this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getactivity', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity })
+        this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false })
       })
   }
 
@@ -87,12 +89,10 @@ class App extends Component {
     event.preventDefault();
     let stateData = this.state;
     const user = {
-      user: stateData.user,
-      author: stateData.author,
-      file: stateData.file,
-      bookname: stateData.bookname,
-      answer: stateData.answer,
-      activity: stateData.activity
+      username: stateData.user,
+      bookCode: stateData.bookCode,
+      selection: stateData.answer,
+      activityId: stateData.activity
     };
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/postactivity', user, config)
@@ -108,14 +108,14 @@ class App extends Component {
           <section>
             <a href="#" id="logo" target="_blank">Vocabby</a>
 
-            <label for="toggle-1" class="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
+            <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
 
             <nav>
               <ul>
-                <li><a href="#logo"><i class="icon-home"></i>Home</a></li>
-                <li><a href="#services"><i class="icon-gear"></i>Books</a></li>
-                <li><a href="#about"><i class="icon-user"></i>About</a></li>
-                <li><a href="#gallery"><i class="icon-picture"></i>Papers</a></li>
+                <li><a href="#logo"><i className="icon-home"></i>Home</a></li>
+                <li><a href="#services"><i className="icon-gear"></i>Books</a></li>
+                <li><a href="#about"><i className="icon-user"></i>About</a></li>
+                <li><a href="#gallery"><i className="icon-picture"></i>Papers</a></li>
               </ul>
             </nav>
           </section>
@@ -150,57 +150,100 @@ class App extends Component {
             : this.state.stats === true ?
               <div>
                 <h1>Word Statistics</h1>
+                <div className="row">
+                  <div className="column">
+                    <div className="card">
+                      <h2>Total Words</h2>
+                      <h3>{this.state.statsResponse.totalWords}</h3>
+                    </div>
+                  </div>
+                  <div className="column">
+                    <div className="card">
+                      <h2>Total Words with frequency more than 10</h2>
+                      <h3>{this.state.statsResponse.totalAbove5}</h3>
+                    </div>
+                  </div>
+                  <div className="column">
+                    <div className="card">
+                      <h2>Total Words with frequency more than 5</h2>
+                      <h3>{this.state.statsResponse.totalAbove10}</h3>
+                    </div>
+                  </div>
+                  <div className="column">
+                    <div className="card">
+                      <h2>Total Families</h2>
+                      <h3>{this.state.statsResponse.totalFamilies}</h3>
+                    </div>
+                  </div>
+                </div>
 
-                Difficult words: {this.state.statsResponse.difficult} <br />
-                Number of words: {this.state.statsResponse.wordCount} <br />
-                Level: {this.state.statsResponse.level} <br />
-                Text Quality : {this.state.statsResponse.textQuality} <br />
+                <div className="row">
+                  <h2>Most 20 Frequent words</h2>
+                  {this.state.statsResponse.mostFrequent.map((value, index) => {
+                    return (
+                      <div className="column" key={index}>
+                        <div className="card">
+                          <h3>{value[1]}</h3>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
                 <form onSubmit={this.getWordList}>
-                  <div>
+                  <section id="content">
                     <div>
                       <button type="submit">
                         Continue
-                  </button>
+                        </button>
                     </div>
-                  </div>
+                  </section>
                 </form>
               </div>
               :
               this.state.words === true ?
                 <div>
-                  Word List so that you can go through:
-               {this.state.wordList.map((value, index) => {
-                    return <div key={index}>{value} <br /></div>
-                  })}
-                  <form onSubmit={this.getActivity}>
-                    <div>
-                      <div>
-                        <button type="submit">
-                          Continue
-                        </button>
+                  <h1>Word List so that you can go through:</h1>
+                  <div className="row">
+                    {this.state.wordList.map((value, index) => {
+                      return <div className="column" key={index}>
+                        <div className="card">
+                          <h3>{value}</h3>
+                        </div>
                       </div>
-                    </div>
+                    })}
+                  </div>
+                  <form onSubmit={this.getActivity}>
+                    <section id="content">
+                      <button type="submit">
+                        Continue
+                        </button>
+                    </section>
                   </form>
                 </div>
                 :
                 this.state.activityPage === true ?
                   <div>
-                    Sentences: <br />
+                    <h1>Sentences:</h1>
+                    <br />
                     {this.state.activity.sentences.map((value, index) => {
-                      return <p key={index}>{index + 1} : {value}<br /></p>
+                      return <div className="card" key={index} style={{textAlign: 'left'}}>
+                          <h3>{index + 1} : {value}</h3>
+                      </div>
                     })}
-                    Options: <br />
-                    {this.state.activity.options.map((value, index) => {
-                      return <button key={index} name="answer" onClick={() => { this.setState({ answer: value }) }}
-                        style={this.state.answer === value ? { color: "blue" } : { color: "red" }}
-                      >
-                        {value}
-                      </button>
-                    })}
+                    <h3>Options:</h3> <br />
+                    <section>
+                      {this.state.activity.options.map((value, index) => {
+                        return <button key={index} name="answer" onClick={() => { this.setState({ answer: value }) }}
+                          style={this.state.answer === value ? { color: "blue", background:'olive' } : { color: "red" }}
+                        >
+                          {value}
+                        </button>
+                      })}
+                    </section>
                     <br />
                     <form onSubmit={this.answerCheck}>
                       <div>
-                        <div>
+                        <div style={{marginLeft: '40%'}}>
                           <button type="submit">
                             Submit Answer
                         </button>
@@ -211,6 +254,20 @@ class App extends Component {
 
                   :
                   <div>Feature Coming Soon</div>
+        }
+        {this.state.isLoading ?
+          <div className="overlay">
+            <div className="lds-roller">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div> : null
         }
       </div>
     );
