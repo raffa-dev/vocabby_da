@@ -3,6 +3,7 @@ Module to prepare and maintain book for vocabulary learning.
 
 :author: Haemanth Santhi Ponnusamy <haemanthsp@gmail.com>
 """
+import os
 import pickle
 from random import randint
 
@@ -55,7 +56,7 @@ class Bookshelf:
         code = self._generate_code(title, author, year)
 
         matching_code = self.find_book(
-                self, text, title, author, gener, year, publisher)
+                title, author, gener, year, publisher)
         if matching_code:
             return matching_code
 
@@ -77,9 +78,15 @@ class Bookshelf:
 
         return '_'.join(samples)
 
-    def find_book(self, *args):
+    def find_book(self, title, author, gener, year, publisher):
         """Find whether a book exists in the shelf."""
         # raise NotImplementedError
+        for code, attrb in self.book_codes.items():
+            if attrb['title'] == title and \
+               attrb['author'] == author and \
+               attrb['gener'] == gener and \
+               attrb['year'] == year:
+                return code
         return None
 
     def get_book(self, book_code):
@@ -89,11 +96,16 @@ class Bookshelf:
     @staticmethod
     def load(shelf_name):
         """Loads the processed book from shelf."""
-        with open('data/books/' + shelf_name + '.p', 'rb') as shelf_file:
-            book = pickle.load(shelf_file)
-        return book
+        shelf_file = 'data/books/' + shelf_name + '.p'
+        if os.path.isfile(shelf_file):
+            with open(shelf_file, 'rb') as shelf_file:
+                shelf = pickle.load(shelf_file)
+        else:
+            shelf = Bookshelf(shelf_name)
+        return shelf
 
     def save(self):
         """Save the book for future use."""
-        with open('data/books/' + self.name + '.p', 'wb') as shelf_file:
+        shelf_file = 'data/books/' + self.name + '.p'
+        with open(shelf_file, 'wb') as shelf_file:
             pickle.dump(self, shelf_file)

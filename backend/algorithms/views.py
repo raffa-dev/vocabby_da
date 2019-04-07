@@ -17,13 +17,8 @@ class PostText(APIView):
         username = json.loads(req.body)['user']
         author = json.loads(req.body)['author']
         book_name = json.loads(req.body)['bookname']
-        # print (text)
-        # print (username)
-        # print (author)
-        # print (book_name)
-        # print(json.loads(req.body))
 
-        book_shelf = Bookshelf('Library')
+        book_shelf = Bookshelf.load('Library')
         book_code = book_shelf.add_book(
                 text, book_name, author, 'fiction', '2000', 'ABC')
         new_book = Book.load(book_code)
@@ -34,6 +29,7 @@ class PostText(APIView):
                 'bookCode': book_code,
                 'stats': new_book.get_stats()}
         learner.save()
+        book_shelf.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -74,9 +70,6 @@ class PostActivity(APIView):
         book_code = json.loads(req.body)['bookCode']
         activity_id = json.loads(req.body)['activityId']['activityId']
         selection = json.loads(req.body)['selection']
-        print (selection)
-        print (activity_id)
-        print (json.loads(req.body)['activityId'])
         learner = Learner.load(username)
         tutor = learner.get_tutor(book_code)
         session = tutor.get_session()
