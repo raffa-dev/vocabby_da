@@ -183,6 +183,7 @@ class Vocab:
                            (f1, f2, self.similarity_mat[i][j]))
 
         network = nx.Graph()
+        network.add_nodes_from(families)
         network.add_weighted_edges_from(weighted_adj_list)
         nx.set_node_attributes(network, 0.5, 'mastery')
         return network

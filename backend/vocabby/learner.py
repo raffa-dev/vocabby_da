@@ -95,7 +95,7 @@ class Session(object):
             sentences = list(
                     set(s.text.replace(word.text, '______')
                         for s in word.sentences))[:3]
-            distractors = self._get_distractors(family) + [word.text]
+            distractors = self._get_distractors(family, word.pos) + [word.text]
             np.random.shuffle(distractors)
             activity_id = random.randint(1000, 100000)
             self.answers.update(
@@ -107,10 +107,21 @@ class Session(object):
                     "activityType": activity_type,
                     "activityId": activity_id}
 
-    def _get_distractors(self, family):
-        return [np.random.choice(self.book.families[w].members).text
-                for w, wt in self.network[family.root].items()
-                if wt['weight'] < 0.8][:3]
+    def _get_distractors(self, family, pos):
+        """Select good distractor"""
+
+        # Sort the neighbor based on context similarity
+        neighbors = sorted(self.network[family.root].items(),
+                           key=lambda x: -x[1]['weight'])
+        return [self._select_family_member(self.book.families[w], pos)
+                for w, wt in neighbors if wt['weight'] < 0.8][:3]
+
+    def _select_family_member(self, family, pos):
+        """Select a word of given POS tag from family if any."""
+        for word in family.members:
+            if word.pos == pos:
+                return word.text
+        return np.random.choice(family.members).text
 
     def _activity_selector(self):
         # TODO: Improve activity selection based on student progress
