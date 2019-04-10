@@ -113,6 +113,7 @@ class Session(object):
                 if wt['weight'] < 0.8][:3]
 
     def _activity_selector(self):
+        # TODO: Improve activity selection based on student progress
         return 0
 
     def next_acitivity(self):

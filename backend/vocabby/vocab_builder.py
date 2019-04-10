@@ -10,6 +10,7 @@ import numpy as np
 import networkx as nx
 from tqdm import tqdm
 from numpy.linalg import norm
+from spacy.lang.en.stop_words import STOP_WORDS
 
 logging.basicConfig(level='INFO')
 
@@ -122,7 +123,8 @@ class Vocab:
 
     def _collect_words(self):
         """Collects all the unique word and pos_tag pairs from the text."""
-        nlp = spacy.load("en_core_web_sm")
+        nlp = spacy.load("en_core_web_lg")
+
         nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
         prev_sent = Sentence(nlp(''), None)
@@ -130,13 +132,14 @@ class Vocab:
         for sent in tqdm(text_obj.sents):
             curr_sent = Sentence(sent, prev_sent)
             for token in tqdm(sent):
-                if token.is_stop or\
+                if token.text in STOP_WORDS or\
                         token.pos_ in ['PUNCT', 'SPACE', 'NUM', 'SYM']:
                     continue
                 key = token.text + ' ; ' + token.pos_
                 if key not in words:
                     words[key] = Word(token)
                 words[key].include_sentence(curr_sent)
+
         return words
 
     def _unite_family(self):
@@ -175,7 +178,7 @@ class Vocab:
         for i, f1 in tqdm(enumerate(families), total=len(families)):
             for j, f2 in tqdm(enumerate(families[i:]), total=len(families)-i):
                 j = i + j
-                if self.similarity_mat[i][j] > 0.60:
+                if self.similarity_mat[i][j] > 0.30:
                     weighted_adj_list.append(
                            (f1, f2, self.similarity_mat[i][j]))
 
