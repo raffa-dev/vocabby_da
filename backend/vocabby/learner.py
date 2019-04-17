@@ -12,8 +12,9 @@ from vocabby.bookshelf import Book
 
 
 class Learner(object):
-    def __init__(self, name):
+    def __init__(self, name, level=3):
         self.name = name
+        self.difficulty_level = level
         self.tutors = {}
 
     def add_book(self, book):
