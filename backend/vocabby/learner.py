@@ -57,7 +57,7 @@ class Tutor(object):
         step = 0.3
         factor = 1 + (sign * step)
         self.network.node[token.root]['mastery'] = min(
-                0.99,  self.network.node[token.root]['mastery'] * factor)
+                0.99, self.network.node[token.root]['mastery'] * factor)
 
         for neigh in self.network.neighbors(token.root):
             weight = self.network[token.root][neigh]['weight']
@@ -67,9 +67,14 @@ class Tutor(object):
 
     def get_critical_nodes(self):
         # TODO: Update with proper implementation
-        families = list(self.book.families.keys())
-        n_choice = np.random.choice(len(families), 20)
-        return [self.book.families[families[i]] for i in n_choice]
+        candidates = []
+        for node in self.network:
+            score = sum([v['weight'] for k, v in self.network[node].items()])
+            candidates.append((node, score))
+
+        # n_choice = np.random.choice(len(families), 20)
+        n_choice = sorted(candidates, key=lambda x: -x[1])[:20]
+        return [self.book.families[i[0]] for i in n_choice]
 
     def get_session(self):
         """Returns a active/incomplete session or a new session."""
@@ -110,11 +115,22 @@ class Session(object):
     def _get_distractors(self, family, pos):
         """Select good distractor"""
 
+        candidates = {}
+        for n1, attrb1 in self.network[family.root].items():
+            wt1 = attrb1['weight']
+            candidates.update({n1: wt1})
+            for n2, attrb2 in self.network[n1].items():
+                if n2 == family.root:
+                    continue
+
+                wt2 = attrb2['weight'] * wt1
+                wt2 = max(candidates.get(n2, 0), wt2)
+                candidates.update({n2: wt2})
+
         # Sort the neighbor based on context similarity
-        neighbors = sorted(self.network[family.root].items(),
-                           key=lambda x: -x[1]['weight'])
+        neighbors = sorted(candidates.items(), key=lambda x: -x[1])
         return [self._select_family_member(self.book.families[w], pos)
-                for w, wt in neighbors if wt['weight'] < 0.8][:3]
+                for w, wt in neighbors if wt < 0.8][:3]
 
     def _select_family_member(self, family, pos):
         """Select a word of given POS tag from family if any."""
