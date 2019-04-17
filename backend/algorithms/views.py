@@ -48,6 +48,30 @@ class SessionStart(APIView):
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
+class GetLevel(APIView):
+    def post(self, req):
+        username = json.loads(req.body)['username']
+
+        # 
+        # learner = Learner.load(username)
+        # tutor = learner.get_tutor(book_code)
+        # session = tutor.get_session()
+
+        data = {'level': 4}
+        # learner.save()
+        return Response(data=data, status=status.HTTP_200_OK)
+
+class PostLevel(APIView):
+    def post(self, req):
+        print(json.loads(req.body))
+        username = json.loads(req.body)['username']
+        level = json.loads(req.body)['level']
+        # learner = Learner.load(username)
+        # tutor = learner.get_tutor(book_code)
+        # session = tutor.get_session()
+        # learner.save()
+        return Response(status=status.HTTP_200_OK)
+
 
 class GetActivity(APIView):
     def post(self, req):
