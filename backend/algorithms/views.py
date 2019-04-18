@@ -12,7 +12,6 @@ import base64
 
 class PostText(APIView):
     def post(self, req):
-            
         text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf-8')
         username = json.loads(req.body)['user']
         author = json.loads(req.body)['author']
@@ -35,19 +34,29 @@ class PostText(APIView):
 
 class SessionStart(APIView):
     def post(self, req):
-        print(json.loads(req.body))
         username = json.loads(req.body)['username']
         book_code = json.loads(req.body)['bookCode']
         learner = Learner.load(username)
         tutor = learner.get_tutor(book_code)
         session = tutor.get_session()
-
+        print (session.tokens.keys())
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys())}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
+
+class GetBooks(APIView):
+        def post(self, req):
+                data = [{
+                        "bookname": 'Bookname',
+                        "author": 'Himanshu Bansal',
+                        "genre": 'Sci-fi',
+                        "pages": 900,
+                        "star": 3.5
+                }]
+                return Response(data=data, status=status.HTTP_200_OK)
 
 class GetLevel(APIView):
     def post(self, req):
@@ -59,7 +68,6 @@ class GetLevel(APIView):
 
 class PostLevel(APIView):
     def post(self, req):
-        print(json.loads(req.body))
         username = json.loads(req.body)['username']
         level = json.loads(req.body)['level']
         learner = Learner.load(username)
@@ -70,7 +78,6 @@ class PostLevel(APIView):
 
 class GetActivity(APIView):
     def post(self, req):
-        print(json.loads(req.body))
         username = json.loads(req.body)['username']
         book_code = json.loads(req.body)['bookCode']
         learner = Learner.load(username)

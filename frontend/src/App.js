@@ -4,7 +4,7 @@ import FileBase64 from 'react-file-base64';
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 import Modal from 'react-modal';
-import { FaGrinAlt } from "react-icons/fa";
+import { FaGrinAlt, FaLess } from "react-icons/fa";
 import { FaGrimace } from "react-icons/fa";
 
 const customStyles = {
@@ -18,18 +18,7 @@ const customStyles = {
     padding: 100
   }
 };
-const bodyStyle = {
-  // border: `2px solid ${config.actualWhite}`,
-  height: 55,
-  minWidth: '100%',
-  // background: config.snackbarColor,
-  // fontFamily: config.fontFamily,
-  // fontStyle: config.fontStyle,
-  // fontWeight: config.fontWeight,
-  // fontSize: config.fontSize,
-  borderBottomRightRadius: 46,
-  borderBottomLeftRadius: 46
-}
+
 
 class App extends Component {
   constructor(props) {
@@ -58,7 +47,9 @@ class App extends Component {
       activityLength: 0,
       showMessage: false,
       error: '',
-      errorColor: true
+      errorColor: true,
+      bookshelf: false,
+      books: []
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -96,7 +87,17 @@ class App extends Component {
     this.setState({
       volume: value
     })
-
+    let stateData = this.state;
+    const user = {
+      username: stateData.user,
+      level: value
+    };
+    this.setState({ isLoading: true })
+    let config = { "Content-Type": "application/json" };
+    axios.post('http://localhost:8000/api/v1/postlevel', user, config)
+      .then(response => {
+        this.setState({ isLoading: false })
+      })
   }
 
   handleChange = evt => {
@@ -119,7 +120,8 @@ class App extends Component {
         console.log(response.data)
         this.setState({
           index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
-          bookCode: response.data.bookCode, isLoading: false
+          bookCode: response.data.bookCode, isLoading: false,
+          bookshelf: false
         })
       })
   }
@@ -140,7 +142,7 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false })
+        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false })
       })
   }
 
@@ -155,8 +157,22 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getactivity', user, config)
       .then(response => {
-        console.log(response.data)
-        this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false })
+        this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
+      })
+  }
+
+  openBookShelf = (event) => {
+    event.preventDefault();
+    let stateData = this.state;
+    const users = {
+
+    }
+    this.setState({ isLoading: true })
+
+    let config = { "Content-Type": "application/json" };
+    axios.post('http://localhost:8000/api/v1/getbooks', users, config)
+      .then(response => {
+        this.setState({ index: false, stats: false, words: false, activityPage: false, isLoading: false, bookshelf: true, books: response.data })
       })
   }
 
@@ -191,212 +207,231 @@ class App extends Component {
       })
   }
   render() {
+    const randomColor = ['#F08282', '#82F098', '#C882F0', '#F2C751']
     return (
       <div>
-        <header>
-          <section>
-            <a href="#" id="logo" target="_blank">Vocabby</a>
-            <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
-            <nav>
-              <ul>
-                <li><a href="#logo"><i className="icon-home"></i>Home</a></li>
-                <li><a href="#services"><i className="icon-gear"></i>Books</a></li>
-                <li><a href="#about"><i className="icon-user"></i>About</a></li>
-                <li><a href="#gallery"><i className="icon-picture"></i>Papers</a></li>
-                <li><a href="#level"><i className="icon-picture"></i>{this.state.user}</a>
-                  <ul className="dropdown">
-                    <li> <a href="#" onClick={this.openModal}>Select Level</a></li>
-                  </ul></li>
-              </ul>
-            </nav>
+        <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
+          <header>
+            <section>
+              <a href="#" id="logo" target="_blank">Vocabby</a>
+              <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
+              <nav>
+                <ul>
+                  <li><a href="#logo" onClick = {()=>{this.setState({index: true})}}><i className="icon-home"></i>Home</a></li>
+                  <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
+                  <li><a href="#about"><i className="icon-user"></i>About</a></li>
+                  <li><a href="#gallery"><i className="icon-picture"></i>Papers</a></li>
+                  <li><a href="#level"><i className="icon-picture"></i>{this.state.user}</a>
+                    <ul className="dropdown">
+                      <li> <a href="#" onClick={this.openModal}>Select Level</a></li>
+                    </ul></li>
+                </ul>
+              </nav>
 
-          </section>
-        </header>
+            </section>
+          </header>
 
-        {
-          this.state.index === true ?
-            <div className="container">
-              <section id="content">
-                <form onSubmit={this.uploadText}>
-                  <h1>Upload Text File:</h1>
-                  {/* <div>
+          {
+            this.state.index === true ?
+              <div className="container">
+                <section id="content">
+                  <form onSubmit={this.uploadText}>
+                    <h1>Upload Text File:</h1>
+                    {/* <div>
                     <input type="text" id="password" onChange={this.handleChange} name="user" placeholder="Name of User" />
                   </div> */}
-                  <div >
-                    <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" />
-                  </div>
-                  <div >
-                    <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
-                  </div>
-                  <FileBase64
-                    multiple={false}
-                    onDone={this.getFiles.bind(this)}
-                  />
-                  <div>
-                    <input type="submit" value="Submit" />
-                  </div>
-                </form>
-              </section>
-            </div>
-            : this.state.stats === true ?
-              <div>
-                <h1>Word Statistics</h1>
-                <div className="row">
-                  <div className="column">
-                    <div className="card">
-                      <h2>Total Words</h2>
-                      <h3>{this.state.statsResponse.totalWords}</h3>
+                    <div >
+                      <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" />
                     </div>
-                  </div>
-                  <div className="column">
-                    <div className="card">
-                      <h2>Total Words with frequency more than 10</h2>
-                      <h3>{this.state.statsResponse.totalAbove5}</h3>
+                    <div >
+                      <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
                     </div>
-                  </div>
-                  <div className="column">
-                    <div className="card">
-                      <h2>Total Words with frequency more than 5</h2>
-                      <h3>{this.state.statsResponse.totalAbove10}</h3>
-                    </div>
-                  </div>
-                  <div className="column">
-                    <div className="card">
-                      <h2>Total Families</h2>
-                      <h3>{this.state.statsResponse.totalFamilies}</h3>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <h2>Most 20 Frequent words</h2>
-                  {this.state.statsResponse.mostFrequent.map((value, index) => {
-                    return (
-                      <div className="column" key={index}>
-                        <div className="card">
-                          <h3>{value[1]}</h3>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-                <form onSubmit={this.getWordList}>
-                  <section id="content">
+                    <FileBase64
+                      multiple={false}
+                      onDone={this.getFiles.bind(this)}
+                    />
                     <div>
-                      <button type="submit">
-                        Continue
-                        </button>
+                      <input type="submit" value="Submit" />
                     </div>
-                  </section>
-                </form>
+                  </form>
+                </section>
               </div>
-              :
-              this.state.words === true ?
-                <div>
-                  <h1>Word List so that you can go through:</h1>
+              : this.state.stats === true ?
+                <div style={{ width: '80%', margin: '0px auto' }}>
+                  <h1>Word Statistics</h1>
                   <div className="row">
-                    {this.state.wordList.map((value, index) => {
-                      return <div className="column" key={index}>
-                        <div className="card">
-                          <h3>{value}</h3>
-                        </div>
+                    <div className="column">
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
+                        <h2>Total Words</h2>
+                        <h3>{this.state.statsResponse.totalWords}</h3>
                       </div>
+                    </div>
+                    <div className="column">
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
+                        <h2>Total Words with frequency more than 10</h2>
+                        <h3>{this.state.statsResponse.totalAbove5}</h3>
+                      </div>
+                    </div>
+                    <div className="column">
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
+                        <h2>Total Words with frequency more than 5</h2>
+                        <h3>{this.state.statsResponse.totalAbove10}</h3>
+                      </div>
+                    </div>
+                    <div className="column">
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
+                        <h2>Total Families</h2>
+                        <h3>{this.state.statsResponse.totalFamilies}</h3>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <h2 style={{ marginBottom: 30 }}>Most 20 Frequent words</h2>
+                    {this.state.statsResponse.mostFrequent.map((value, index) => {
+                      return (
+                        <div className="column" key={index}>
+                          <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
+                            <h3>{value[1]}</h3>
+                          </div>
+                        </div>
+                      )
                     })}
                   </div>
-                  <form onSubmit={this.getActivity}>
+                  <form onSubmit={this.getWordList}>
                     <section id="content">
-                      <button type="submit">
-                        Continue
+                      <div style={{ marginBottom: 20 }}>
+                        <button type="submit">
+                          Continue
                         </button>
+                      </div>
                     </section>
                   </form>
                 </div>
                 :
-                this.state.activityPage === true ?
-                  <div>
-                    {console.log(this.state.wordList.length)}
-                    {console.log(this.state.progress * 5)}
-                    {console.log(this.state.wordList.length - (this.state.progress * 5))}
-                    <div id="progressbar" >
-                      <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
-                    </div>
-                    <h1>Sentences:</h1>
-                    <br />
-                    <div className="card-activity"  style={{ textAlign: 'left' }}>
-                    {this.state.activity.sentences.map((value, index) => {
-                      return  <h3>{index + 1} : {value}</h3>
-                      
-                    })}
-                    </div>
-                    <h3>Options:</h3> <br />
-                    <section>
-                      {this.state.activity.options.map((value, index) => {
-                        return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
-                          style={this.state.answer === index ? { color: "blue", background: 'olive' } : { color: "red" }}
-                        >
-                          {value}
-                        </button>
+                this.state.words === true ?
+                  <div style={{ width: '80%', margin: '0px auto' }}>
+                    <h1>Word List so that you can go through:</h1>
+                    <div className="row">
+                      {this.state.wordList.map((value, index) => {
+                        return <div className="column" key={index}>
+                          <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
+                            <h3>{value}</h3>
+                          </div>
+                        </div>
                       })}
-                    </section>
-                    <br />
-                    <form onSubmit={this.answerCheck}>
-                      <div>
-                        <div style={{ marginLeft: '40%' }}>
+                    </div>
+                    <form onSubmit={this.getActivity}>
+                      <section id="content">
+                        <div style={{ marginBottom: 20 }}>
                           <button type="submit">
-                            Submit Answer
+                            Continue
                         </button>
                         </div>
-                      </div>
+                      </section>
                     </form>
                   </div>
-                  : <div>Feature Coming Soon</div>
-        }
-        {this.state.isLoading ?
-          <div className="overlay">
-            <div className="lds-roller">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div> : null
-        }
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
-        >
+                  :
+                  this.state.activityPage === true ?
+                    <div style={{ width: '80%', margin: '0 auto' }}>
+                      <div id="progressbar" >
+                        <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
+                      </div>
+                      <h1>Sentences:</h1>
+                      <br />
+                      <div className="card-activity" style={{ textAlign: 'left' }}>
+                        {this.state.activity.sentences.map((value, index) => {
+                          return <h3 style={{ marginBottom: 20 }} key={index + Math.random()}>{index + 1} : {value}</h3>
+                        })}
 
-          <h2 ref={subtitle => this.subtitle = subtitle}>Please select your current level</h2>
+                        <br />
+                        <section>
+                          {this.state.activity.options.map((value, index) => {
+                            return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
+                              style={this.state.answer === index ? { color: "blue", background: 'olive', marginRight: 20 } : { color: "red", marginRight: 20 }}
+                            >
+                              {value}
+                            </button>
+                          })}
+                        </section>
+                      </div>
+                      <br />
+                      <form onSubmit={this.answerCheck}>
+                        <div>
+                          <div style={{ marginLeft: '40%' }}>
+                            <button type="submit">
+                              Submit Answer
+                        </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div> : this.state.bookshelf === true ?
+                      <div style={{ width: '80%', margin: '0 auto' }}>
+                        <div className="row">
+                          {this.state.books.map((value, index) => {
+                            return <div className="column" key={index}>
+                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
+                                <h3>{value.bookname}</h3><br/>
+                                <h3>{value.author}</h3><br/>
+                                <h3>{value.genre}</h3><br/>
+                                <h3>Pages: {value.pages}</h3><br/>
+                                <h3>Rating: {value.star}</h3>
+                              </div>
+                            </div>
+                          })}
+                        </div>
+                      </div>
+                      : <div>Feature Coming Soon</div>
+          }
+          {this.state.isLoading ?
+            <div className="overlay">
+              <div className="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div> : null
+          }
+          <Modal
+            isOpen={this.state.modalIsOpen}
+            onAfterOpen={this.afterOpenModal}
+            onRequestClose={this.closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
 
-          <Slider
-            value={this.state.volume}
-            min={1}
-            max={5}
-            step={1}
-            labels={{ 1: "Very Easy", 2: "Easy", 3: "Average", 4: "Hard", 5: "Super Hard" }}
-            onChange={this.handleOnChange}
-          />
-          <button onClick={this.closeModal} style={{ marginTop: 40, marginLeft: 167 }}>Save</button>
-        </Modal>
+            <h2 ref={subtitle => this.subtitle = subtitle}>Please select your current level</h2>
+
+            <Slider
+              value={this.state.volume}
+              min={1}
+              max={5}
+              step={1}
+              labels={{ 1: "Very Easy", 2: "Easy", 3: "Average", 4: "Hard", 5: "Super Hard" }}
+              onChange={this.handleOnChange}
+            />
+            <button onClick={this.closeModal} style={{ marginTop: 40, marginLeft: 167 }}>Save</button>
+          </Modal>
+        </div>
         {
           this.state.showMessage === true ?
             <div id="snackbar" style={{
               backgroundColor:
-                this.state.errorColor === true ? 'green' : 'red'
+                this.state.errorColor === true ? 'green' : 'red',
+              bottom: 0,
+              padding: 30
             }}>
-            
-            <div>
-            {this.state.errorColor === true ? <FaGrinAlt style={{marginRight: 50}}/> : <FaGrimace style={{marginRight: 50}}/>}
-            {this.state.error}
-            <button style={{marginLeft: 50}} onClick={()=> {this.setState({showMessage: false})}}>Continue</button>
-            </div>
+
+              <div style={{ bottom: 0 }}>
+                {this.state.errorColor === true ? <FaGrinAlt style={{ marginRight: 50 }} /> : <FaGrimace style={{ marginRight: 50 }} />}
+                {this.state.error}
+                <button style={{ marginLeft: 50 }} onClick={() => { this.setState({ showMessage: false }) }}>Continue</button>
+              </div>
             </div> : null
         }
 

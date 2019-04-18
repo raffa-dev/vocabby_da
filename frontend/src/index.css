@@ -371,7 +371,7 @@ h1 {padding: 20px 0px;}
     padding: 16px;
     text-align: center;
     background-color: #f1f1f1;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   
   }
 
@@ -381,9 +381,13 @@ h1 {padding: 20px 0px;}
     text-align: center;
     background-color: #f1f1f1;
     margin-bottom: 20px;
-    width: 80%;
-    margin: 0 auto;
+
   }
+
+  .card:hover {
+    box-shadow: 0 20px 8px 0 rgba(0, 2, 5, 0.7);
+  }
+
 
 button { 
     background: rgb(254,193,81);

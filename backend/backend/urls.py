@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^api/v1/getactivity$', views.GetActivity.as_view(), name='get activity'),
     url(r'^api/v1/postactivity$', views.PostActivity.as_view(), name='post activity'),
     url(r'^api/v1/getlevel$', views.GetLevel.as_view(), name='get level'),
+    url(r'^api/v1/postlevel$', views.PostLevel.as_view(), name='post level'),
+    url(r'^api/v1/getbooks$', views.GetBooks.as_view(), name='get books'),
 ]
