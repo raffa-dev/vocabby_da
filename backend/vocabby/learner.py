@@ -112,7 +112,7 @@ class Session(object):
                         {"answer": distractors.index(word.text),
                          "family": family,
                          "distractors": distractor_objs,
-                         "activity_type": activity_type}})
+                         "activityType": activity_type}})
             return {"sentences": sentences,
                     "options": distractors,
                     "activityType": activity_type,
@@ -130,7 +130,7 @@ class Session(object):
                     {activity_id:
                         {"answer": word.text,
                          "family": family,
-                         "activity_type": activity_type}})
+                         "activityType": activity_type}})
             return {"sentences": sentences,
                     "options": character_mix,
                     "activityType": activity_type,
