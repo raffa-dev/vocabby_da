@@ -99,9 +99,9 @@ class Session(object):
         """"""
         if activity_type == 0:
             word = np.random.choice(family.members)
-            all_sentences = random.shuffle(list(
-                    set(s.text.replace(word.text, '______')
-                        for s in word.sentences)))
+            all_sentences = list(
+                set(s.text.replace(word.text, '______') for s in word.sentences))
+            random.shuffle(all_sentences)
             sentences = all_sentences[:3]
             distractor_objs = self._get_distractors(family, word.pos) + [word]
             np.random.shuffle(distractor_objs)
@@ -119,7 +119,7 @@ class Session(object):
 
         elif activity_type == 1:
             word = np.random.choice(family.members)
-            sentences = random.shuffle(list(
+            sentences = random.choice(list(
                     set(s.text.replace(word.text, '______')
                         for s in word.sentences)))[:3]
 
