@@ -92,29 +92,32 @@ class Session(object):
         self.tokens = {t.root: t for t in tokens}
         self.queue = list(self.tokens.keys())
         self.answers = {}
-        self.activity_cache = {}  # Prevent regeneration of new activity
+        # Prevent regeneration of new activity
+        self.activity_cache = {}
 
     def _create_activity(self, family, activity_type):
         """"""
         if activity_type == 0:
             word = np.random.choice(family.members)
-            sentences = list(
+            sentences = random.shuffle(list(
                     set(s.text.replace(word.text, '______')
-                        for s in word.sentences))[:3]
-            distractors = self._get_distractors(family, word.pos) + [word.text]
-            np.random.shuffle(distractors)
+                        for s in word.sentences)))[:3]
+            distractor_objs = self._get_distractors(family, word.pos) + [word]
+            np.random.shuffle(distractor_objs)
+            distractors = [d.text for d in distractor_objs]
             activity_id = random.randint(1000, 100000)
             self.answers.update(
                     {activity_id:
                         {'index': distractors.index(word.text),
-                         'family': family}})
+                         'family': family,
+                         'distractors': distractor_objs}})
             return {"sentences": sentences,
                     "options": distractors,
                     "activityType": activity_type,
                     "activityId": activity_id}
 
     def _get_distractors(self, family, pos):
-        """Select good distractor"""
+        """Select good set of distractors"""
 
         candidates = {}
         for n1, attrb1 in self.network[family.root].items():
@@ -138,7 +141,7 @@ class Session(object):
         for word in family.members:
             if word.pos == pos:
                 return word.text
-        return np.random.choice(family.members).text
+        return np.random.choice(family.members)
 
     def _activity_selector(self):
         # TODO: Improve activity selection based on student progress
@@ -168,5 +171,12 @@ class Session(object):
         self.activity_cache = {}
         is_correct = self.answers[activity_id]['index'] == selection
         self.update(self.answers[activity_id]['family'], is_correct)
-        return {'isCorrect': is_correct,
-                'remaining': len(self.queue)}
+        result = {'isCorrect': is_correct,
+                  'remaining': len(self.queue)}
+        if not is_correct:
+            wrong_word = self.answers[
+                    activity_id]['distractors'][selection]
+            feedback_sentence = random.choice(wrong_word.sentences)
+            result.update({'feedback': feedback_sentence})
+
+        return result

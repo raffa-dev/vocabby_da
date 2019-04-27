@@ -91,6 +91,15 @@ class Word(object):
         """Get the document frequency of the word."""
         return len(self.sentences)
 
+    @property
+    def complexity(self):
+        """Get the complexity of the word."""
+        letters = 'etaoinshrdlcumwfgypbvkjxqz'
+        vowels = set('aeiou')
+        unique = set(self.text)
+        positions = sum(letters.index(c) for c in self.text)
+        return len(self.text) * len(unique) * (7 - len(unique & vowels)) * positions
+
 
 class Vocab:
     """Collect and organize the vocabulary from the book."""
