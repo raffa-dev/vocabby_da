@@ -13,7 +13,10 @@ import base64
 
 class PostText(APIView):
     def post(self, req):
-        text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf-8')
+        if not json.loads(req.body)['file'] == []:
+                text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf-8')
+        else:
+                text = ""
         username = json.loads(req.body)['user']
         author = json.loads(req.body)['author']
         book_name = json.loads(req.body)['bookname']

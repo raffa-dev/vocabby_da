@@ -47,12 +47,14 @@ class App extends Component {
       event: "",
       volume: 0,
       progress: 20,
-      activityLength: 0,
       showMessage: false,
       error: '',
       errorColor: true,
       bookshelf: false,
-      books: []
+      books: [],
+      remaining_words: 0,
+      scrambledForm: [],
+      scrambledActivity: [{'h':0}, {'l':1}, {'e':2}, {'o':3}, {'l':4}]
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -139,7 +141,6 @@ class App extends Component {
   getWordList = event => {
     event.preventDefault();
     let stateData = this.state;
-    console.log(stateData.bookCode)
     const user = {
       username: stateData.user,
       bookCode: stateData.bookCode,
@@ -148,7 +149,7 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false })
+        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false, progress: response.data.words.length })
       })
   }
 
@@ -201,17 +202,70 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/postactivity', user, config)
       .then(response => {
-        this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
         this.setState({ error: "Hey you have given " + response.data.result.isCorrect + " answer for previous question", errorColor: response.data.result.isCorrect })
-
-        if (response.data.result.remaining > 0) {
-          this.getActivity(event)
-        }
-        else {
-          alert("Hey you answered all questions for day 1")
-        }
+        this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
+        this.setState({ remaining_words: response.data.result.remaining, answer: selection })
       })
   }
+
+  next_activity = (event) => {
+    this.setState({ showMessage: false, answer: "" })
+    if (this.state.remaining_words > 0) {
+      let stateData = this.state;
+      const user = {
+        username: stateData.user,
+        bookCode: stateData.bookCode,
+      };
+      this.setState({ isLoading: true })
+      let config = { "Content-Type": "application/json" };
+      axios.post('http://localhost:8000/api/v1/getactivity', user, config)
+        .then(response => {
+          this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
+        })
+    }
+    else {
+      alert("Hey you answered all questions for day 1")
+    }
+  }
+
+  openBook = (books) => {
+    let stateData = this.state;
+    const user = {
+      user: stateData.user,
+      author: books.author,
+      file: [],
+      genre: books.gener,
+      year: books.year,
+      publisher: books.publisher,
+      bookname: books.title,
+    };
+    this.setState({ isLoading: true })
+    let config = { "Content-Type": "application/json" };
+    axios.post('http://localhost:8000/api/v1/posttext', user, config)
+      .then(response => {
+        console.log(response.data)
+        this.setState({
+          index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
+          bookCode: response.data.bookCode, isLoading: false,
+          bookshelf: false
+        })
+      })
+  }
+  scrambledWord = (button) => {
+    this.setState({
+      scrambledForm: [...this.state.scrambledForm, button]
+    })
+    
+    let filteredArray = this.state.scrambledActivity.filter(item => item !== button)
+    this.setState({scrambledActivity: filteredArray});
+  }
+  removeScrambledWord = (button) => {
+    let filteredArray = this.state.scrambledForm.filter(item => item !== button)
+    this.setState({scrambledForm: filteredArray});
+    this.setState({
+      scrambledActivity: [...this.state.scrambledActivity, button]
+    })
+  } 
   render() {
     const randomColor = ['#fffeed']
     return (
@@ -245,10 +299,10 @@ class App extends Component {
                     <h1>Upload Text File:</h1>
 
                     <div >
-                      <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" required/>
+                      <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" required />
                     </div>
                     <div >
-                      <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" required/>
+                      <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" required />
                     </div>
                     <div >
                       <input type="text" id="password" onChange={this.handleChange} name="genre" placeholder="Genre (Optional)" />
@@ -269,7 +323,7 @@ class App extends Component {
                   </form>
                 </section>
               </div>
-              
+
               : this.state.stats === true ?
                 <div style={{ width: '80%', margin: '0px auto' }}>
                   <h1>Word Statistics</h1>
@@ -313,11 +367,11 @@ class App extends Component {
                     })}
                   </div>
                   <form onSubmit={this.getWordList}>
-                      <div style={{ marginBottom: 20 }}>
-                        <button type="submit" className="button pulse">
-                          Continue
+                    <div style={{ marginBottom: 20 }}>
+                      <button type="submit" className="button pulse">
+                        Start Learning
                         </button>
-                      </div>
+                    </div>
                   </form>
                 </div>
                 :
@@ -334,11 +388,11 @@ class App extends Component {
                       })}
                     </div>
                     <form onSubmit={this.getActivity}>
-                        <div style={{ marginBottom: 20 }}>
-                          <button type="submit" className="button pulse">
-                            Continue
+                      <div style={{ marginBottom: 20 }}>
+                        <button type="submit" className="button pulse">
+                          Start Session
                         </button>
-                        </div>
+                      </div>
                     </form>
                   </div>
                   :
@@ -347,25 +401,45 @@ class App extends Component {
                       <div id="progressbar" >
                         <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
                       </div>
-                      <br/>
-                      <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
-                      <h2 style={{marginBottom: 20}}>Choose a word which satisfies all the blanks</h2>
-                        {this.state.activity.sentences.map((value, index) => {
-                          return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {value}</h4>
-                        })}
-
-                        <br />
-                        <section style={{maxWidth: '100%'}}>
-                          {this.state.activity.options.map((value, index) => {
-                            return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
-                              style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } : 
-                              { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
-                            >
-                              {value}
-                            </button>
+                      <br />
+                      {this.state.activity.activityType === 0 ?
+                        <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
+                          <h2 style={{ marginBottom: 20 }}>Choose a word which satisfies all the blanks</h2>
+                          {this.state.activity.sentences.map((value, index) => {
+                            return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {value}</h4>
                           })}
-                        </section>
-                      </div>
+
+                          <br />
+                          <section style={{ maxWidth: '100%' }}>
+                            {this.state.activity.options.map((value, index) => {
+                              return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
+                                style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } :
+                                  { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
+                              >
+                                {value}
+                              </button>
+                            })}
+                          </section>
+                        </div> :
+                        <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
+                          <h2 style={{ marginBottom: 20 }}>Re-arrange the characters</h2>
+                          Activity 2<br/>
+
+                          {this.state.scrambledActivity.map((value, index)=> {
+                            return (
+                              <button key={index+Math.random()} onClick={()=>{this.scrambledWord(value)}}>{Object.keys(value)}</button>
+                            )
+                          })}
+                         
+                          <br/><br/>
+                          {this.state.scrambledForm.map((value, index)=> {
+                            return (
+                              <button key={index+Math.random()} onClick={()=>{this.removeScrambledWord(value)}}>{Object.keys(value)}</button>
+                            )
+                          })}
+                        </div>
+                      }
+
                       <br />
                       <form onSubmit={this.answerCheck}>
                         <div>
@@ -380,13 +454,13 @@ class App extends Component {
                       <div style={{ width: '80%', margin: '0 auto' }}>
                         <div className="row">
                           {this.state.books.map((value, index) => {
-                            return <div className="column" key={index}>
-                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
-                                <h3>{value.bookname}</h3><br />
-                                <h3>{value.author}</h3><br />
-                                <h3>{value.genre}</h3><br />
-                                <h3>Pages: {value.pages}</h3><br />
-                                <h3>Rating: {value.star}</h3>
+                            return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
+                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 200, textAlign: 'left' }}>
+                                <h3>Title: {value.title}</h3><br />
+                                <h4>Author: {value.author}</h4><br />
+                                <h4>Genre: {value.gener}</h4><br />
+                                <h4>Year: {value.year}</h4><br />
+                                <h4>Publisher: {value.publisher}</h4>
                               </div>
                             </div>
                           })}
@@ -441,7 +515,7 @@ class App extends Component {
               <div style={{ bottom: 0 }}>
                 {this.state.errorColor === true ? <FaGrinAlt style={{ marginRight: 50 }} /> : <FaGrimace style={{ marginRight: 50 }} />}
                 {this.state.error}
-                <button style={{ marginLeft: 50 }} onClick={() => { this.setState({ showMessage: false }) }}>Continue</button>
+                <button style={{ marginLeft: 50 }} onClick={() => { this.next_activity() }}>Continue</button>
               </div>
             </div> : null
         }
