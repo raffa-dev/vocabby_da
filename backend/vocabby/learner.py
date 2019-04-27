@@ -196,9 +196,10 @@ class Session(object):
                   'remaining': len(self.queue)}
 
         if activity_id == 0:
+            feedback_sentence = ''
             if not is_correct:
                 wrong_word = self.answers[
                         activity_id]['distractors'][selection]
                 feedback_sentence = random.choice(wrong_word.sentences).text
-                result.update({'feedback': feedback_sentence})
+            result.update({'feedback': feedback_sentence})
         return result
