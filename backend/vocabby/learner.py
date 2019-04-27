@@ -189,6 +189,7 @@ class Session(object):
 
     def evaluate(self, activity_id, selection):
         self.activity_cache = {}
+        activity_type = self.answers[activity_id][activityType]
 
         is_correct = self.answers[activity_id]['answer'] == selection
         self.update(self.answers[activity_id]['family'], is_correct)
@@ -197,7 +198,7 @@ class Session(object):
 
         if not is_correct:
             feedback_sentence = ''
-            if activity_id == 0:
+            if activity_type == 0:
                 wrong_word = self.answers[
                         activity_id]['distractors'][selection]
                 feedback_sentence = random.choice(wrong_word.sentences).text
