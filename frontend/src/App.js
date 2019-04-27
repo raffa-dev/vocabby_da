@@ -6,6 +6,8 @@ import 'react-rangeslider/lib/index.css'
 import Modal from 'react-modal';
 import { FaGrinAlt, FaLess } from "react-icons/fa";
 import { FaGrimace } from "react-icons/fa";
+import Highlight from 'react-highlighter';
+
 
 const customStyles = {
   content: {
@@ -48,13 +50,14 @@ class App extends Component {
       volume: 0,
       progress: 20,
       showMessage: false,
-      error: '',
+      feedback: '',
       errorColor: true,
       bookshelf: false,
       books: [],
       remaining_words: 0,
       scrambledForm: [],
-      scrambledActivity: [{'h':0}, {'l':1}, {'e':2}, {'o':3}, {'l':4}]
+      scrambledActivity: [],
+      selected_answer: ""
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -125,7 +128,6 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/posttext', user, config)
       .then(response => {
-        console.log(response.data)
         this.setState({
           index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
           bookCode: response.data.bookCode, isLoading: false,
@@ -161,9 +163,21 @@ class App extends Component {
       bookCode: stateData.bookCode,
     };
     this.setState({ isLoading: true })
+    this.setState({scrambledActivity: []})
+    this.setState({scrambledForm: []})
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getactivity', user, config)
       .then(response => {
+        let total_word = [];
+        if (response.data.activity.activityType === 1) {
+          for (let i = 0; i < response.data.activity.options.length; i++) {
+            const dic = {};
+            dic[response.data.activity.options[i]] = i
+            total_word.push(dic)
+          }
+          this.setState({scrambledActivity: total_word})
+          }
+        
         this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
       })
   }
@@ -193,6 +207,15 @@ class App extends Component {
     } else {
       selection = stateData.answer
     }
+
+    if (stateData.activity.activityType === 1){
+      let word = "";
+      for (let i = 0; i < this.state.scrambledForm.length; i++) {
+      word = word + Object.keys(this.state.scrambledForm[i])
+      }
+      selection = word
+    }
+
     const user = {
       username: stateData.user,
       bookCode: stateData.bookCode,
@@ -202,7 +225,7 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/postactivity', user, config)
       .then(response => {
-        this.setState({ error: "Hey you have given " + response.data.result.isCorrect + " answer for previous question", errorColor: response.data.result.isCorrect })
+        this.setState({ feedback: response.data.result.feedback, errorColor: response.data.result.isCorrect })
         this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
         this.setState({ remaining_words: response.data.result.remaining, answer: selection })
       })
@@ -217,9 +240,20 @@ class App extends Component {
         bookCode: stateData.bookCode,
       };
       this.setState({ isLoading: true })
+      this.setState({scrambledActivity: []})
+      this.setState({scrambledForm: []})
       let config = { "Content-Type": "application/json" };
       axios.post('http://localhost:8000/api/v1/getactivity', user, config)
         .then(response => {
+          let total_word = [];
+        if (response.data.activity.activityType === 1) {
+          for (let i = 0; i < response.data.activity.options.length; i++) {
+            const dic = {};
+            dic[response.data.activity.options[i]] = i
+            total_word.push(dic)
+          }
+          this.setState({scrambledActivity: total_word})
+          }
           this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
         })
     }
@@ -243,7 +277,6 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/posttext', user, config)
       .then(response => {
-        console.log(response.data)
         this.setState({
           index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
           bookCode: response.data.bookCode, isLoading: false,
@@ -255,17 +288,18 @@ class App extends Component {
     this.setState({
       scrambledForm: [...this.state.scrambledForm, button]
     })
-    
+
     let filteredArray = this.state.scrambledActivity.filter(item => item !== button)
-    this.setState({scrambledActivity: filteredArray});
+    this.setState({ scrambledActivity: filteredArray });
   }
   removeScrambledWord = (button) => {
     let filteredArray = this.state.scrambledForm.filter(item => item !== button)
-    this.setState({scrambledForm: filteredArray});
+    this.setState({ scrambledForm: filteredArray });
     this.setState({
       scrambledActivity: [...this.state.scrambledActivity, button]
     })
-  } 
+  }
+
   render() {
     const randomColor = ['#fffeed']
     return (
@@ -412,7 +446,7 @@ class App extends Component {
                           <br />
                           <section style={{ maxWidth: '100%' }}>
                             {this.state.activity.options.map((value, index) => {
-                              return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
+                              return <button key={index} name="answer" onClick={() => { this.setState({ answer: index, selected_answer: value }) }}
                                 style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } :
                                   { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
                               >
@@ -423,18 +457,18 @@ class App extends Component {
                         </div> :
                         <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
                           <h2 style={{ marginBottom: 20 }}>Re-arrange the characters</h2>
-                          Activity 2<br/>
+                          <h3>{this.state.activity.sentences[0]}</h3><br />
 
-                          {this.state.scrambledActivity.map((value, index)=> {
+                          {this.state.scrambledActivity.map((value, index) => {
                             return (
-                              <button key={index+Math.random()} onClick={()=>{this.scrambledWord(value)}}>{Object.keys(value)}</button>
+                              <button key={index + Math.random()} onClick={() => { this.scrambledWord(value) }}>{Object.keys(value)}</button>
                             )
                           })}
-                         
-                          <br/><br/>
-                          {this.state.scrambledForm.map((value, index)=> {
+
+                          <br /><br />
+                          {this.state.scrambledForm.map((value, index) => {
                             return (
-                              <button key={index+Math.random()} onClick={()=>{this.removeScrambledWord(value)}}>{Object.keys(value)}</button>
+                              <button key={index + Math.random()} onClick={() => { this.removeScrambledWord(value) }}>{Object.keys(value)}</button>
                             )
                           })}
                         </div>
@@ -511,11 +545,27 @@ class App extends Component {
               bottom: 0,
               padding: 30
             }}>
+              
+
+              {this.state.errorColor === true ? "" :
+                <React.Fragment>
+                  {
+                    this.state.feedback.length > 3 ? <h4>The word you chose is generaly used in following context.</h4>: null
+                  }
+                  
+                  <br />
+                  <h2>
+                    <Highlight
+                      search={this.state.selected_answer}>{this.state.feedback}</Highlight>
+                  </h2>
+                  <br />
+                </React.Fragment>
+              }
 
               <div style={{ bottom: 0 }}>
                 {this.state.errorColor === true ? <FaGrinAlt style={{ marginRight: 50 }} /> : <FaGrimace style={{ marginRight: 50 }} />}
-                {this.state.error}
-                <button style={{ marginLeft: 50 }} onClick={() => { this.next_activity() }}>Continue</button>
+                {this.state.errorColor === true ? "Good Job!! Correct Answer" : 'Sorry your answer is wrong.'}
+                <button className="button pulse" style={{ float: 'right', background:'#0300dc' }} onClick={() => { this.next_activity() }}>Continue</button>
               </div>
             </div> : null
         }
@@ -525,5 +575,7 @@ class App extends Component {
     );
   }
 }
+
+
 
 export default App;
