@@ -99,9 +99,10 @@ class Session(object):
         """"""
         if activity_type == 0:
             word = np.random.choice(family.members)
-            sentences = random.shuffle(list(
+            all_sentences = random.shuffle(list(
                     set(s.text.replace(word.text, '______')
-                        for s in word.sentences)))[:3]
+                        for s in word.sentences)))
+            sentences = all_sentences[:3]
             distractor_objs = self._get_distractors(family, word.pos) + [word]
             np.random.shuffle(distractor_objs)
             distractors = [d.text for d in distractor_objs]
@@ -115,6 +116,13 @@ class Session(object):
                     "options": distractors,
                     "activityType": activity_type,
                     "activityId": activity_id}
+
+        elif activity_type == 1:
+            word = np.random.choice(family.members)
+            sentences = random.shuffle(list(
+                    set(s.text.replace(word.text, '______')
+                        for s in word.sentences)))[:3]
+
 
     def _get_distractors(self, family, pos):
         """Select good set of distractors"""
