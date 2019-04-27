@@ -27,6 +27,9 @@ class App extends Component {
     this.state = {
       user: 'Himanshu',
       author: '',
+      genre: 'Fiction',
+      year: "2000",
+      publisher: "ABC",
       file: [],
       bookname: '',
       modalIsOpen: false,
@@ -111,6 +114,9 @@ class App extends Component {
       user: stateData.user,
       author: stateData.author,
       file: stateData.file,
+      genre: stateData.genre,
+      year: stateData.year,
+      publisher: stateData.publisher,
       bookname: stateData.bookname,
     };
     this.setState({ isLoading: true })
@@ -207,7 +213,7 @@ class App extends Component {
       })
   }
   render() {
-    const randomColor = ['#F08282', '#82F098', '#C882F0', '#F2C751']
+    const randomColor = ['#fffeed']
     return (
       <div>
         <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
@@ -217,7 +223,7 @@ class App extends Component {
               <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
               <nav>
                 <ul>
-                  <li><a href="#logo" onClick = {()=>{this.setState({index: true})}}><i className="icon-home"></i>Home</a></li>
+                  <li><a href="#logo" onClick={() => { this.setState({ index: true }) }}><i className="icon-home"></i>Home</a></li>
                   <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
                   <li><a href="#about"><i className="icon-user"></i>About</a></li>
                   <li><a href="#gallery"><i className="icon-picture"></i>Papers</a></li>
@@ -237,14 +243,21 @@ class App extends Component {
                 <section id="content">
                   <form onSubmit={this.uploadText}>
                     <h1>Upload Text File:</h1>
-                    {/* <div>
-                    <input type="text" id="password" onChange={this.handleChange} name="user" placeholder="Name of User" />
-                  </div> */}
+
                     <div >
-                      <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" />
+                      <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" required/>
                     </div>
                     <div >
-                      <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" />
+                      <input type="text" id="password" onChange={this.handleChange} name="author" placeholder="Author" required/>
+                    </div>
+                    <div >
+                      <input type="text" id="password" onChange={this.handleChange} name="genre" placeholder="Genre (Optional)" />
+                    </div>
+                    <div >
+                      <input type="text" id="password" onChange={this.handleChange} name="year" placeholder="Year (Optional)" />
+                    </div>
+                    <div >
+                      <input type="text" id="password" onChange={this.handleChange} name="publisher" placeholder="Publisher (Optional)" />
                     </div>
                     <FileBase64
                       multiple={false}
@@ -256,32 +269,33 @@ class App extends Component {
                   </form>
                 </section>
               </div>
+              
               : this.state.stats === true ?
                 <div style={{ width: '80%', margin: '0px auto' }}>
                   <h1>Word Statistics</h1>
                   <div className="row">
                     <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
-                        <h2>Total Words</h2>
-                        <h3>{this.state.statsResponse.totalWords}</h3>
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                        <h4>Total Words</h4>
+                        <h1>{this.state.statsResponse.totalWords}</h1>
                       </div>
                     </div>
                     <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
-                        <h2>Total Words with frequency more than 10</h2>
-                        <h3>{this.state.statsResponse.totalAbove5}</h3>
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                        <h4>Total Words with frequency more than 10</h4>
+                        <h1>{this.state.statsResponse.totalAbove5}</h1>
                       </div>
                     </div>
                     <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
-                        <h2>Total Words with frequency more than 5</h2>
-                        <h3>{this.state.statsResponse.totalAbove10}</h3>
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                        <h4>Total Words with frequency more than 5</h4>
+                        <h1>{this.state.statsResponse.totalAbove10}</h1>
                       </div>
                     </div>
                     <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174 }}>
-                        <h2>Total Families</h2>
-                        <h3>{this.state.statsResponse.totalFamilies}</h3>
+                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                        <h4>Total Families</h4>
+                        <h1>{this.state.statsResponse.totalFamilies}</h1>
                       </div>
                     </div>
                   </div>
@@ -299,13 +313,11 @@ class App extends Component {
                     })}
                   </div>
                   <form onSubmit={this.getWordList}>
-                    <section id="content">
                       <div style={{ marginBottom: 20 }}>
-                        <button type="submit">
+                        <button type="submit" className="button pulse">
                           Continue
                         </button>
                       </div>
-                    </section>
                   </form>
                 </div>
                 :
@@ -322,13 +334,11 @@ class App extends Component {
                       })}
                     </div>
                     <form onSubmit={this.getActivity}>
-                      <section id="content">
                         <div style={{ marginBottom: 20 }}>
-                          <button type="submit">
+                          <button type="submit" className="button pulse">
                             Continue
                         </button>
                         </div>
-                      </section>
                     </form>
                   </div>
                   :
@@ -337,18 +347,19 @@ class App extends Component {
                       <div id="progressbar" >
                         <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
                       </div>
-                      <h1>Sentences:</h1>
-                      <br />
-                      <div className="card-activity" style={{ textAlign: 'left' }}>
+                      <br/>
+                      <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
+                      <h2 style={{marginBottom: 20}}>Choose a word which satisfies all the blanks</h2>
                         {this.state.activity.sentences.map((value, index) => {
-                          return <h3 style={{ marginBottom: 20 }} key={index + Math.random()}>{index + 1} : {value}</h3>
+                          return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {value}</h4>
                         })}
 
                         <br />
-                        <section>
+                        <section style={{maxWidth: '100%'}}>
                           {this.state.activity.options.map((value, index) => {
                             return <button key={index} name="answer" onClick={() => { this.setState({ answer: index }) }}
-                              style={this.state.answer === index ? { color: "blue", background: 'olive', marginRight: 20 } : { color: "red", marginRight: 20 }}
+                              style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } : 
+                              { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
                             >
                               {value}
                             </button>
@@ -359,7 +370,7 @@ class App extends Component {
                       <form onSubmit={this.answerCheck}>
                         <div>
                           <div style={{ marginLeft: '40%' }}>
-                            <button type="submit">
+                            <button type="submit" className="button pulse">
                               Submit Answer
                         </button>
                           </div>
@@ -371,10 +382,10 @@ class App extends Component {
                           {this.state.books.map((value, index) => {
                             return <div className="column" key={index}>
                               <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
-                                <h3>{value.bookname}</h3><br/>
-                                <h3>{value.author}</h3><br/>
-                                <h3>{value.genre}</h3><br/>
-                                <h3>Pages: {value.pages}</h3><br/>
+                                <h3>{value.bookname}</h3><br />
+                                <h3>{value.author}</h3><br />
+                                <h3>{value.genre}</h3><br />
+                                <h3>Pages: {value.pages}</h3><br />
                                 <h3>Rating: {value.star}</h3>
                               </div>
                             </div>
