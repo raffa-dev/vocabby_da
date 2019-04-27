@@ -119,7 +119,7 @@ class Session(object):
 
         elif activity_type == 1:
             word = np.random.choice(family.members)
-            sentences = random.choice(list(
+            sentences = m.choice(list(
                     set(s.text.replace(word.text, '______')
                         for s in word.sentences)))[:3]
 
@@ -184,7 +184,7 @@ class Session(object):
         if not is_correct:
             wrong_word = self.answers[
                     activity_id]['distractors'][selection]
-            feedback_sentence = random.choice(wrong_word.sentences)
+            feedback_sentence = random.choice(wrong_word.sentences).text
             result.update({'feedback': feedback_sentence})
 
         return result
