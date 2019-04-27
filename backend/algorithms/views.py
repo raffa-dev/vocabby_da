@@ -10,6 +10,7 @@ from vocabby.learner import Learner
 from vocabby.bookshelf import Bookshelf, Book
 import base64
 
+
 class PostText(APIView):
     def post(self, req):
         text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf-8')
@@ -49,14 +50,10 @@ class SessionStart(APIView):
 
 class GetBooks(APIView):
         def post(self, req):
-                data = [{
-                        "bookname": 'Bookname',
-                        "author": 'Himanshu Bansal',
-                        "genre": 'Sci-fi',
-                        "pages": 900,
-                        "star": 3.5
-                }]
-                return Response(data=data, status=status.HTTP_200_OK)
+            book_shelf = Bookshelf.load('Library')
+            data = book_shelf.get_index()
+            return Response(data=data, status=status.HTTP_200_OK)
+
 
 class GetLevel(APIView):
     def post(self, req):
