@@ -178,7 +178,7 @@ class Session(object):
                  self.tokens[word], activity_type)
             return self.activity_cache
         else:
-            return {'activityType': '-1'}
+            return {"activityType": '-1'}
 
     def update(self, family, response):
         if family.root == self.queue[0]:
@@ -189,7 +189,7 @@ class Session(object):
 
     def evaluate(self, activity_id, selection):
         self.activity_cache = {}
-        activity_type = self.answers[activity_id][activityType]
+        activity_type = self.answers[activity_id]["activityType"]
 
         is_correct = self.answers[activity_id]['answer'] == selection
         self.update(self.answers[activity_id]['family'], is_correct)
