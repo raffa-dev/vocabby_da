@@ -49,7 +49,7 @@ class Bookshelf:
 
     def __init__(self, name):
         self.name = name
-        self.book_codes = {}
+        self.books = {}
 
     def add_book(self, text, title, author, gener, year, publisher):
         """Add a new book to the shelf."""
@@ -60,7 +60,7 @@ class Bookshelf:
         if matching_code:
             return matching_code
 
-        self.book_codes.update(
+        self.books.update(
                 {code: {'title': title,
                         'author': author,
                         'gener': gener,
@@ -81,7 +81,7 @@ class Bookshelf:
     def find_book(self, title, author, gener, year, publisher):
         """Find whether a book exists in the shelf."""
         # raise NotImplementedError
-        for code, attrb in self.book_codes.items():
+        for code, attrb in self.books.items():
             if attrb['title'] == title and \
                attrb['author'] == author and \
                attrb['gener'] == gener and \
@@ -92,6 +92,10 @@ class Bookshelf:
     def get_book(self, book_code):
         """Get the book corresponding to the code."""
         return Book.load(book_code)
+
+    def get_index(self):
+        """Get details of all book in this shelf"""
+        return [book for book in self.books.values()]
 
     @staticmethod
     def load(shelf_name):
