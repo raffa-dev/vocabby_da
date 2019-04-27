@@ -123,7 +123,6 @@ class Session(object):
                     set(s.text.replace(word.text, '______')
                         for s in word.sentences)))[:3]
 
-
     def _get_distractors(self, family, pos):
         """Select good set of distractors"""
 
@@ -148,7 +147,7 @@ class Session(object):
         """Select a word of given POS tag from family if any."""
         for word in family.members:
             if word.pos == pos:
-                return word.text
+                return word
         return np.random.choice(family.members)
 
     def _activity_selector(self):
