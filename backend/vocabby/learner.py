@@ -109,9 +109,10 @@ class Session(object):
             activity_id = random.randint(1000, 100000)
             self.answers.update(
                     {activity_id:
-                        {'index': distractors.index(word.text),
-                         'family': family,
-                         'distractors': distractor_objs}})
+                        {"answer": distractors.index(word.text),
+                         "family": family,
+                         "distractors": distractor_objs,
+                         "activity_type": activity_type}})
             return {"sentences": sentences,
                     "options": distractors,
                     "activityType": activity_type,
@@ -119,9 +120,21 @@ class Session(object):
 
         elif activity_type == 1:
             word = np.random.choice(family.members)
-            sentences = m.choice(list(
+            sentences = [random.choice(list(
                     set(s.text.replace(word.text, '______')
-                        for s in word.sentences)))[:3]
+                        for s in word.sentences)))]
+            character_mix = list(word.text)
+            random.shuffle(character_mix)
+            activity_id = random.randint(1000, 100000)
+            self.answers.update(
+                    {activity_id:
+                        {"answer": word.text,
+                         "family": family,
+                         "activity_type": activity_type}})
+            return {"sentences": sentences,
+                    "options": character_mix,
+                    "activityType": activity_type,
+                    "activityId": activity_id}
 
     def _get_distractors(self, family, pos):
         """Select good set of distractors"""
@@ -152,7 +165,7 @@ class Session(object):
 
     def _activity_selector(self):
         # TODO: Improve activity selection based on student progress
-        return 0
+        return random.choice([0, 1])
 
     def next_acitivity(self):
         if self.activity_cache:
@@ -176,14 +189,16 @@ class Session(object):
 
     def evaluate(self, activity_id, selection):
         self.activity_cache = {}
-        is_correct = self.answers[activity_id]['index'] == selection
+
+        is_correct = self.answers[activity_id]['answer'] == selection
         self.update(self.answers[activity_id]['family'], is_correct)
         result = {'isCorrect': is_correct,
                   'remaining': len(self.queue)}
-        if not is_correct:
-            wrong_word = self.answers[
-                    activity_id]['distractors'][selection]
-            feedback_sentence = random.choice(wrong_word.sentences).text
-            result.update({'feedback': feedback_sentence})
 
+        if activity_id == 0:
+            if not is_correct:
+                wrong_word = self.answers[
+                        activity_id]['distractors'][selection]
+                feedback_sentence = random.choice(wrong_word.sentences).text
+                result.update({'feedback': feedback_sentence})
         return result
