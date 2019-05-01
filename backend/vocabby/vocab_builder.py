@@ -138,11 +138,12 @@ class Vocab:
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
         prev_sent = Sentence(nlp(''), None)
         words = {}
+        STOP_WORDS.add('_')
         for sent in tqdm(text_obj.sents):
             curr_sent = Sentence(sent, prev_sent)
             for token in tqdm(sent):
                 if token.text in STOP_WORDS or\
-                        token.pos_ in ['PUNCT', 'SPACE', 'NUM', 'SYM']:
+                        token.pos_ in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']:
                     continue
                 key = token.text + ' ; ' + token.pos_
                 if key not in words:
