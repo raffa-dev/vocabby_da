@@ -12,7 +12,10 @@ from tqdm import tqdm
 from numpy.linalg import norm
 from spacy.lang.en.stop_words import STOP_WORDS
 
+from utils import load_freq_lookup
+
 logging.basicConfig(level='INFO')
+FREQ_LUT = load_freq_lookup()
 
 
 class Family(object):
@@ -47,6 +50,11 @@ class Family(object):
         numerator = np.dot(self.vector, neighbor.vector)
         denominator = norm(self.vector) * norm(neighbor.vector)
         return numerator / denominator
+
+    @property
+    def complexity(self):
+        """Get the complexity of the family."""
+        return np.mean([member.complexity for member in self.members])
 
 
 class Sentence(object):
@@ -94,11 +102,9 @@ class Word(object):
     @property
     def complexity(self):
         """Get the complexity of the word."""
-        letters = 'etaoinshrdlcumwfgypbvkjxqz'
-        vowels = set('aeiou')
-        unique = set(self.text)
-        positions = sum(letters.index(c) for c in self.text)
-        return len(self.text) * len(unique) * (7 - len(unique & vowels)) * positions
+        if self.text in FREQ_LUT:
+            return 7 - FREQ_LUT[self.text]
+        return 3.5
 
 
 class Vocab:
