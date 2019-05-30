@@ -10,9 +10,10 @@ import numpy as np
 import networkx as nx
 from tqdm import tqdm
 from numpy.linalg import norm
-from spacy.lang.en.stop_words import STOP_WORDS
+from spacy.lang.en .stop_words import STOP_WORDS
 
-from utils import load_freq_lookup
+
+from vocabby.utils import load_freq_lookup
 
 logging.basicConfig(level='INFO')
 FREQ_LUT = load_freq_lookup()
@@ -140,7 +141,7 @@ class Vocab:
         """Collects all the unique word and pos_tag pairs from the text."""
         nlp = spacy.load("en_core_web_lg")
 
-        nlp.max_length = len(self.text)
+        # nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
         prev_sent = Sentence(nlp(''), None)
         words = {}
@@ -178,15 +179,12 @@ class Vocab:
 
         # n x n cosine similarity
         logging.debug("Computing similarity")
-        correlation_mat = np.dot(vectors, vectors.T)
         norms = np.linalg.norm(vectors, axis=1)
-        norm_mat = np.dot(norms.reshape(-1, 1), norms.reshape(1, -1))
-        self.similarity_mat = correlation_mat / norm_mat
+        normalised_vectors = vectors / norms[:, np.newaxis]
+        self.similarity_mat = np.dot(normalised_vectors, normalised_vectors.T)
 
-        logging.debug(
-                "Shape of correlation matrix {}".format(correlation_mat.shape))
+        logging.debug("Shape of vectors {}".format(vectors.shape))
         logging.debug("Shape of norms {}".format(norms.shape))
-        logging.debug("Shape of norms matrix {}".format(norm_mat.shape))
         logging.debug(
                 "Shape of sim matrix {}".format(self.similarity_mat.shape))
 
@@ -194,9 +192,11 @@ class Vocab:
         for i, f1 in tqdm(enumerate(families), total=len(families)):
             for j, f2 in tqdm(enumerate(families[i:]), total=len(families)-i):
                 j = i + j
-                if self.similarity_mat[i][j] > 0.30:
+                if f1 == f2:
+                    continue
+                if self.similarity_mat[i][j] > 0.60:
                     weighted_adj_list.append(
-                           (f1, f2, self.similarity_mat[i][j]))
+                           (f1, f2, min(1, self.similarity_mat[i][j])))
 
         network = nx.Graph()
         network.add_nodes_from(families)
