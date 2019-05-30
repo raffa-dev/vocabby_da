@@ -70,8 +70,9 @@ class Tutor(object):
         # TODO: Update with proper implementation
         candidates = []
         for node in self.network:
-            score = sum([v['weight'] for k, v in self.network[node].items()])
-            candidates.append((node, score))
+            extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
+            intrensic_score = self.book.families[node].complexity
+            candidates.append((node, extrensic_score * intrensic_score))
 
         # n_choice = np.random.choice(len(families), 20)
         n_choice = sorted(candidates, key=lambda x: -x[1])[:20]
@@ -163,9 +164,12 @@ class Session(object):
                 return word
         return np.random.choice(family.members)
 
-    def _activity_selector(self):
+    def _activity_selector(self, word):
         # TODO: Improve activity selection based on student progress
-        return random.choice([0, 1])
+        if len(word) >= 6:
+            return 0
+        else:
+            return random.choice([0, 1])
 
     def next_acitivity(self):
         if self.activity_cache:
@@ -173,7 +177,7 @@ class Session(object):
 
         if self.queue:
             word = self.queue[0]
-            activity_type = self._activity_selector()
+            activity_type = self._activity_selector(word)
             self.activity_cache = self._create_activity(
                  self.tokens[word], activity_type)
             return self.activity_cache

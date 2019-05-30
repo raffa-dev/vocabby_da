@@ -43,6 +43,11 @@ class Family(object):
         """Get collective vector representation of the family."""
         return np.mean([member.vector for member in self.members], axis=0)
 
+    @property
+    def complexity(self):
+        """Get collective complexity of the family."""
+        return np.mean([member.complexity for member in self.members])
+
     def similarity(self, neighbor):
         """Get similarity between our and the neighboring family.
 
@@ -86,7 +91,7 @@ class Word(object):
         **word** is a word token of type `spacy.token`.
         """
         self.text = word.text
-        self.pos = word.pos_
+        self.pos = word.tag_
         self.lemma = word.lemma_
         self.vector = word.vector
         self.sentences = []
@@ -152,7 +157,7 @@ class Vocab:
                 if token.text in STOP_WORDS or\
                         token.pos_ in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']:
                     continue
-                key = token.text + ' ; ' + token.pos_
+                key = token.text + ' ; ' + token.tag_
                 if key not in words:
                     words[key] = Word(token)
                 words[key].include_sentence(curr_sent)
@@ -194,7 +199,7 @@ class Vocab:
                 j = i + j
                 if f1 == f2:
                     continue
-                if self.similarity_mat[i][j] > 0.60:
+                if self.similarity_mat[i][j] > 0.30:
                     weighted_adj_list.append(
                            (f1, f2, min(1, self.similarity_mat[i][j])))
 
