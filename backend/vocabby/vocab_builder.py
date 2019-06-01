@@ -74,13 +74,24 @@ class Sentence(object):
         **previous_sentence** is the pointer to previous sentence in the book
         of type :class:`Sentence` class.
         """
-        self.text = sentence_text.text
+        self.text = self._clean_sentence(sentence_text.text)
         self.next_sent = None
 
         # TODO: Fix sentence repetition
         if previous_sentence:
             self.prev_sent = previous_sentence
             self.prev_sent.next_sent = self
+
+    def _clean_sentence(self, text):
+        clean = text.strip().capitalize()
+
+        import re
+        pattern = re.compile(r'[\r\n]')
+        clean = pattern.sub('', clean)
+        if text != clean:
+            print('Input: %s' % text)
+            print('Output: %s' % clean)
+        return clean
 
 
 class Word(object):
