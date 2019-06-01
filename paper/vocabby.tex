@@ -1,0 +1,133 @@
+%
+% File acl2018.tex
+%
+%% Based on the style files for ACL-2017, with some changes, which were, in turn,
+%% Based on the style files for ACL-2015, with some improvements
+%%  taken from the NAACL-2016 style
+%% Based on the style files for ACL-2014, which were, in turn,
+%% based on ACL-2013, ACL-2012, ACL-2011, ACL-2010, ACL-IJCNLP-2009,
+%% EACL-2009, IJCNLP-2008...
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{acl2018}
+\usepackage{times}
+\usepackage{latexsym}
+
+\usepackage{url}
+
+%\aclfinalcopy % Uncomment this line for the final submission
+%\def\aclpaperid{***} %  Enter the acl Paper ID here
+
+%\setlength\titlebox{5cm}
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+\newcommand\BibTeX{B{\sc ib}\TeX}
+
+\title{Vocabby: Vocabulary learning with in the context of user domain}
+
+\author{Haemanth Santhi Ponnusamy \\
+  Department of computational linguistics, \\
+  Eberhard Karls University of Tuebingen,\\
+  {\tt email@domain} \\\And
+  Himanshu Bansal \\
+  Department of computational linguistics, \\
+  Eberhard Karls University of Tuebingen,\\
+  {\tt email@domain} \\}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+  This is an vocabulary learning application for a targeted set of user
+  who already posses some basic skills of the English language and
+  bored of the traditional method of learning new word in the language. This
+  application provides the ability to upload text of user preference
+  such as a story book, research writing etc... All activities generated for
+  vocabulary learning and their distractor are closed to the chosen content.
+\end{abstract}
+
+\section{Introduction}
+The vocabulary learning is a never ending task. Since the languages are vast
+and continuously evolving. Majority of the tools for vocabulary learning takes
+the user through a pre defined set of word groups which is constructed into a
+hierarchy of word in the language.(motivation) The main drawback of this approach are, it
+takes too long for someone to get a feel of progress, it might not be the
+order in which the user wants to learn words and the words might not be
+introduced in the context that the user is interested in. All the above reasons
+makes the user feel boring and finally quit the habit of learning in few days
+or weeks. (content creation) In order to keeps the user of different kind
+motivated, the developer has to manually/automatically generate lot of content
+to show the examples to all the words in the language in multiple context.
+We attempt to overcome these issues of creating tool for vocabulary learning
+by allowing the user to choose content their interest and we use that to
+generate the content for the vocabulary learning activities. By this way one
+could choose to improve vocabularies used in a specific domain with specific
+context. They could move on to a new area once they complete that.
+(Indefinite space) So the problem of vocabulary learning scales down from an
+indefinite space to a finite space.
+
+\section{Related works}
+Details of some of the existing tools goes here.
+
+
+\section{Our application}
+
+\subsection{Building vocabulary}
+The vocabulary is built from the user text.
+
+\subsubsection{Candidates}
+All the words in the user text doesn't need to be addressed. For examples 
+function words (the, of, in, on etc...), rare/very less frequent words and
+improperly parsed words. So the words occurring below the frequency of 10 and
+the stop words are eliminated. 
+
+Also in-order to differentiate between the same words occurring in the
+different parts of speech. The words are represented as a tuple of word and its
+POS tag.
+\begin{center}(word, POS tag)\end{center}
+
+\subsubsection{Occurrence map}
+All the instance of the candidate words are cleaned and mapped to the words.
+So each word is mapped to all the sentences in which it occur and also each
+sentence is mapped to all the words it contains.
+
+\subsubsection{Complexity}
+There are lot of methods to measure the complexity of a word. We choose frequency.
+The frequency of usage of a word in the SUBTELEXUS as a reference
+
+\subsection{Creating structure}
+
+\subsubsection{Family}
+
+\subsubsection{Network}
+
+\subsection{Learner model}
+\subsection{Content organization}
+\subsubsection{Books}
+\subsubsection{Bookshelf}
+
+\subsection{Details on learning}
+\subsubsection{Tutor}
+\subsubsection{Session}
+
+
+\subsection{Activity}
+\subsection{Update rule}
+
+
+\section*{Acknowledgments}
+
+% include your own bib file like this:
+%\bibliographystyle{acl}
+%\bibliography{acl2018}
+\bibliography{acl2018}
+\bibliographystyle{acl_natbib}
+
+\end{document}
