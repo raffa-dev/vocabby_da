@@ -18,8 +18,8 @@
 
 \usepackage{url}
 
-%\aclfinalcopy % Uncomment this line for the final submission
-%\def\aclpaperid{***} %  Enter the acl Paper ID here
+\aclfinalcopy % Uncomment this line for the final submission
+\def\aclpaperid{***} %  Enter the acl Paper ID here
 
 %\setlength\titlebox{5cm}
 % You can expand the titlebox if you need extra space
@@ -34,7 +34,7 @@
 \author{Haemanth Santhi Ponnusamy \\
   Department of computational linguistics, \\
   Eberhard Karls University of Tuebingen,\\
-  {\tt email@domain} \\\And
+  {\tt hameanthsp@gmail.com} \\\And
   Himanshu Bansal \\
   Department of computational linguistics, \\
   Eberhard Karls University of Tuebingen,\\
@@ -57,10 +57,10 @@
 The vocabulary learning is a never ending task. Since the languages are vast
 and continuously evolving. Majority of the tools for vocabulary learning takes
 the user through a pre defined set of word groups which is constructed into a
-hierarchy of word in the language.(motivation) The main drawback of this approach are, it
+hierarchy of words in the language.(motivation) The main drawback of this approach are, it
 takes too long for someone to get a feel of progress, it might not be the
 order in which the user wants to learn words and the words might not be
-introduced in the context that the user is interested in. All the above reasons
+introduced in the context that the user is not interested in. All the above reasons
 makes the user feel boring and finally quit the habit of learning in few days
 or weeks. (content creation) In order to keeps the user of different kind
 motivated, the developer has to manually/automatically generate lot of content
@@ -86,7 +86,7 @@ The vocabulary is built from the user text.
 All the words in the user text doesn't need to be addressed. For examples 
 function words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words are eliminated. 
+the stop words(\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}) are eliminated. 
 
 Also in-order to differentiate between the same words occurring in the
 different parts of speech. The words are represented as a tuple of word and its
@@ -94,33 +94,92 @@ POS tag.
 \begin{center}(word, POS tag)\end{center}
 
 \subsubsection{Occurrence map}
-All the instance of the candidate words are cleaned and mapped to the words.
-So each word is mapped to all the sentences in which it occur and also each
-sentence is mapped to all the words it contains.
+All the sentences in which the candidate words occur are cleaned and mapped to
+the corresponding words. So each candidate word is mapped to all the sentences
+in which it occur and also each sentence is mapped to all the all the candidate
+words it contains.
 
 \subsubsection{Complexity}
 There are lot of methods to measure the complexity of a word. We choose frequency.
-The frequency of usage of a word in the SUBTELEXUS as a reference
+In a language, we consider the words that are less frequently used are as
+more complex and the words that occurs more frequent are as easier or well known.
+We use the SUBTLEX-US~\cite{brysbaert2009moving}, a database of 50 million
+words containing word frequencies based on English-US movies and TV series subtitles.
 
 \subsection{Creating structure}
 
 \subsubsection{Family}
+We group the words into families, similar to ~\citep{bauer1993word} work on word
+families but instead of seven sub-groups we form a single group for all types.
+This is based on the intuition that the user can extrapolate their knowledge of
+inflections of a word to understand/predict all the forms of a words family
+by knowing only one or few of them.
 
 \subsubsection{Network}
+Now the families has to co-exist in the space of language(conditioned by the
+book) as a network like a society. It is a fully connected network with each
+family with a different affinity to another. The affinity is a measure of
+contextual similarity between the families. We compute cosine similarity 
+between the mean of word vectors of all the members of the family to similar
+mean vector representation of another family.
 
-\subsection{Learner model}
+By this way we create more structure in the space of vocabulary. Which come
+handy in many situations like activity creation, updating mastery of each
+vocabulary, analysis etc... This structure helps in reducing the search space
+by allowing the model to get a better inference about learners level with
+relatively very less and effective interactions compared to a method of
+tracking each word in the vocabulary individually.
+
 \subsection{Content organization}
 \subsubsection{Books}
+All the processed data such as vocabulary, families, network, sample sentences
+are packed into a book instance. This also tracks the meta information such as
+Title, Author, Genre, Year and Publisher. This help any future user to select
+the processed book directly. This also could help in comparing the performance
+of different users on the same book.
+
 \subsubsection{Bookshelf}
+All such processed book are organized in multiple bookshelves specific to each
+domain similar to the gutenberg project.
 
-\subsection{Details on learning}
+\subsection{Model}
+In this work we maintain multiple models to track and update different aspect
+of the application.
+
+\subsubsection{Learner}
+The learner instance maintain the personal information of the user and tracks
+the list of instance of books the user has choose to improve vocabulary and the
+progress in them. This also could maintain overall vocabulary knowledge of
+the user and customize the activity type, feedback and book suggestions based
+on individual needs.
+
 \subsubsection{Tutor}
-\subsubsection{Session}
+For each book the user selects, a tutor instance will be created. The main
+activities of the tutor are to design a learning session, evaluate the
+performance and track the mastery level of the user w.r.t all the vocabulary
+in the book. Then again generate a new session based on the updated mastery
+levels.
 
+\textbf{Mastery Score:} The value ranges between 0 and 1. Initially it is
+assigned to 0.5 to indicate the uncertainty. Based on the performance of the
+user it is either increased or decreased by a factor. This approach implicitly
+capture the un-visited nodes in the network.
+
+\textbf{Update rule:} As we have built a network of families capturing the
+contextual similarity. We can incorporate this into our update rule to update
+the mastery scores.
+
+\subsubsection{Session}
+An instance of session is created by the tutor. A session is a list of word
+families to be learned and evaluated in a session. The key functions of this
+model are to deciding the interaction type (teaching, testing, feedback), 
+compose an interaction with all required data and handles the flow and closure
+of the session.
 
 \subsection{Activity}
-\subsection{Update rule}
+We create two type of activities. 
 
+\section{Implementation}
 
 \section*{Acknowledgments}
 
@@ -129,5 +188,4 @@ The frequency of usage of a word in the SUBTELEXUS as a reference
 %\bibliography{acl2018}
 \bibliography{acl2018}
 \bibliographystyle{acl_natbib}
-
 \end{document}
