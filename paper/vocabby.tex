@@ -32,13 +32,9 @@
 \title{Vocabby: Vocabulary learning with in the context of user domain}
 
 \author{Haemanth Santhi Ponnusamy \\
-  Department of computational linguistics, \\
-  Eberhard Karls University of Tuebingen,\\
   {\tt hameanthsp@gmail.com} \\\And
   Himanshu Bansal \\
-  Department of computational linguistics, \\
-  Eberhard Karls University of Tuebingen,\\
-  {\tt email@domain} \\}
+  {\tt email@domain}}
 
 \date{}
 
@@ -109,8 +105,8 @@ words containing word frequencies based on English-US movies and TV series subti
   C_w = \frac{1}{\log_{10}(freq_w)}
 \end{equation}
 
-Where the ${freq_w}$ in from this database is the average frequency of words per
-million words.
+Where ${freq_w}$ is the average frequency of words per million words in the
+database.
 
 \subsection{Creating structure}
 
@@ -194,23 +190,57 @@ from the family ${F_i}$.
   M_j = M_j * (1 + (\alpha * sign * S_{ij}))
 \end{equation}
 
-Where ${M_i}$ is the mastery of the family ${i}$. ${\alpha}$ is a tunable parameter
+Where ${M_i}$ is the mastery of the family ${F_i}$. ${\alpha}$ is a tunable parameter
 for the magnitude of an update. ${sign \epsilon \{-1, +1\}}$ is the direction 
 of the update. It depends on the correctness of user response to the corresponding
 activity. And ${S_{ij}}$ is the measure of contextual similarity between the two
-families.
+families ${F_i}$ and ${F_j}$.
 
 \subsubsection{Session}
-An instance of session is created by the tutor. A session is a list of word
-families to be learned and evaluated in a session. The key functions of this
-model are to deciding the interaction type (teaching, testing, feedback), 
-compose an interaction with all required data and handles the flow and closure
-of the session.
+An instance of session is created by the tutor. Which decided list of word
+families to be practiced. The key functions of this model are to deciding the
+interaction type (teaching, testing, feedback), compose an interaction with all
+required data and handles the flow and closure of the session.
+
+In order to make the learning more efficient the most critical nodes of the
+graph are selected for a session. Here, The criticality of a node is decided
+based on the intrinsic(complexity) and extrinsic(degree, quality of connection)
+nature of the node.
+
 
 \subsection{Activity}
-We create two type of activities. 
+Since our motive is to reduce the effort for content creation. We generate the
+activities on the fly. In this work we generate two type of activities. 
 
-\section{Implementation}
+\textbf{fit to context:} The user is prompted to complete 3-4 incomplete
+sentences with one among the given list of word suggestions. The options are
+chosen to be very tight to improve the contextual learning of the word usage.
+
+\textbf{scrambled word:} The user is prompted to come up with a word from the
+set of characters to complete an incomplete sentence. The words with word length
+less than 6 characters are allowed to generate this activity. Since the larger
+words as answers in this activity makes it more ambiguous for the user.
+
+Currently, the activity types are chosen in random for the answer words of length
+more than 6 characters. This could be updated to chose based on the user
+interactions.
+
+\subsection{Distractor selection}
+The distractors plays a important role in deciding the quality of the activities.
+We take advantage of the network of families we built based on the contextual
+closeness to overcome this problem. Here we rank the neighbors of the
+answer family and chose a best set below a threshold to avoid the synonyms. From
+the best set of families we choose the members which matches the POS tag of the
+answer word to make all the distractors coherent.
+
+
+\subsection{Implementation}
+
+\section{Future Works}
+Teaching the word in a session.
+Control over the complexity (tunable complexity)
+Tracking words at learner level across books (to have a warm start for new book)
+
 
 \section*{Acknowledgments}
 
