@@ -105,6 +105,12 @@ In a language, we consider the words that are less frequently used are as
 more complex and the words that occurs more frequent are as easier or well known.
 We use the SUBTLEX-US~\cite{brysbaert2009moving}, a database of 50 million
 words containing word frequencies based on English-US movies and TV series subtitles.
+\begin{equation}
+  C_w = \frac{1}{\log_{10}(freq_w)}
+\end{equation}
+
+Where the ${freq_w}$ in from this database is the average frequency of words per
+million words.
 
 \subsection{Creating structure}
 
@@ -123,6 +129,20 @@ contextual similarity between the families. We compute cosine similarity
 between the mean of word vectors of all the members of the family to similar
 mean vector representation of another family.
 
+\begin{equation}
+  V_{F_i} = \frac{1}{n} \sum_{k}^{n} V_{w_k}
+\end{equation}
+
+where ${n}$ is the number of elements of the family ${F_i}$.
+
+\begin{equation}
+  S_{ij} = \frac{V_{F_i} * V_{F_j}}{\|V_{F_i}\|  \|V_{F_j}\|}
+\end{equation}
+
+where, ${S_{ij}}$ is the cosine similarity between the vector representations of
+families ${F_i}$ and ${F_j}$.
+
+
 By this way we create more structure in the space of vocabulary. Which come
 handy in many situations like activity creation, updating mastery of each
 vocabulary, analysis etc... This structure helps in reducing the search space
@@ -140,7 +160,7 @@ of different users on the same book.
 
 \subsubsection{Bookshelf}
 All such processed book are organized in multiple bookshelves specific to each
-domain similar to the gutenberg project.
+domain similar to the gutenberg project (\url{http://www.gutenberg.org}).
 
 \subsection{Model}
 In this work we maintain multiple models to track and update different aspect
@@ -167,7 +187,18 @@ capture the un-visited nodes in the network.
 
 \textbf{Update rule:} As we have built a network of families capturing the
 contextual similarity. We can incorporate this into our update rule to update
-the mastery scores.
+the mastery scores. When we get some outcome for an activity involving a member
+from the family ${F_i}$.
+
+\begin{equation}
+  M_j = M_j * (1 + (\alpha * sign * S_{ij}))
+\end{equation}
+
+Where ${M_i}$ is the mastery of the family ${i}$. ${\alpha}$ is a tunable parameter
+for the magnitude of an update. ${sign \epsilon \{-1, +1\}}$ is the direction 
+of the update. It depends on the correctness of user response to the corresponding
+activity. And ${S_{ij}}$ is the measure of contextual similarity between the two
+families.
 
 \subsubsection{Session}
 An instance of session is created by the tutor. A session is a list of word
