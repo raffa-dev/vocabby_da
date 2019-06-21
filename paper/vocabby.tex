@@ -12,7 +12,7 @@
 %% and that of ACL 08 by Joakim Nivre and Noah Smith
 
 \documentclass[11pt,a4paper]{article}
-\usepackage[hyperref]{acl2018}
+\usepackage[hyperref]{vocabbysty}
 \usepackage{times}
 \usepackage{latexsym}
 
@@ -79,47 +79,58 @@ Details of some of the existing tools goes here.
 The vocabulary is built from the user text.
 
 \subsubsection{Candidates}
-All the words in the user text doesn't need to be addressed. For examples 
+All the words in the language are not equally important. Given that the users
+already know some basics of the language, we could eliminate the most frequent, 
 function words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words(\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}) are eliminated. 
+the stop words(\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}) are eliminated to handle the above cases. 
 
-Also in-order to differentiate between the same words occurring in the
-different parts of speech. The words are represented as a tuple of word and its
-POS tag.
+The words that occur in different parts of the speech could posses different sense.
+In-order to differentiate between them. We represent each candidate word as a
+pair of word and its POS tag.
 \begin{center}(word, POS tag)\end{center}
 
-\subsubsection{Occurrence map}
+\subsubsection{Sentences}
 All the sentences in which the candidate words occur are cleaned and mapped to
-the corresponding words. So each candidate word is mapped to all the sentences
+the corresponding candidate word. So each candidate word is mapped to all the sentences
 in which it occur and also each sentence is mapped to all the all the candidate
 words it contains.
 
 \subsubsection{Complexity}
 There are lot of methods to measure the complexity of a word. We choose frequency.
 In a language, we consider the words that are less frequently used are as
-more complex and the words that occurs more frequent are as easier or well known.
-We use the SUBTLEX-US~\cite{brysbaert2009moving}, a database of 50 million
-words containing word frequencies based on English-US movies and TV series subtitles.
+more complex / uncommon and the words that occurs more frequent are as easier / well known.
+We use the frequencies obtained from SUBTLEX-US~\citet{brysbaert2009moving}, a database of 50 million
+words from various English-US movies and TV series subtitles.
 \begin{equation}
   C_w = \frac{1}{\log_{10}(freq_w)}
 \end{equation}
 
-Where ${freq_w}$ is the average frequency of words per million words in the
+Where ${freq_w}$ is the average frequency of word $w$ per million words in the
 database.
+
+\subsubsection{Vector representation}
+Also each of the candidate is mapped with a semantic vector representation which
+is obtained from the pre trained model \emph{en\_web\_core\_lg} of \emph{spaCy}
+(\url{https://spacy.io/}), a natural language processing library. The main
+drawback is that it cannot address the out of vocabulary(OOV) words. Which
+could be rectified by training a custom word vectors over a decently sized user content.
 
 \subsection{Creating structure}
 
 \subsubsection{Family}
-We group the words into families, similar to ~\citep{bauer1993word} work on word
-families but instead of seven sub-groups we form a single group for all types.
-This is based on the intuition that the user can extrapolate their knowledge of
-inflections of a word to understand/predict all the forms of a words family
-by knowing only one or few of them.
+We group the words into families, similar to ~\citet{bauer1993word} work on word
+families but instead of seven sub-groups we form a single group for all the types.
+The main intuition of grouping the words into families is that the user can
+extrapolate their knowledge of inflections of a language to understand/predict
+all the possible forms of an unseen word. Similarly with this setup our system
+can extrapolate the mastery of one the member to the entire family. Which could 
+drastically reduce the number of interaction that the system need to estimate
+the user's vocabulary.
 
 \subsubsection{Network}
-Now the families has to co-exist in the space of language(conditioned by the
-book) as a network like a society. It is a fully connected network with each
+Now the families has to co-exist in the space of language(limited by the
+user text) as a network like a society. It is a fully connected network with each
 family with a different affinity to another. The affinity is a measure of
 contextual similarity between the families. We compute cosine similarity 
 between the mean of word vectors of all the members of the family to similar
@@ -141,7 +152,7 @@ families ${F_i}$ and ${F_j}$.
 
 By this way we create more structure in the space of vocabulary. Which come
 handy in many situations like activity creation, updating mastery of each
-vocabulary, analysis etc... This structure helps in reducing the search space
+vocabulary and analysis. This structure helps in further reducing the search space
 by allowing the model to get a better inference about learners level with
 relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
@@ -158,7 +169,7 @@ of different users on the same book.
 All such processed book are organized in multiple bookshelves specific to each
 domain similar to the gutenberg project (\url{http://www.gutenberg.org}).
 
-\subsection{Model}
+\subsection{Models}
 In this work we maintain multiple models to track and update different aspect
 of the application.
 
@@ -174,7 +185,7 @@ For each book the user selects, a tutor instance will be created. The main
 activities of the tutor are to design a learning session, evaluate the
 performance and track the mastery level of the user w.r.t all the vocabulary
 in the book. Then again generate a new session based on the updated mastery
-levels.
+levels in the network.
 
 \textbf{Mastery Score:} The value ranges between 0 and 1. Initially it is
 assigned to 0.5 to indicate the uncertainty. Based on the performance of the
@@ -214,15 +225,16 @@ activities on the fly. In this work we generate two type of activities.
 
 \textbf{fit to context:} The user is prompted to complete 3-4 incomplete
 sentences with one among the given list of word suggestions. The options are
-chosen to be very tight to improve the contextual learning of the word usage.
+chosen to be contextually tight to improve the quality of the activity and
+user learning outcome.
 
 \textbf{scrambled word:} The user is prompted to come up with a word from the
 set of characters to complete an incomplete sentence. The words with word length
 less than 6 characters are allowed to generate this activity. Since the larger
-words as answers in this activity makes it more ambiguous for the user.
+answer words makes it more ambiguous for the user to solve.
 
 Currently, the activity types are chosen in random for the answer words of length
-more than 6 characters. This could be updated to chose based on the user
+more than 6 characters. This could also be enhanced to chose based on the user
 interactions.
 
 \subsection{Distractor selection}
@@ -245,8 +257,6 @@ Tracking words at learner level across books (to have a warm start for new book)
 \section*{Acknowledgments}
 
 % include your own bib file like this:
-%\bibliographystyle{acl}
-%\bibliography{acl2018}
-\bibliography{acl2018}
-\bibliographystyle{acl_natbib}
+\bibliography{vocabby}
+\bibliographystyle{vocabby_natbib}
 \end{document}
