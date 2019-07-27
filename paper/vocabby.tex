@@ -41,33 +41,37 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  This is an vocabulary learning application for a targeted set of user
-  who already posses some basic skills of the English language and
-  bored of the traditional method of learning new word in the language. This
-  application provides the ability to upload text of user preference
-  such as a story book, research writing etc... All activities generated for
-  vocabulary learning and their distractor are closed to the chosen content.
+  We propose a vocabulary learning application targeted on the set of user
+  who already posses some basic skills in a language and bored of the
+  traditional method of learning words in the language. Our design 
+  efficiently structure the vocabulary space and track the user performance.
+  Also the design provides a great advantage in auto-generating the content
+  for the entire learning process with almost zero human effort. We allow the
+  user to provide the text of there own interest. All the activities and
+  feedbacks are generated only from the user text.
+
 \end{abstract}
 
 \section{Introduction}
-The vocabulary learning is a never ending task. Since the languages are vast
-and continuously evolving. Majority of the tools for vocabulary learning takes
-the user through a pre defined set of word groups which is constructed into a
-hierarchy of words in the language.(motivation) The main drawback of this approach are, it
-takes too long for someone to get a feel of progress, it might not be the
-order in which the user wants to learn words and the words might not be
-introduced in the context that the user is not interested in. All the above reasons
-makes the user feel boring and finally quit the habit of learning in few days
-or weeks. (content creation) In order to keeps the user of different kind
-motivated, the developer has to manually/automatically generate lot of content
-to show the examples to all the words in the language in multiple context.
-We attempt to overcome these issues of creating tool for vocabulary learning
-by allowing the user to choose content their interest and we use that to
-generate the content for the vocabulary learning activities. By this way one
-could choose to improve vocabularies used in a specific domain with specific
-context. They could move on to a new area once they complete that.
-(Indefinite space) So the problem of vocabulary learning scales down from an
-indefinite space to a finite space.
+Vocabulary learning is an open ended task as the languages are vast and still
+evolving with the addition of new words now and then. This makes it hard for the
+user to get a sense of progress. Many of the vocabulary learning application 
+starts from very basic words in the language. Which makes more sense for the 
+beginners, but not for our target users. They might want to start at an
+intermediate level. Also the example sentences used in these tools as a context
+of a word are mostly very generic and some time unnatural. This nature is due to the
+fact that those application are designed to support users irrespective of their
+language competence, background, area of interest, learning goals. Also It is
+hard for the developers to manually create content to satisfy all kind of users.
+
+In this paper we propose an approach to overcome all the above mentioned
+difficulties to build an application that could potentially satisfy our targeted
+users. We do this by partially sharing the problem with the user to choose the 
+text of their interest and reading level. Then we process the chosen text to
+select the candidate words and build a network of candidates to efficiently model
+the vocabulary of the text and generate useful activities from them. This help
+the user in defining the definite space to master. By this way one
+could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
 Details of some of the existing tools goes here.
@@ -76,12 +80,18 @@ Details of some of the existing tools goes here.
 \section{Our application}
 
 \subsection{Building vocabulary}
-The vocabulary is built from the user text.
+The raw input text from the user is structured into a meaningful form that is
+convenient for vocabulary learning. As we use some statistical feature to
+process the user text, the quality of structured data is directly
+proportional to the size of the user text. The process of building the
+vocabulary with respect to the user text is independent of the user. We focus
+to capture the entire vocabulary structure of the text. Thus any new user can
+selc
 
 \subsubsection{Candidates}
 All the words in the language are not equally important. Given that the users
 already know some basics of the language, we could eliminate the most frequent, 
-function words (the, of, in, on etc...), rare/very less frequent words and
+functional words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
 the stop words(\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}) are eliminated to handle the above cases. 
 
@@ -93,7 +103,7 @@ pair of word and its POS tag.
 \subsubsection{Sentences}
 All the sentences in which the candidate words occur are cleaned and mapped to
 the corresponding candidate word. So each candidate word is mapped to all the sentences
-in which it occur and also each sentence is mapped to all the all the candidate
+in which it occur and also each sentence is mapped to all the candidate
 words it contains.
 
 \subsubsection{Complexity}
@@ -249,6 +259,11 @@ answer word to make all the distractors coherent.
 \subsection{Implementation}
 
 \section{Future Works}
+The system has limitation on operating on the words that does not have a learned
+representation on the vector space. Which could be rectified by learning a
+custom word vector specific to the domain. This feature could create new use case
+like a tool to learn jargon specifics to a new domain.
+
 Teaching the word in a session.
 Control over the complexity (tunable complexity)
 Tracking words at learner level across books (to have a warm start for new book)
