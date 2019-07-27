@@ -15,7 +15,8 @@
 \usepackage[hyperref]{vocabbysty}
 \usepackage{times}
 \usepackage{latexsym}
-
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
 \usepackage{url}
 
 \aclfinalcopy % Uncomment this line for the final submission
@@ -29,7 +30,7 @@
 
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
-\title{Vocabby: Vocabulary learning with in the context of user domain}
+\title{Vocabulary learning with in the context of user domain}
 
 \author{Haemanth Santhi Ponnusamy \\
   {\tt hameanthsp@gmail.com} \\\And
@@ -166,6 +167,17 @@ vocabulary and analysis. This structure helps in further reducing the search spa
 by allowing the model to get a better inference about learners level with
 relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
+
+\begin{figure}
+  \includegraphics[width=0.5\textwidth]{network_1}
+  \caption{neighbors of 'width'}
+  \includegraphics[width=0.5\textwidth]{network_2}
+  \caption{neighbors of 'color'}
+  \includegraphics[width=0.5\textwidth]{network_3}
+  \caption{neighbors of 'noon'}
+  \includegraphics[width=0.5\textwidth]{network_4}
+  \caption{neighbors of 'analysis'}
+\end{figure}
 
 \subsection{Content organization}
 \subsubsection{Books}
