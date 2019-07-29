@@ -17,6 +17,7 @@
 \usepackage{latexsym}
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
+\usepackage{subfig}
 \usepackage{url}
 
 \aclfinalcopy % Uncomment this line for the final submission
@@ -46,10 +47,10 @@
   who already posses some basic skills in a language and bored of the
   traditional method of learning words in the language. Our design 
   efficiently structure the vocabulary space and track the user performance.
-  Also the design provides a great advantage in auto-generating the content
+  It also provides a great advantage in auto-generating the content
   for the entire learning process with almost zero human effort. We allow the
-  user to provide the text of there own interest. All the activities and
-  feedbacks are generated only from the user text.
+  user to choose the text of there own interest. Then all the activities and
+  feedbacks are generated only from the chosen text.
 
 \end{abstract}
 
@@ -160,6 +161,24 @@ where ${n}$ is the number of elements of the family ${F_i}$.
 where, ${S_{ij}}$ is the cosine similarity between the vector representations of
 families ${F_i}$ and ${F_j}$.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{network_1}
+  \caption{neighbors of 'width'}
+  \label{fig:net1}
+  \includegraphics[width=0.5\textwidth]{network_2}
+  \caption{neighbors of 'color'}
+  \label{fig:net2}
+  \includegraphics[width=0.5\textwidth]{network_3}
+  \caption{neighbors of 'noon'}
+  \label{fig:net3}
+  \includegraphics[width=0.5\textwidth]{network_4}
+  \caption{neighbors of 'analysis'}
+  \label{fig:net4}
+\end{figure}
+
+As we can see in the figure \ref{fig:net1} the neighbors of the terms in the
+graph are tightly bound with the neighbors that are contextually closer.
 
 By this way we create more structure in the space of vocabulary. Which come
 handy in many situations like activity creation, updating mastery of each
@@ -168,16 +187,6 @@ by allowing the model to get a better inference about learners level with
 relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
-\begin{figure}
-  \includegraphics[width=0.5\textwidth]{network_1}
-  \caption{neighbors of 'width'}
-  \includegraphics[width=0.5\textwidth]{network_2}
-  \caption{neighbors of 'color'}
-  \includegraphics[width=0.5\textwidth]{network_3}
-  \caption{neighbors of 'noon'}
-  \includegraphics[width=0.5\textwidth]{network_4}
-  \caption{neighbors of 'analysis'}
-\end{figure}
 
 \subsection{Content organization}
 \subsubsection{Books}
