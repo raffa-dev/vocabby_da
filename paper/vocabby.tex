@@ -16,8 +16,11 @@
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage{graphicx}
-\graphicspath{ {./images/} }
 \usepackage{subfig}
+\usepackage[most]{tcolorbox}
+\usepackage{lipsum}
+
+\graphicspath{ {./images/} }
 \usepackage{url}
 
 \aclfinalcopy % Uncomment this line for the final submission
@@ -76,7 +79,12 @@ the user in defining the definite space to master. By this way one
 could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
-Details of some of the existing tools goes here.
+There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantage of each. The study by Chen-Ming Chen et al. presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by L-H. Wong \& C-K. Looi, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
+
+We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo Ehara et al. from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
+Lei Zhang et al. proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
+
+But in any of research user is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that user can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
 
 
 \section{Our application}
@@ -161,20 +169,28 @@ where ${n}$ is the number of elements of the family ${F_i}$.
 where, ${S_{ij}}$ is the cosine similarity between the vector representations of
 families ${F_i}$ and ${F_j}$.
 
+
+By this way we create more structure in the space of vocabulary. Which come
+handy in many situations like activity creation, updating mastery of each
+vocabulary and analysis. This structure helps in further reducing the search space
+by allowing the model to get a better inference about learners level with
+relatively very less and effective interactions compared to a method of
+tracking each word in the vocabulary individually.
+
 \begin{figure}
-  \centering
-  \includegraphics[width=0.5\textwidth]{network_1}
-  \caption{neighbors of 'width'}
-  \label{fig:net1}
-  \includegraphics[width=0.5\textwidth]{network_2}
-  \caption{neighbors of 'color'}
-  \label{fig:net2}
-  \includegraphics[width=0.5\textwidth]{network_3}
-  \caption{neighbors of 'noon'}
-  \label{fig:net3}
-  \includegraphics[width=0.5\textwidth]{network_4}
-  \caption{neighbors of 'analysis'}
-  \label{fig:net4}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{network_1}
+\caption{(a) neighbors of 'width' }
+
+\tcbincludegraphics{network_2}
+\caption{ (b) neighbors of 'color' }
+
+\tcbincludegraphics{network_3}
+
+\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
+\tcbincludegraphics{network_4}
+\end{tcbraster}
+\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
 \end{figure}
 
 As we can see in the figure \ref{fig:net1} the neighbors of the terms in the
@@ -268,8 +284,16 @@ Currently, the activity types are chosen in random for the answer words of lengt
 more than 6 characters. This could also be enhanced to chose based on the user
 interactions.
 
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{architecture}
+\caption{Architecture of system}
+
+\end{tcbraster}
+\end{figure}
+
 \subsection{Distractor selection}
-The distractors plays a important role in deciding the quality of the activities.
+The distractors plays an important role in deciding the quality of the activities.
 We take advantage of the network of families we built based on the contextual
 closeness to overcome this problem. Here we rank the neighbors of the
 answer family and chose a best set below a threshold to avoid the synonyms. From
@@ -277,7 +301,56 @@ the best set of families we choose the members which matches the POS tag of the
 answer word to make all the distractors coherent.
 
 
-\subsection{Implementation}
+
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{1}
+\caption{One of activity in which user has to select one correct answer that satisfies the all given three sentences}
+
+\tcbincludegraphics{8}
+\caption{This is the another type of activity in which user is given a sentence with scrambled characters as options. User has to rearrange them to make correct word that fits that sentence.}
+
+\tcbincludegraphics{5}
+\caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
+
+
+\tcbincludegraphics{4}
+\caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
+
+\end{tcbraster}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{7}
+\caption{User can select the word complexity according to knowledge level. By default it is "Average".}
+
+
+\tcbincludegraphics{6}
+\caption{This is the list of words that will be used for creating activities. User can go through these words for getting insight of words.}
+
+\tcbincludegraphics{3}
+\caption{If user gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime user can also see the progress by progress bar above activity.}
+
+\tcbincludegraphics{2}
+\caption{If user gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
+\end{tcbraster}
+\end{figure}
+
+
+
+
+\subsection{System Architecture}
+Our plan for system was to create interactive and single page application so we used React.js with Redux as frontend for our system. We used CSS for creating animations or user interface. For backend we used Python-Django. We used Rest framework for the interaction between frontend and backend. Controllers in django handled the request from frontend and then redirected to appropriate API. Django system was also interacting with our proposed vocabulary learning algorithms. We used NoSQL-MongoDB for storing sessions.   
+
+
+
+\subsection{System Flow}
+The first screen of system is the form in which user will fill some details like name of author, name of book, publisher, etc. and also upload the book. The next step is to process the book and assign an ID for library reference. User can see the stats of book with details like number of families, total number of words, most frequent 20 words. 
+The next screen is the list of 20 words that will be used in activities. In the mean time user can click on various menu items like "Books" for opening library and changing the book or user can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of user and showing for motivation and also showing user appropriate error or success message and also giving correct explanation in the case of wrong answer selected. 
+
 
 \section{Future Works}
 The system has limitation on operating on the words that does not have a learned
@@ -286,8 +359,13 @@ custom word vector specific to the domain. This feature could create new use cas
 like a tool to learn jargon specifics to a new domain.
 
 Teaching the word in a session.
-Control over the complexity (tunable complexity)
+Control over the complexity (tuneable complexity)
 Tracking words at learner level across books (to have a warm start for new book)
+
+On the user interface mobile application can used to attract for users. The number activity types are limited for now but future work can be implementation of other activity types. Currently this system is one user limited but after implementation of login screen and maintaining the database of users with sessions can also be a helpful feature. Use of text to speech can improve user's pronunciation. 
+
+Integration of forget factor to the learner model as a function of number of days of inactivity.
+Extending as a tool to acquire the pre-requisites: Like acquiring commonly used proper nouns specific to a place before going to the place; Getting introduced to nouns and verbs specific to a novel or tv series.
 
 
 \section*{Acknowledgments}
