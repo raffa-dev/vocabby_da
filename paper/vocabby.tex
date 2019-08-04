@@ -22,7 +22,6 @@
 
 \graphicspath{ {./images/} }
 \usepackage{url}
-
 \aclfinalcopy % Uncomment this line for the final submission
 \def\aclpaperid{***} %  Enter the acl Paper ID here
 
@@ -33,8 +32,9 @@
 % in the camera-ready version and ask you to change it back.
 
 \newcommand\BibTeX{B{\sc ib}\TeX}
+\newcommand\myworries[1]{\textcolor{red}{#1}}
 
-\title{Vocabulary learning with in the context of user domain}
+\title{Vocabulary learning with in the context of learner domain}
 
 \author{Haemanth Santhi Ponnusamy \\
   {\tt hameanthsp@gmail.com} \\\And
@@ -46,60 +46,61 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-  We propose a vocabulary learning application targeted on the set of user
+  We propose a vocabulary learning approach targeted on the set of learners
   who already posses some basic skills in a language and bored of the
-  traditional method of learning words in the language. Our design 
-  efficiently structure the vocabulary space and track the user performance.
+  traditional method of learning new words. Our design 
+  efficiently structure the vocabulary space and track the learner performance.
   It also provides a great advantage in auto-generating the content
   for the entire learning process with almost zero human effort. We allow the
-  user to choose the text of there own interest. Then all the activities and
+  learner to choose the text of there own interest. Then all the activities and
   feedbacks are generated only from the chosen text.
-
 \end{abstract}
 
 \section{Introduction}
 Vocabulary learning is an open ended task as the languages are vast and still
 evolving with the addition of new words now and then. This makes it hard for the
-user to get a sense of progress. Many of the vocabulary learning application 
+learner to get a sense of progress. Many of the vocabulary learning application 
 starts from very basic words in the language. Which makes more sense for the 
-beginners, but not for our target users. They might want to start at an
-intermediate level. Also the example sentences used in these tools as a context
-of a word are mostly very generic and some time unnatural. This nature is due to the
-fact that those application are designed to support users irrespective of their
-language competence, background, area of interest, learning goals. Also It is
-hard for the developers to manually create content to satisfy all kind of users.
+beginners, but not for our target learners. They might want to start at an intermediate level.
+Even an adaptive systems that try to adopt to the learner level need lots of interactions
+to get a sense of learner's vocabulary. Another major issue of these tools are the
+example sentences used. They are mostly very generic and some time unnatural.
+This nature is due to the fact that those application are designed to support learners irrespective of their
+language competence, background, area of interest, learning goals. Also, it is
+hard for the developers to manually create content to satisfy all kind of learners.
 
-In this paper we propose an approach to overcome all the above mentioned
+In this paper we propose an approach to overcome the above mentioned
 difficulties to build an application that could potentially satisfy our targeted
-users. We do this by partially sharing the problem with the user to choose the 
+learners. We do this by partially sharing the problem with the learner to choose the 
 text of their interest and reading level. Then we process the chosen text to
 select the candidate words and build a network of candidates to efficiently model
 the vocabulary of the text and generate useful activities from them. This help
-the user in defining the definite space to master. By this way one
+the learner in defining the definite space to master. By this way one
 could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
-There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantage of each. The study by Chen-Ming Chen et al. presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by L-H. Wong \& C-K. Looi, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
+There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantage of each. The study by Chen-Ming Chen et al. presents a personalised mobile application for learning English vocabulary based on \myworries{learning memory cycle and item response theory} which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the learner about current English news but according to the reading abilities of learner. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to learners. \myworries{In the paper presented by LH Wong and Ck looi , In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms.}
 
 We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo Ehara et al. from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
 Lei Zhang et al. proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
 
-But in any of research user is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that user can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
+But in any of research learner is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that learner can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
 
 
 \section{Our application}
 
 \subsection{Building vocabulary}
-The raw input text from the user is structured into a meaningful form that is
+The raw input text from the learner is structured into a meaningful form that is
 convenient for vocabulary learning. As we use some statistical feature to
-process the user text, the quality of structured data is directly
-proportional to the size of the user text. The process of building the
-vocabulary with respect to the user text is independent of the user. We focus
-to capture the entire vocabulary structure of the text. Thus any new user can
-selc
+process the learner text, the quality of structured data is directly
+proportional to the size of the learner text. The process of building the
+vocabulary with respect to the learner text is independent of the learner. We focus
+to capture the entire vocabulary structure of the text. So any new learner can
+pick a pre-processed book from a library of books. Also this could help us to easily
+analyse the learning progress across the user.
 
 \subsubsection{Candidates}
-All the words in the language are not equally important. Given that the users
+All the words in the language are not equally important. Given that the learners
 already know some basics of the language, we could eliminate the most frequent, 
 functional words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
@@ -134,23 +135,23 @@ Also each of the candidate is mapped with a semantic vector representation which
 is obtained from the pre trained model \emph{en\_web\_core\_lg} of \emph{spaCy}
 (\url{https://spacy.io/}), a natural language processing library. The main
 drawback is that it cannot address the out of vocabulary(OOV) words. Which
-could be rectified by training a custom word vectors over a decently sized user content.
+could be rectified by training a custom word vectors over a decently sized learner content.
 
 \subsection{Creating structure}
 
 \subsubsection{Family}
 We group the words into families, similar to ~\citet{bauer1993word} work on word
 families but instead of seven sub-groups we form a single group for all the types.
-The main intuition of grouping the words into families is that the user can
+The main intuition of grouping the words into families is that the learner can
 extrapolate their knowledge of inflections of a language to understand/predict
 all the possible forms of an unseen word. Similarly with this setup our system
 can extrapolate the mastery of one the member to the entire family. Which could 
 drastically reduce the number of interaction that the system need to estimate
-the user's vocabulary.
+the learner's vocabulary.
 
 \subsubsection{Network}
 Now the families has to co-exist in the space of language(limited by the
-user text) as a network like a society. It is a fully connected network with each
+learner text) as a network like a society. It is a fully connected network with each
 family with a different affinity to another. The affinity is a measure of
 contextual similarity between the families. We compute cosine similarity 
 between the mean of word vectors of all the members of the family to similar
@@ -208,9 +209,9 @@ tracking each word in the vocabulary individually.
 \subsubsection{Books}
 All the processed data such as vocabulary, families, network, sample sentences
 are packed into a book instance. This also tracks the meta information such as
-Title, Author, Genre, Year and Publisher. This help any future user to select
+Title, Author, Genre, Year and Publisher. This help any future learner to select
 the processed book directly. This also could help in comparing the performance
-of different users on the same book.
+of different learners on the same book.
 
 \subsubsection{Bookshelf}
 All such processed book are organized in multiple bookshelves specific to each
@@ -221,22 +222,22 @@ In this work we maintain multiple models to track and update different aspect
 of the application.
 
 \subsubsection{Learner}
-The learner instance maintain the personal information of the user and tracks
-the list of instance of books the user has choose to improve vocabulary and the
+The learner instance maintain the personal information of the learner and tracks
+the list of instance of books the learner has choose to improve vocabulary and the
 progress in them. This also could maintain overall vocabulary knowledge of
-the user and customize the activity type, feedback and book suggestions based
+the learner and customize the activity type, feedback and book suggestions based
 on individual needs.
 
 \subsubsection{Tutor}
-For each book the user selects, a tutor instance will be created. The main
+For each book the learner selects, a tutor instance will be created. The main
 activities of the tutor are to design a learning session, evaluate the
-performance and track the mastery level of the user w.r.t all the vocabulary
+performance and track the mastery level of the learner w.r.t all the vocabulary
 in the book. Then again generate a new session based on the updated mastery
 levels in the network.
 
 \textbf{Mastery Score:} The value ranges between 0 and 1. Initially it is
 assigned to 0.5 to indicate the uncertainty. Based on the performance of the
-user it is either increased or decreased by a factor. This approach implicitly
+learner it is either increased or decreased by a factor. This approach implicitly
 capture the un-visited nodes in the network.
 
 \textbf{Update rule:} As we have built a network of families capturing the
@@ -250,7 +251,7 @@ from the family ${F_i}$.
 
 Where ${M_i}$ is the mastery of the family ${F_i}$. ${\alpha}$ is a tunable parameter
 for the magnitude of an update. ${sign \epsilon \{-1, +1\}}$ is the direction 
-of the update. It depends on the correctness of user response to the corresponding
+of the update. It depends on the correctness of learner response to the corresponding
 activity. And ${S_{ij}}$ is the measure of contextual similarity between the two
 families ${F_i}$ and ${F_j}$.
 
@@ -270,18 +271,18 @@ nature of the node.
 Since our motive is to reduce the effort for content creation. We generate the
 activities on the fly. In this work we generate two type of activities. 
 
-\textbf{fit to context:} The user is prompted to complete 3-4 incomplete
+\textbf{fit to context:} The learner is prompted to complete 3-4 incomplete
 sentences with one among the given list of word suggestions. The options are
 chosen to be contextually tight to improve the quality of the activity and
-user learning outcome.
+learning outcome.
 
-\textbf{scrambled word:} The user is prompted to come up with a word from the
+\textbf{scrambled word:} The learner is prompted to come up with a word from the
 set of characters to complete an incomplete sentence. The words with word length
 less than 6 characters are allowed to generate this activity. Since the larger
-answer words makes it more ambiguous for the user to solve.
+answer words makes it more ambiguous for the learner to solve.
 
 Currently, the activity types are chosen in random for the answer words of length
-more than 6 characters. This could also be enhanced to chose based on the user
+more than 6 characters. This could also be enhanced to chose based on the learner
 interactions.
 
 \begin{figure}
@@ -305,10 +306,10 @@ answer word to make all the distractors coherent.
 \begin{figure}
 \begin{tcbraster}[raster columns=1, enhanced, blankest]
 \tcbincludegraphics{1}
-\caption{One of activity in which user has to select one correct answer that satisfies the all given three sentences}
+\caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
 
 \tcbincludegraphics{8}
-\caption{This is the another type of activity in which user is given a sentence with scrambled characters as options. User has to rearrange them to make correct word that fits that sentence.}
+\caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
 
 \tcbincludegraphics{5}
 \caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
@@ -325,17 +326,17 @@ answer word to make all the distractors coherent.
 \begin{figure}
 \begin{tcbraster}[raster columns=1, enhanced, blankest]
 \tcbincludegraphics{7}
-\caption{User can select the word complexity according to knowledge level. By default it is "Average".}
+\caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
 
 
 \tcbincludegraphics{6}
-\caption{This is the list of words that will be used for creating activities. User can go through these words for getting insight of words.}
+\caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
 
 \tcbincludegraphics{3}
-\caption{If user gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime user can also see the progress by progress bar above activity.}
+\caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
 
 \tcbincludegraphics{2}
-\caption{If user gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
+\caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
 \end{tcbraster}
 \end{figure}
 
@@ -348,8 +349,8 @@ Our plan for system was to create interactive and single page application so we 
 
 
 \subsection{System Flow}
-The first screen of system is the form in which user will fill some details like name of author, name of book, publisher, etc. and also upload the book. The next step is to process the book and assign an ID for library reference. User can see the stats of book with details like number of families, total number of words, most frequent 20 words. 
-The next screen is the list of 20 words that will be used in activities. In the mean time user can click on various menu items like "Books" for opening library and changing the book or user can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of user and showing for motivation and also showing user appropriate error or success message and also giving correct explanation in the case of wrong answer selected. 
+The first screen of system is the form in which learner will fill some details like name of author, name of book, publisher, etc. and also upload the book. The next step is to process the book and assign an ID for library reference. Learner can see the stats of book with details like number of families, total number of words, most frequent 20 words. 
+The next screen is the list of 20 words that will be used in activities. In the mean time learner can click on various menu items like "Books" for opening library and changing the book or learner can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of learner and showing for motivation and also showing learner appropriate error or success message and also giving correct explanation in the case of wrong answer selected. 
 
 
 \section{Future Works}
@@ -362,7 +363,7 @@ Teaching the word in a session.
 Control over the complexity (tuneable complexity)
 Tracking words at learner level across books (to have a warm start for new book)
 
-On the user interface mobile application can used to attract for users. The number activity types are limited for now but future work can be implementation of other activity types. Currently this system is one user limited but after implementation of login screen and maintaining the database of users with sessions can also be a helpful feature. Use of text to speech can improve user's pronunciation. 
+On the user interface mobile application can used to attract for learners. The number activity types are limited for now but future work can be implementation of other activity types. Currently this system is one learner limited but after implementation of login screen and maintaining the database of learners with sessions can also be a helpful feature. Use of text to speech can improve learner's pronunciation. 
 
 Integration of forget factor to the learner model as a function of number of days of inactivity.
 Extending as a tool to acquire the pre-requisites: Like acquiring commonly used proper nouns specific to a place before going to the place; Getting introduced to nouns and verbs specific to a novel or tv series.
