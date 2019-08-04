@@ -22,6 +22,7 @@
 
 \graphicspath{ {./images/} }
 \usepackage{url}
+
 \aclfinalcopy % Uncomment this line for the final submission
 \def\aclpaperid{***} %  Enter the acl Paper ID here
 
@@ -32,7 +33,6 @@
 % in the camera-ready version and ask you to change it back.
 
 \newcommand\BibTeX{B{\sc ib}\TeX}
-\newcommand\myworries[1]{\textcolor{red}{#1}}
 
 \title{Vocabulary learning with in the context of learner domain}
 
@@ -52,7 +52,7 @@
   efficiently structure the vocabulary space and track the learner performance.
   It also provides a great advantage in auto-generating the content
   for the entire learning process with almost zero human effort. We allow the
-  learner to choose the text of there own interest. Then all the activities and
+  learner to choose the text of their own interest. Then all the activities and
   feedbacks are generated only from the chosen text.
 \end{abstract}
 
@@ -79,10 +79,10 @@ the learner in defining the definite space to master. By this way one
 could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
-There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantage of each. The study by Chen-Ming Chen et al. presents a personalised mobile application for learning English vocabulary based on \myworries{learning memory cycle and item response theory} which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the learner about current English news but according to the reading abilities of learner. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to learners. \myworries{In the paper presented by LH Wong and Ck looi , In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms.}
+There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantages of each. The study by ~\citet{chen2008personalized} presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
 
-We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo Ehara et al. from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
-Lei Zhang et al. proposed a method in which they used machine learning based approachÂ that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
+We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}  from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
+~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
 
 But in any of research learner is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that learner can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
 
@@ -178,20 +178,26 @@ by allowing the model to get a better inference about learners level with
 relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
-\begin{figure}
-\begin{tcbraster}[raster columns=1, enhanced, blankest]
-\tcbincludegraphics{network_1}
-\caption{(a) neighbors of 'width' }
 
-\tcbincludegraphics{network_2}
-\caption{ (b) neighbors of 'color' }
+\begin{figure}[h!]
+\begin{center}
 
-\tcbincludegraphics{network_3}
+\resizebox{150pt}{!}{\includegraphics{network_1}}
+\caption{a) neighbors of 'width' }
 
-\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
-\tcbincludegraphics{network_4}
-\end{tcbraster}
-\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
+
+\resizebox{150pt}{!}{\includegraphics{network_2}}
+\caption{a) neighbors of 'color' }
+
+
+\resizebox{150pt}{!}{\includegraphics{network_3}}
+\caption{a) neighbors of 'noon' }
+
+
+\resizebox{150pt}{!}{\includegraphics{network_4}}
+\caption{a) neighbors of 'analysis' }
+
+\end{center}
 \end{figure}
 
 As we can see in the figure \ref{fig:net1} the neighbors of the terms in the
