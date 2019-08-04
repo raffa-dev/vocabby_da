@@ -82,7 +82,7 @@ could choose to learn words used in a specific domain with specific context.
 There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantages of each. The study by ~\citet{chen2008personalized} presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
 
 We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}  from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
-~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
+~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link for this model. 
 
 But in any of research user is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that user can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
 
@@ -190,15 +190,15 @@ tracking each word in the vocabulary individually.
 
 
 \resizebox{150pt}{!}{\includegraphics{network_2}}
-\caption{a) neighbors of 'color' }
+\caption{b) neighbors of 'color' }
 
 
 \resizebox{150pt}{!}{\includegraphics{network_3}}
-\caption{a) neighbors of 'noon' }
+\caption{c) neighbors of 'noon' }
 
 
 \resizebox{150pt}{!}{\includegraphics{network_4}}
-\caption{a) neighbors of 'analysis' }
+\caption{d) neighbors of 'analysis' }
 
 \end{center}
 \end{figure}
@@ -344,7 +344,7 @@ answer word to make all the distractors coherent.
 
 
 \subsection{System Architecture}
-Our plan for system was to create interactive and single page application so we used React.js with Redux as frontend for our system. We used CSS for creating animations or user interface. For backend we used Python-Django. We used Rest framework for the interaction between frontend and backend. Controllers in django handled the request from frontend and then redirected to appropriate API. Django system was also interacting with our proposed vocabulary learning algorithms. We used NoSQL-MongoDB for storing sessions.   
+Our plan for system was to create interactive and single page application so we used React.js with Redux as frontend for our system. We used CSS for creating animations or user interface. For backend we used Python-Django. We used Rest framework for the interaction between frontend and backend. Controllers in Django handled the request from frontend and then redirected to appropriate API. Django system was also interacting with our proposed vocabulary learning algorithms. We used NoSQL-MongoDB for storing sessions.   
 
 
 
