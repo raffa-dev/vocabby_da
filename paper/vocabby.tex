@@ -79,7 +79,7 @@ the user in defining the definite space to master. By this way one
 could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
-There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantage of each. The study by ~\citet{chen2008personalized} presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by~\citet{wong2010mobile} presents, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
+There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantages of each. The study by ~\citet{chen2008personalized} presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
 
 We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}  from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
 ~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link Grammar for this model. 
@@ -148,6 +148,10 @@ can extrapolate the mastery of one the member to the entire family. Which could
 drastically reduce the number of interaction that the system need to estimate
 the user's vocabulary.
 
+
+
+
+
 \subsubsection{Network}
 Now the families has to co-exist in the space of language(limited by the
 user text) as a network like a society. It is a fully connected network with each
@@ -178,20 +182,25 @@ relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
 
-\begin{figure}
-\begin{tcbraster}[raster columns=1, enhanced, blankest]
-\tcbincludegraphics{network_1}
-\caption{(a) neighbors of 'width' }
+\begin{figure}[h!]
+\begin{center}
 
-\tcbincludegraphics{network_2}
-\caption{ (b) neighbors of 'color' }
+\resizebox{150pt}{!}{\includegraphics{network_1}}
+\caption{a) neighbors of 'width' }
 
-\tcbincludegraphics{network_3}
 
-\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
-\tcbincludegraphics{network_4}
-\end{tcbraster}
-\caption{(a) neighbors of 'width'  (b) neighbors of 'color'  (c) neighbors of 'noon'  (d) neighbors of 'analysis'}
+\resizebox{150pt}{!}{\includegraphics{network_2}}
+\caption{a) neighbors of 'color' }
+
+
+\resizebox{150pt}{!}{\includegraphics{network_3}}
+\caption{a) neighbors of 'noon' }
+
+
+\resizebox{150pt}{!}{\includegraphics{network_4}}
+\caption{a) neighbors of 'analysis' }
+
+\end{center}
 \end{figure}
 
 
@@ -293,7 +302,6 @@ the best set of families we choose the members which matches the POS tag of the
 answer word to make all the distractors coherent.
 
 
-
 \begin{figure}
 \begin{tcbraster}[raster columns=1, enhanced, blankest]
 \tcbincludegraphics{1}
@@ -311,6 +319,7 @@ answer word to make all the distractors coherent.
 
 \end{tcbraster}
 \end{figure}
+
 
 
 

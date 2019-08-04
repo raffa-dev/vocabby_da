@@ -27,7 +27,7 @@ class App extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'Himanshu',
+      user: 'Profile',
       author: '',
       genre: 'Fiction',
       year: "2000",
@@ -554,7 +554,7 @@ class App extends Component {
                   }
                   
                   <br />
-                  <h2>
+                  <h2 style={{color: "#fff"}}>
                     <Highlight
                       search={this.state.selected_answer}>{this.state.feedback}</Highlight>
                   </h2>
