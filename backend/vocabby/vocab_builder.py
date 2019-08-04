@@ -120,8 +120,10 @@ class Word(object):
     def complexity(self):
         """Get the complexity of the word."""
         if self.text in FREQ_LUT:
-            return 7 - FREQ_LUT[self.text]
-        return 3.5
+            return 5 - FREQ_LUT[self.text]
+        # TODO: Frequency of the unknown word could be realized as mean of the 
+        # distribution instead of a simple mean of the range
+        return 2.5
 
 
 class Vocab:
