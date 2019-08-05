@@ -13,16 +13,19 @@
 
 \documentclass[11pt,a4paper]{article}
 \usepackage[hyperref]{vocabbysty}
+\usepackage{url}
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage{graphicx}
 \usepackage{subfig}
 \usepackage[most]{tcolorbox}
 \usepackage{lipsum}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage[colorlinks]{hyperref}
 
 \graphicspath{ {./images/} }
-\usepackage{url}
-
 \aclfinalcopy % Uncomment this line for the final submission
 \def\aclpaperid{***} %  Enter the acl Paper ID here
 
@@ -39,11 +42,12 @@
 \author{Haemanth Santhi Ponnusamy \qquad Himanshu Bansal \\\\
   International Studies of Computational Linguistics(ISCL) \\
   Eberhard karls university of Tuebingen\\
-  Tuebingen, 72074, Germany}
+  Tuebingen, 72074, Germany \\\\ \tt \small \{haemanth.santhi-ponnusamy,himanshu.bansal\}@student.uni-tuebingen.de}
 
 \date{}
 
 \begin{document}
+
 \maketitle
 \begin{abstract}
   We propose a vocabulary learning approach targeted on the set of learners
@@ -62,7 +66,7 @@ evolving with the addition of new words now and then. This makes it hard for the
 learner to get a sense of progress. Many of the vocabulary learning application 
 starts from very basic words in the language. Which makes more sense for the 
 beginners, but not for our target learners. They might want to start at an intermediate level.
-Even an adaptive systems that try to adopt to the learner level need lots of interactions
+Even an adaptive systems that try to adopt to the learner level needs lots of interactions
 to get a sense of learner's vocabulary. Another major issue of these tools are the
 example sentences used. They are mostly very generic and some time unnatural.
 This nature is due to the fact that those application are designed to support learners irrespective of their
@@ -75,7 +79,7 @@ learners. We do this by partially sharing the problem with the learner to choose
 text of their interest and reading level. Then we process the chosen text to
 select the candidate words and build a network of candidates to efficiently model
 the vocabulary of the text and generate useful activities from them. This help
-the learner in defining the definite space to master. By this way one
+the learner in defining the sub-space of the language to master. By this way one
 could choose to learn words used in a specific domain with specific context.
 
 \section{Related works}
@@ -104,7 +108,7 @@ All the words in the language are not equally important. Given that the learners
 already know some basics of the language, we could eliminate the most frequent, 
 functional words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words(\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}) are eliminated to handle the above cases. 
+the stop words\footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}} are eliminated to handle the above cases. 
 
 The words that occur in different parts of the speech could posses different sense.
 In-order to differentiate between them. We represent each candidate word as a
@@ -133,7 +137,7 @@ database.
 \subsubsection{Vector representation}
 Also each of the candidate is mapped with a semantic vector representation which
 is obtained from the pre trained model \emph{en\_web\_core\_lg} of \emph{spaCy}
-(\url{https://spacy.io/}), a natural language processing library. The main
+\footnote{\url{https://spacy.io/}}, a natural language processing library. The main
 drawback is that it cannot address the out of vocabulary(OOV) words. Which
 could be rectified by training a custom word vectors over a decently sized learner content.
 
@@ -221,7 +225,7 @@ of different learners on the same book.
 
 \subsubsection{Bookshelf}
 All such processed book are organized in multiple bookshelves specific to each
-domain similar to the gutenberg project (\url{http://www.gutenberg.org}).
+domain similar to the gutenberg project\footnote{\url{http://www.gutenberg.org}}.
 
 \subsection{Models}
 In this work we maintain multiple models to track and update different aspect
