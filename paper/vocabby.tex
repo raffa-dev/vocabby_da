@@ -23,7 +23,7 @@
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage{url}
-\usepackage[colorlinks]{hyperref}
+% \usepackage[colorlinks]{hyperref}
 
 \graphicspath{ {./images/} }
 \aclfinalcopy % Uncomment this line for the final submission
@@ -53,7 +53,8 @@
   We propose a vocabulary learning approach targeted on the set of learners
   who already posses some basic skills in a language and bored of the
   traditional method of learning new words. Our design 
-  efficiently structure the vocabulary space and track the learner performance.
+  structures the vocabulary space to estimate the learner's
+  level in lesser number of interactions and track their performance efficiently.
   It also provides a great advantage in auto-generating the content
   for the entire learning process with almost zero human effort. We allow the
   learner to choose the text of their own interest. Then all the activities and
@@ -64,26 +65,39 @@
 Vocabulary learning is an open ended task as the languages are vast and still
 evolving with the addition of new words now and then. This makes it hard for the
 learner to get a sense of progress. Many of the vocabulary learning application 
-starts from very basic words in the language. Which makes more sense for the 
+starts from very basic words of the language. Which makes more sense for the 
 beginners, but not for our target learners. They might want to start at an intermediate level.
-Even an adaptive systems that try to adopt to the learner level needs lots of interactions
-to get a sense of learner's vocabulary. Another major issue of these tools are the
-example sentences used. They are mostly very generic and some time unnatural.
+Even an adaptive systems that tries to adopt to the learner needs a lots of interactions
+to get a sense of learner's vocabulary knowledge. Another major issue of these tools are the
+example sentences used as context. They are mostly very generic and some time unnatural.
 This nature is due to the fact that those application are designed to support learners irrespective of their
 language competence, background, area of interest, learning goals. Also, it is
-hard for the developers to manually create content to satisfy all kind of learners.
+hard for a developers to manually create contents aligned with different domain to satisfy all kind of learners.
 
 In this paper we propose an approach to overcome the above mentioned
 difficulties to build an application that could potentially satisfy our targeted
 learners. We do this by partially sharing the problem with the learner to choose the 
-text of their interest and reading level. Then we process the chosen text to
-select the candidate words and build a network of candidates to efficiently model
-the vocabulary of the text and generate useful activities from them. This help
+text of their own interest and reading level. Then we process the chosen text to
+build a network of candidates to efficiently model the limited language space and
+generate useful activities from them. This helps
 the learner in defining the sub-space of the language to master. By this way one
 could choose to learn words used in a specific domain with specific context.
+So the open ended problem of learning vocabulary of an entire language can be reduced
+down to a smaller and self defined milestones.
 
 \section{Related works}
-There are many vocabulary learning tools available in market. We gone through many of them to compare the advantages and disadvantages of each. The study by ~\citet{chen2008personalized} presents a personalised mobile application for learning English vocabulary based on learning memory cycle and item response theory which helps in selecting appropriate vocabulary according to individual. After that this group also presented another paper for English vocabulary learning by creating mobile application which notifies the user about current English news but according to the reading abilities of user. Which they found out by using fuzzy item response theory. This application helps in improving English reading ability to users. In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively, the primary school students used the mobile devices assigned to them on a one-to-one basis to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms. 
+There are many vocabulary learning tools available in the market.
+We gone through many of them to compare the advantages and disadvantages of each.
+The study by ~\citet{chen2008personalized} presents a personalised mobile application for
+learning English vocabulary based on learning memory cycle and item response theory.
+Which helps in selecting appropriate vocabulary according to individual.
+After that this group also presented another paper for English vocabulary
+learning by creating mobile application which notifies the user about current
+English news but according to the reading abilities of user. Which they found out
+by using fuzzy item response theory. This application helps in improving English reading ability to users.
+In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively,
+the primary school students used the mobile devices assigned to them on a one-to-one basis
+to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms.
 
 We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}  from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
 ~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link for this model. 
@@ -313,42 +327,42 @@ answer word to make all the distractors coherent.
 
 
 
-\begin{figure}
-\begin{tcbraster}[raster columns=1, enhanced, blankest]
-\tcbincludegraphics{1}
-\caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
-
-\tcbincludegraphics{8}
-\caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
-
-\tcbincludegraphics{5}
-\caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
-
-
-\tcbincludegraphics{4}
-\caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
-
-\end{tcbraster}
-\end{figure}
-
-
-
-\begin{figure}
-\begin{tcbraster}[raster columns=1, enhanced, blankest]
-\tcbincludegraphics{7}
-\caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
-
-
-\tcbincludegraphics{6}
-\caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
-
-\tcbincludegraphics{3}
-\caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
-
-\tcbincludegraphics{2}
-\caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
-\end{tcbraster}
-\end{figure}
+% \begin{figure}
+% \begin{tcbraster}[raster columns=1, enhanced, blankest]
+% \tcbincludegraphics{1}
+% \caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
+% 
+% \tcbincludegraphics{8}
+% \caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
+% 
+% \tcbincludegraphics{5}
+% \caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
+% 
+% 
+% \tcbincludegraphics{4}
+% \caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
+% 
+% \end{tcbraster}
+% \end{figure}
+% 
+% 
+% 
+% \begin{figure}
+% \begin{tcbraster}[raster columns=1, enhanced, blankest]
+% \tcbincludegraphics{7}
+% \caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
+% 
+% 
+% \tcbincludegraphics{6}
+% \caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
+% 
+% \tcbincludegraphics{3}
+% \caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
+% 
+% \tcbincludegraphics{2}
+% \caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
+% \end{tcbraster}
+% \end{figure}
 
 
 
