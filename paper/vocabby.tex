@@ -67,7 +67,7 @@ evolving with the addition of new words now and then. This makes it hard for the
 learner to get a sense of progress. Many of the vocabulary learning application 
 starts from very basic words of the language. Which makes more sense for the 
 beginners, but not for our target learners. They might want to start at an intermediate level.
-Even an adaptive systems that tries to adopt to the learner needs a lots of interactions
+Even an adaptive systems that tries to adopt to the learner, needs a lots of interactions
 to get a sense of learner's vocabulary knowledge. Another major issue of these tools are the
 example sentences used as context. They are mostly very generic and some time unnatural.
 This nature is due to the fact that those application are designed to support learners irrespective of their
@@ -122,12 +122,13 @@ All the words in the language are not equally important. Given that the learners
 already know some basics of the language, we could eliminate the most frequent, 
 functional words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words\footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}} are eliminated to handle the above cases. 
+the stop words %% \footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}
+are eliminated to handle the above cases.
 
 The words that occur in different parts of the speech could posses different sense.
 In-order to differentiate between them. We represent each candidate word as a
 pair of word and its POS tag.
-\begin{center}(word, POS tag)\end{center}
+\begin{center}\emph{(word, POS tag)}\end{center}
 
 \subsubsection{Sentences}
 All the sentences in which the candidate words occur are cleaned and mapped to
@@ -197,26 +198,25 @@ relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
 
-\begin{figure}[h!]
-\begin{center}
+\begin{figure*}[hbt!]
+  \centering
+  \subfloat[neighbors of \emph{width}]{
+    \includegraphics[width=.4\linewidth]{network_1}
+  }
+  \subfloat[neighbors of \emph{color}]{
+    \includegraphics[width=.4\linewidth]{network_2}
+  }
+  \hspace{0mm}
+  \subfloat[neighbors of \emph{noon}]{
+    \includegraphics[width=.4\linewidth]{network_3}
+  }
+  \subfloat[neighbors of \emph{analysis}]{
+    \includegraphics[width=.4\linewidth]{network_4}
+  }
+  \caption{A figure with two sub-figures}
+  \label{fig:network}
+\end{figure*}
 
-\resizebox{150pt}{!}{\includegraphics{network_1}}
-\caption{a) neighbors of 'width' }
-
-
-\resizebox{150pt}{!}{\includegraphics{network_2}}
-\caption{b) neighbors of 'color' }
-
-
-\resizebox{150pt}{!}{\includegraphics{network_3}}
-\caption{c) neighbors of 'noon' }
-
-
-\resizebox{150pt}{!}{\includegraphics{network_4}}
-\caption{d) neighbors of 'analysis' }
-
-\end{center}
-\end{figure}
 
 As we can see in the figure \ref{fig:net1} the neighbors of the terms in the
 graph are tightly bound with the neighbors that are contextually closer.
