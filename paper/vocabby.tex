@@ -13,16 +13,13 @@
 
 \documentclass[11pt,a4paper]{article}
 \usepackage[hyperref]{vocabbysty}
-\usepackage{url}
+
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage{graphicx}
 \usepackage{subfig}
 \usepackage[most]{tcolorbox}
 \usepackage{lipsum}
-\usepackage{lmodern}
-\usepackage[T1]{fontenc}
-% \usepackage[colorlinks]{hyperref}
 
 \graphicspath{ {./images/} }
 \aclfinalcopy % Uncomment this line for the final submission
@@ -46,7 +43,6 @@
 \date{}
 
 \begin{document}
-
 \maketitle
 \begin{abstract}
   We propose a vocabulary learning approach targeted on the set of learners
@@ -113,6 +109,7 @@ This is the problem that we overcome in our system so that learner can use own t
 according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.
 
 \section{Our application}
+
 \subsection{Building vocabulary}
 The raw input text from the learner is structured into a meaningful form that is
 convenient for vocabulary learning. As we use some statistical feature to
@@ -194,6 +191,7 @@ where ${n}$ is the number of elements of the family ${F_i}$.
 
 where, ${S_{ij}}$ is the cosine similarity between the vector representations of
 families ${F_i}$ and ${F_j}$.
+
 
 By this way we create more structure in the space of vocabulary. Which come
 handy in many situations like activity creation, updating mastery of each

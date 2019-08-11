@@ -1,0 +1,42 @@
+\begin{thebibliography}{2}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Bauer and Nation(1993)}]{bauer1993word}
+Laurie Bauer and Paul Nation. 1993.
+\newblock Word families.
+\newblock \emph{International journal of Lexicography}, 6(4):253--279.
+
+\bibitem[{Brysbaert and New(2009)}]{brysbaert2009moving}
+Marc Brysbaert and Boris New. 2009.
+\newblock Moving beyond ku{\v{c}}era and francis: A critical evaluation of
+  current word frequency norms and the introduction of a new and improved word
+  frequency measure for american english.
+\newblock \emph{Behavior research methods}, 41(4):977--990.
+
+
+\bibitem[{Chen, C.M. and Chung, C.J. (2008)}]{chen2008personalized}
+Chen, C.M. and Chung, C.J., 2008.
+\newblock Personalized mobile English vocabulary learning system based on item response theory and learning memory cycle.
+\newblock \emph{Computers \& Education}, 51(2), pp.624-645.
+
+\bibitem[{Wong, L. H., \& Looi, C. K. (2010, April)}]{wong2010mobile}
+Wong, L. H., \& Looi, C. K. (2010, April)
+Mobile-assisted vocabulary learning in real-life setting for primary school students: two case studies.
+\newblock \emph{In 2010 6th IEEE International Conference on Wireless, Mobile, and Ubiquitous Technologies in Education}, (pp. 88-95). IEEE.
+
+\bibitem[{Ehara, Y., Miyao, Y., Oiwa, H., Sato, I., \& Nakagawa, H. (2014, October)}]{ehara2014formalizing}
+Ehara, Y., Miyao, Y., Oiwa, H., Sato, I., \& Nakagawa, H. (2014, October)
+Formalizing word sampling for vocabulary prediction as graph-based active learning
+\newblock \emph{In Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)}, (pp. 1374-1384).
+
+\bibitem[{Zhang, L., \& Yu, Y. (2001, July)}]{zhang2001learning}
+Zhang, L., \& Yu, Y. (2001, July)
+Learning to generate CGs from domain specific sentences
+\newblock \emph{In International Conference on Conceptual Structures}, (pp. 44-57).
+
+\bibitem[{Paetzold, G., \& Specia, L. (2016, June)}]{paetzold2016semeval}
+Paetzold, G., \& Specia, L. (2016, June)
+Semeval 2016 task 11: Complex word identification. In Proceedings of the 10th International Workshop on Semantic Evaluation
+\newblock \emph{SemEval-2016}, (pp. 560-569).
+
+\end{thebibliography}
