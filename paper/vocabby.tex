@@ -22,7 +22,6 @@
 \usepackage{lipsum}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
-\usepackage{url}
 % \usepackage[colorlinks]{hyperref}
 
 \graphicspath{ {./images/} }
@@ -95,18 +94,25 @@ After that this group also presented another paper for English vocabulary
 learning by creating mobile application which notifies the user about current
 English news but according to the reading abilities of user. Which they found out
 by using fuzzy item response theory. This application helps in improving English reading ability to users.
-In the paper presented by~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively,
+In the paper presented by ~\citet{wong2010mobile}, In learning English prepositions and Chinese idioms, respectively,
 the primary school students used the mobile devices assigned to them on a one-to-one basis
 to take photos in real-life contexts so as to construct sentences with the newly acquired prepositions or idioms.
 
-We gone through lot of methods for graph creation for vocabulary generation as it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}  from National Institute of Information and Communications Technology, Tokyo proposed a method by formalising heuristic techniques as a graph-based non-interactive active learning method as applied to a special graph. They showed that by extending the graph they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
-~\citet{zhang2001learning} proposed a method in which they used machine learning based approach that can be trained for different domains and requires almost no manual rules. They adopted a dependency grammar link for this model. 
+We gone through lot of methods for graph creation for vocabulary generation as
+it is the most important step of vocabulary learning. Yo ~\citet{ehara2014formalizing}
+from National Institute of Information and Communications Technology, Tokyo proposed
+a method by formalising heuristic techniques as a graph-based non-interactive active
+learning method as applied to a special graph. They showed that by extending the graph
+they can retrieve additional functionality such as incorporating domain specificity and sampling from multiple corpora.
+~\citet{zhang2001learning} proposed a method in which they used machine learning based approach
+that can be trained for different domains and requires almost no manual rules.
+They adopted a dependency grammar link for this model.
 
-But in any of research learner is not able to learn vocabulary from uploaded text. This is the problem that we overcome in our system so that learner can use own text according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.  
-
+But in any of research learner is not able to learn vocabulary from uploaded text.
+This is the problem that we overcome in our system so that learner can use own text
+according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.
 
 \section{Our application}
-
 \subsection{Building vocabulary}
 The raw input text from the learner is structured into a meaningful form that is
 convenient for vocabulary learning. As we use some statistical feature to
@@ -122,7 +128,7 @@ All the words in the language are not equally important. Given that the learners
 already know some basics of the language, we could eliminate the most frequent, 
 functional words (the, of, in, on etc...), rare/very less frequent words and
 improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words %% \footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}
+the stop words \footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}
 are eliminated to handle the above cases.
 
 The words that occur in different parts of the speech could posses different sense.
@@ -189,7 +195,6 @@ where ${n}$ is the number of elements of the family ${F_i}$.
 where, ${S_{ij}}$ is the cosine similarity between the vector representations of
 families ${F_i}$ and ${F_j}$.
 
-
 By this way we create more structure in the space of vocabulary. Which come
 handy in many situations like activity creation, updating mastery of each
 vocabulary and analysis. This structure helps in further reducing the search space
@@ -217,8 +222,7 @@ tracking each word in the vocabulary individually.
   \label{fig:network}
 \end{figure*}
 
-
-As we can see in the figure \ref{fig:net1} the neighbors of the terms in the
+As we can see in the figure \ref{fig:network} the neighbors of the terms in the
 graph are tightly bound with the neighbors that are contextually closer.
 
 By this way we create more structure in the space of vocabulary. Which come
@@ -230,6 +234,7 @@ tracking each word in the vocabulary individually.
 
 
 \subsection{Content organization}
+
 \subsubsection{Books}
 All the processed data such as vocabulary, families, network, sample sentences
 are packed into a book instance. This also tracks the meta information such as
@@ -327,42 +332,42 @@ answer word to make all the distractors coherent.
 
 
 
-% \begin{figure}
-% \begin{tcbraster}[raster columns=1, enhanced, blankest]
-% \tcbincludegraphics{1}
-% \caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
-% 
-% \tcbincludegraphics{8}
-% \caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
-% 
-% \tcbincludegraphics{5}
-% \caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
-% 
-% 
-% \tcbincludegraphics{4}
-% \caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
-% 
-% \end{tcbraster}
-% \end{figure}
-% 
-% 
-% 
-% \begin{figure}
-% \begin{tcbraster}[raster columns=1, enhanced, blankest]
-% \tcbincludegraphics{7}
-% \caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
-% 
-% 
-% \tcbincludegraphics{6}
-% \caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
-% 
-% \tcbincludegraphics{3}
-% \caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
-% 
-% \tcbincludegraphics{2}
-% \caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
-% \end{tcbraster}
-% \end{figure}
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{1}
+\caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
+
+\tcbincludegraphics{8}
+\caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
+
+\tcbincludegraphics{5}
+\caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
+
+
+\tcbincludegraphics{4}
+\caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
+
+\end{tcbraster}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{7}
+\caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
+
+
+\tcbincludegraphics{6}
+\caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
+
+\tcbincludegraphics{3}
+\caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
+
+\tcbincludegraphics{2}
+\caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
+\end{tcbraster}
+\end{figure}
 
 
 
@@ -392,8 +397,6 @@ On the user interface mobile application can used to attract for learners. The n
 Integration of forget factor to the learner model as a function of number of days of inactivity.
 Extending as a tool to acquire the pre-requisites: Like acquiring commonly used proper nouns specific to a place before going to the place; Getting introduced to nouns and verbs specific to a novel or tv series.
 
-
-\section*{Acknowledgments}
 
 % include your own bib file like this:
 \bibliography{vocabby}
