@@ -57,7 +57,8 @@ class App extends Component {
       remaining_words: 0,
       scrambledForm: [],
       scrambledActivity: [],
-      selected_answer: ""
+      selected_answer: "",
+      activatedAnswer: "______"
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -239,7 +240,7 @@ class App extends Component {
         username: stateData.user,
         bookCode: stateData.bookCode,
       };
-      this.setState({ isLoading: true })
+      this.setState({ isLoading: true, activatedAnswer: "______" })
       this.setState({scrambledActivity: []})
       this.setState({scrambledForm: []})
       let config = { "Content-Type": "application/json" };
@@ -440,13 +441,16 @@ class App extends Component {
                         <div className="card-activity" style={{ textAlign: 'left', padding: 30, borderRadius: 5 }}>
                           <h2 style={{ marginBottom: 20 }}>Choose a word which satisfies all the blanks</h2>
                           {this.state.activity.sentences.map((value, index) => {
-                            return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {value}</h4>
+			    //let replacedValue = value.replace("______", '<u style= {{fontWeight: "bold", color:"yellow"}}>this.state.activatedAnswer</u>'))
+
+                            return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {
+value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}}>{this.state.activatedAnswer}</u> {value.split("______")[1]}</h4>
                           })}
 
                           <br />
                           <section style={{ maxWidth: '100%' }}>
                             {this.state.activity.options.map((value, index) => {
-                              return <button key={index} name="answer" onClick={() => { this.setState({ answer: index, selected_answer: value }) }}
+                              return <button key={index} name="answer" onClick={() => { this.setState({ answer: index, selected_answer: value, activatedAnswer: value }) }}
                                 style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } :
                                   { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
                               >

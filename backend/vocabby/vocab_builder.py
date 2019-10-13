@@ -157,7 +157,7 @@ class Vocab:
 
     def _collect_words(self):
         """Collects all the unique word and pos_tag pairs from the text."""
-        nlp = spacy.load("en_core_web_lg")
+        nlp = spacy.load("en_core_web_sm")
 
         # nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
