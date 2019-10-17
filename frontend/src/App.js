@@ -27,7 +27,7 @@ class App extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'Profile',
+      user: 'learner1',
       author: '',
       genre: 'Fiction',
       year: "2000",
