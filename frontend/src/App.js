@@ -20,6 +20,7 @@ const customStyles = {
     padding: 100
   }
 };
+const randomColor = ['#fffeed']
 
 
 class App extends Component {
@@ -301,33 +302,8 @@ class App extends Component {
     })
   }
 
-  render() {
-    const randomColor = ['#fffeed']
-    return (
-      <div>
-        <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
-          <header>
-            <section>
-              <a href="#" id="logo" target="_blank">Vocabby</a>
-              <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
-              <nav>
-                <ul>
-                  <li><a href="#logo" onClick={() => { this.setState({ index: true }) }}><i className="icon-home"></i>Home</a></li>
-                  <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
-                  <li><a href="#about"><i className="icon-user"></i>About</a></li>
-                  <li><a href="#gallery"><i className="icon-picture"></i>Papers</a></li>
-                  <li><a href="#level"><i className="icon-picture"></i>{this.state.user}</a>
-                    <ul className="dropdown">
-                      <li> <a href="#" onClick={this.openModal}>Select Level</a></li>
-                    </ul></li>
-                </ul>
-              </nav>
-
-            </section>
-          </header>
-
-          {
-            this.state.index === true ?
+   renderIndex() {
+     return (
               <div className="container">
                 <section id="content">
                   <form onSubmit={this.uploadText}>
@@ -358,59 +334,65 @@ class App extends Component {
                   </form>
                 </section>
               </div>
+      );
+   }
 
-              : this.state.stats === true ?
-                <div style={{ width: '80%', margin: '0px auto' }}>
-                  <h1>Word Statistics</h1>
-                  <div className="row">
-                    <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                        <h4>Total Words</h4>
-                        <h1>{this.state.statsResponse.totalWords}</h1>
-                      </div>
-                    </div>
-                    <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                        <h4>Total Words with frequency more than 10</h4>
-                        <h1>{this.state.statsResponse.totalAbove5}</h1>
-                      </div>
-                    </div>
-                    <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                        <h4>Total Words with frequency more than 5</h4>
-                        <h1>{this.state.statsResponse.totalAbove10}</h1>
-                      </div>
-                    </div>
-                    <div className="column">
-                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                        <h4>Total Families</h4>
-                        <h1>{this.state.statsResponse.totalFamilies}</h1>
-                      </div>
-                    </div>
-                  </div>
+  renderStats() {
+    return (
+            <div style={{ width: '80%', margin: '0px auto' }}>
+                              <h1>Word Statistics</h1>
+                              <div className="row">
+                                <div className="column">
+                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                                    <h4>Total Words</h4>
+                                    <h1>{this.state.statsResponse.totalWords}</h1>
+                                  </div>
+                                </div>
+                                <div className="column">
+                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                                    <h4>Total Words with frequency more than 10</h4>
+                                    <h1>{this.state.statsResponse.totalAbove5}</h1>
+                                  </div>
+                                </div>
+                                <div className="column">
+                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                                    <h4>Total Words with frequency more than 5</h4>
+                                    <h1>{this.state.statsResponse.totalAbove10}</h1>
+                                  </div>
+                                </div>
+                                <div className="column">
+                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
+                                    <h4>Total Families</h4>
+                                    <h1>{this.state.statsResponse.totalFamilies}</h1>
+                                  </div>
+                                </div>
+                              </div>
+            
+                              <div className="row">
+                                <h2 style={{ marginBottom: 30 }}>Most 20 Frequent words</h2>
+                                {this.state.statsResponse.mostFrequent.map((value, index) => {
+                                  return (
+                                    <div className="column" key={index}>
+                                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
+                                        <h3>{value[1]}</h3>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                              <form onSubmit={this.getWordList}>
+                                <div style={{ marginBottom: 20 }}>
+                                  <button type="submit" className="button pulse">
+                                    Start Learning
+                                    </button>
+                                </div>
+                              </form>
+                            </div>
+            
+    );}
 
-                  <div className="row">
-                    <h2 style={{ marginBottom: 30 }}>Most 20 Frequent words</h2>
-                    {this.state.statsResponse.mostFrequent.map((value, index) => {
-                      return (
-                        <div className="column" key={index}>
-                          <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
-                            <h3>{value[1]}</h3>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <form onSubmit={this.getWordList}>
-                    <div style={{ marginBottom: 20 }}>
-                      <button type="submit" className="button pulse">
-                        Start Learning
-                        </button>
-                    </div>
-                  </form>
-                </div>
-                :
-                this.state.words === true ?
+  renderWords() {
+    return (
                   <div style={{ width: '80%', margin: '0px auto' }}>
                     <h1>Word List so that you can go through:</h1>
                     <div className="row">
@@ -430,8 +412,31 @@ class App extends Component {
                       </div>
                     </form>
                   </div>
-                  :
-                  this.state.activityPage === true ?
+    );
+  }
+
+  renderBookShelf() {
+    return (
+                      <div style={{ width: '80%', margin: '0 auto' }}>
+                        <div className="row">
+                          {this.state.books.map((value, index) => {
+                            return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
+                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 200, textAlign: 'left' }}>
+                                <h3>Title: {value.title}</h3><br />
+                                <h4>Author: {value.author}</h4><br />
+                                <h4>Genre: {value.gener}</h4><br />
+                                <h4>Year: {value.year}</h4><br />
+                                <h4>Publisher: {value.publisher}</h4>
+                              </div>
+                            </div>
+                          })}
+                        </div>
+                      </div>
+    );
+  }
+
+  renderActivity() {
+    return (
                     <div style={{ width: '80%', margin: '0 auto' }}>
                       <div id="progressbar" >
                         <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
@@ -442,12 +447,9 @@ class App extends Component {
                           <h2 style={{ marginBottom: 20 }}>Choose a word which satisfies all the blanks</h2>
                           {this.state.activity.sentences.map((value, index) => {
 			    //let replacedValue = value.replace("______", '<u style= {{fontWeight: "bold", color:"yellow"}}>this.state.activatedAnswer</u>'))
-
-                            return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {
-value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}}>{this.state.activatedAnswer}</u> {value.split("______")[1]}</h4>
+                            return <h4 style={{ background: 'white', marginBottom: 20, borderRadius: 5, boxShadow: '0px 2px 4px 1px darkgrey', padding: 20, textTransform: "cap" }} key={index + Math.random()}> {value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}}>{this.state.activatedAnswer}</u> {value.split("______")[1]}</h4>
                           })}
-
-                          <br />
+                        <br />
                           <section style={{ maxWidth: '100%' }}>
                             {this.state.activity.options.map((value, index) => {
                               return <button key={index} name="answer" onClick={() => { this.setState({ answer: index, selected_answer: value, activatedAnswer: value }) }}
@@ -488,38 +490,35 @@ value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}
                           </div>
                         </div>
                       </form>
-                    </div> : this.state.bookshelf === true ?
-                      <div style={{ width: '80%', margin: '0 auto' }}>
-                        <div className="row">
-                          {this.state.books.map((value, index) => {
-                            return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
-                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 200, textAlign: 'left' }}>
-                                <h3>Title: {value.title}</h3><br />
-                                <h4>Author: {value.author}</h4><br />
-                                <h4>Genre: {value.gener}</h4><br />
-                                <h4>Year: {value.year}</h4><br />
-                                <h4>Publisher: {value.publisher}</h4>
-                              </div>
-                            </div>
-                          })}
-                        </div>
-                      </div>
-                      : <div>Feature Coming Soon</div>
-          }
-          {this.state.isLoading ?
-            <div className="overlay">
-              <div className="lds-roller">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            </div> : null
-          }
+                    </div> 
+    );
+  }
+
+  renderHeader() {
+    return (
+          <header>
+            <section>
+              <a href="#" id="logo" target="_blank">Vocabby</a>
+              <label htmlFor="toggle-1" className="toggle-menu"><ul><li></li> <li></li> <li></li></ul></label>
+              <nav>
+                <ul>
+                  <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
+                  <li><a href="#upload" onClick={() => { this.setState({ index: true }) }}><i className="icon-home"></i>Upload</a></li>
+                  <li><a href="#graph"><i className="icon-picture"></i>Papers</a></li>
+                  <li><a href="#user"><i className="icon-picture"></i>{this.state.user}</a>
+                    <ul className="dropdown">
+                      <li> <a href="#" onClick={this.openModal}>Select Level</a></li>
+                    </ul></li>
+                </ul>
+              </nav>
+
+            </section>
+          </header>
+    );
+  }
+
+  renderModal() {
+    return (
           <Modal
             isOpen={this.state.modalIsOpen}
             onAfterOpen={this.afterOpenModal}
@@ -540,8 +539,11 @@ value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}
             />
             <button onClick={this.closeModal} style={{ marginTop: 40, marginLeft: 167 }}>Save</button>
           </Modal>
-        </div>
-        {
+    );
+  }
+
+  renderFeedback() {
+    return (
           this.state.showMessage === true ?
             <div id="snackbar" style={{
               backgroundColor:
@@ -572,6 +574,40 @@ value.split("______")[0] }<u style= {{fontWeight: "bold", color:"lightseagreen"}
                 <button className="button pulse" style={{ float: 'right', background:'#0300dc' }} onClick={() => { this.next_activity() }}>Continue</button>
               </div>
             </div> : null
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
+      {this.renderHeader()}
+          {
+            this.state.index === true ? this.renderIndex()
+             : this.state.stats === true ? this.renderStats()
+              : this.state.words === true ? this.renderWords()
+                : this.state.activityPage === true ? this.renderActivity()
+                  : this.state.bookshelf === true ? this.renderBookShelf()
+                    : <div>Feature Coming Soon</div>
+          }
+          {this.state.isLoading ?
+            <div className="overlay">
+              <div className="lds-roller">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div> : null
+          }
+        {this.renderModal() }
+        </div>
+        {
+          this.renderFeedback()
         }
 
 
