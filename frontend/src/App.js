@@ -4,8 +4,6 @@ import FileBase64 from 'react-file-base64';
 import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 import Modal from 'react-modal';
-import { FaGrinAlt, FaLess } from "react-icons/fa";
-import { FaGrimace } from "react-icons/fa";
 import Highlight from 'react-highlighter';
 
 
@@ -569,7 +567,6 @@ class App extends Component {
               }
 
               <div style={{ bottom: 0 }}>
-                {this.state.errorColor === true ? <FaGrinAlt style={{ marginRight: 50 }} /> : <FaGrimace style={{ marginRight: 50 }} />}
                 {this.state.errorColor === true ? "Good Job!! Correct Answer" : 'Sorry your answer is wrong.'}
                 <button className="button pulse" style={{ float: 'right', background:'#0300dc' }} onClick={() => { this.next_activity() }}>Continue</button>
               </div>
