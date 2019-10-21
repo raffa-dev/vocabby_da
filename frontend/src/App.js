@@ -338,30 +338,29 @@ class App extends Component {
   renderStats() {
     return (
             <div style={{ width: '80%', margin: '0px auto' }}>
-                              <h1>Word Statistics</h1>
                               <div className="row">
                                 <div className="column">
-                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                                    <h4>Total Words</h4>
-                                    <h1>{this.state.statsResponse.totalWords}</h1>
+                                  <div className="card" style={{borderRadius: 30 }}>
+                                    <h4>Words</h4><br />
+                                    <h2>{this.state.statsResponse.totalWords}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                                    <h4>Total Words with frequency more than 10</h4>
-                                    <h1>{this.state.statsResponse.totalAbove5}</h1>
+                                  <div className="card" style={{borderRadius: 30 }}>
+                                    <h4>Words(freq. > 10)</h4><br />
+                                    <h2>{this.state.statsResponse.totalAbove5}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                                    <h4>Total Words with frequency more than 5</h4>
-                                    <h1>{this.state.statsResponse.totalAbove10}</h1>
+                                  <div className="card" style={{borderRadius: 30 }}>
+                                    <h4>Words(freq. > 5)</h4><br />
+                                    <h2>{this.state.statsResponse.totalAbove10}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 174, borderRadius: 30 }}>
-                                    <h4>Total Families</h4>
-                                    <h1>{this.state.statsResponse.totalFamilies}</h1>
+                                  <div className="card" style={{borderRadius: 30 }}>
+                                    <h4>Families</h4><br />
+                                    <h2>{this.state.statsResponse.totalFamilies}</h2>
                                   </div>
                                 </div>
                               </div>
@@ -371,8 +370,8 @@ class App extends Component {
                                 {this.state.statsResponse.mostFrequent.map((value, index) => {
                                   return (
                                     <div className="column" key={index}>
-                                      <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
-                                        <h3>{value[1]}</h3>
+                                      <div className="card" style={{borderRadius: 30}}>
+                                        <h4>{value[1]}</h4>
                                       </div>
                                     </div>
                                   )
@@ -396,7 +395,7 @@ class App extends Component {
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
                         return <div className="column" key={index}>
-                          <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)] }}>
+                          <div className="card" style={{ borderRadius: 20 }}>
                             <h3>{value}</h3>
                           </div>
                         </div>
@@ -419,12 +418,12 @@ class App extends Component {
                         <div className="row">
                           {this.state.books.map((value, index) => {
                             return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
-                              <div className="card" style={{ background: randomColor[Math.floor(Math.random() * randomColor.length)], height: 200, textAlign: 'left' }}>
-                                <h3>Title: {value.title}</h3><br />
-                                <h4>Author: {value.author}</h4><br />
-                                <h4>Genre: {value.gener}</h4><br />
-                                <h4>Year: {value.year}</h4><br />
-                                <h4>Publisher: {value.publisher}</h4>
+                              <div className="card" style={{ borderRadius: 20, height: 200, textAlign: 'left' }}>
+                                <h2 style={{textAlign: 'center'}}>{value.title}</h2><br />
+                                <h5>Author: {value.author}</h5><br />
+                                <h5>Genre: {value.gener}</h5><br />
+                                <h5>Year: {value.year}</h5><br />
+                                <h5>Publisher: {value.publisher}</h5>
                               </div>
                             </div>
                           })}
@@ -502,7 +501,7 @@ class App extends Component {
                 <ul>
                   <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
                   <li><a href="#upload" onClick={() => { this.setState({ index: true }) }}><i className="icon-home"></i>Upload</a></li>
-                  <li><a href="#graph"><i className="icon-picture"></i>Papers</a></li>
+                  <li><a href="#graph" onClick={this.openBookShelf}><i className="icon-picture"></i>Graph</a></li>
                   <li><a href="#user"><i className="icon-picture"></i>{this.state.user}</a>
                     <ul className="dropdown">
                       <li> <a href="#" onClick={this.openModal}>Select Level</a></li>
