@@ -5,7 +5,9 @@ import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
+import {Sigma, ForceAtlas2, RandomizeNodePositions, RelativeSize} from 'react-sigma';
 
+let myGraph = {nodes:[{id:"n1", label:"Alice"}, {id:"n2", label:"Rabbit"}], edges:[{id:"e1",source:"n1",target:"n2",label:"SEES"}]};
 
 const customStyles = {
   content: {
@@ -18,12 +20,11 @@ const customStyles = {
     padding: 100
   }
 };
-const randomColor = ['#fffeed']
 
 
 class App extends Component {
   constructor(props) {
-    super(props);
+     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       user: 'learner1',
@@ -57,7 +58,10 @@ class App extends Component {
       scrambledForm: [],
       scrambledActivity: [],
       selected_answer: "",
-      activatedAnswer: "______"
+      activatedAnswer: "______",
+      neighbourhood: {},
+			activeWordIndex: 1,
+			neighbourGraph: {}
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -151,7 +155,7 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false, progress: response.data.words.length })
+        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false, progress: response.data.words.length, neighbourhood: response.data.neighbours})
       })
   }
 
@@ -390,21 +394,28 @@ class App extends Component {
 
   renderWords() {
     return (
+
                   <div style={{ width: '80%', margin: '0px auto' }}>
-                    <h1>Word List so that you can go through:</h1>
+                    <h2>Session</h2>
+				<Sigma graph={this.state.neighbourhood[this.state.activeWordIndex]} settings={{drawEdges: true, clone: false}}>
+				<ForceAtlas2 worker barnesHutOptimize barnesHutTheta={0.6} iterationsPerRender={3} linLogMode timeout={3000}/>
+				<RelativeSize initialSize={15}/>
+				  <RandomizeNodePositions/>
+				</Sigma>
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
-                        return <div className="column" key={index}>
-                          <div className="card" style={{ borderRadius: 20 }}>
-                            <h3>{value}</h3>
-                          </div>
-                        </div>
-                      })}
+                              return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index, })}}
+                                style={this.state.activeWordIndex === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
+                                  { color: "black", marginRight: 20, textTransform: "uppercase", border: '1 px solid black', background: 'white', }}
+                              >
+                            <h2>{value}</h2>
+                              </button>
+                            })}
                     </div>
                     <form onSubmit={this.getActivity}>
                       <div style={{ marginBottom: 20 }}>
                         <button type="submit" className="button pulse">
-                          Start Session
+                          Start >>
                         </button>
                       </div>
                     </form>

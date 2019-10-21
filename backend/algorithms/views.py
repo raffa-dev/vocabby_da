@@ -48,7 +48,8 @@ class SessionStart(APIView):
         print (session.tokens.keys())
         data = {'username': username,
                 'bookCode': book_code,
-                'words': list(session.tokens.keys())}
+                'words': list(session.tokens.keys()),
+                'neighbours': session.candidate_neighbours()}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 
