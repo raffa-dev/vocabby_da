@@ -75,7 +75,7 @@ class Tutor(object):
             candidates.append((node, extrensic_score * intrensic_score))
 
         # n_choice = np.random.choice(len(families), 20)
-        n_choice = sorted(candidates, key=lambda x: -x[1])[:20]
+        n_choice = sorted(candidates, key=lambda x: -x[1])[:10]
         return [self.book.families[i[0]] for i in n_choice]
 
     def get_session(self):
@@ -168,15 +168,18 @@ class Session(object):
         neighbourhood = []
         for token in self.tokens:
             edges = []
-            nodes = [{'id': 0, 'label': token}]
-            for idx, neighbour in enumerate(self.network[token]):
-                if self.network[token][neighbour]['weight'] < 0.6:
+            nodes = [{'id': 0, 'name': token,
+                      "score": self.network.node[token]['mastery']}]
+
+            count = 0
+            for neighbour in self.network[token]:
+                if self.network[token][neighbour]['weight'] < 0.7:
                     continue
-                nodes.append({'id': idx+1, 'label': neighbour})
-                edges.append({'id': 'e' + str(idx), 'source': 0, 'target': idx+1})
-            neighbourhood.append({'nodes': nodes, 'edges': edges})
-            print(nodes)
-            print(edges)
+                count += 1
+                nodes.append({"id": count, "name": neighbour, "score": self.network.node[token]['mastery']})
+                edges.append({"source": 0, "target": count})
+            neighbourhood.append({"nodes": nodes, "links": edges})
+        print(neighbourhood[1])
 
         return neighbourhood
 

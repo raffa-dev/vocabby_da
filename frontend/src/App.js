@@ -5,9 +5,8 @@ import Slider from 'react-rangeslider'
 import 'react-rangeslider/lib/index.css'
 import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
-import {Sigma, ForceAtlas2, RandomizeNodePositions, RelativeSize} from 'react-sigma';
+import Graph from '../src/Graph.js';
 
-let myGraph = {nodes:[{id:"n1", label:"Alice"}, {id:"n2", label:"Rabbit"}], edges:[{id:"e1",source:"n1",target:"n2",label:"SEES"}]};
 
 const customStyles = {
   content: {
@@ -59,9 +58,23 @@ class App extends Component {
       scrambledActivity: [],
       selected_answer: "",
       activatedAnswer: "______",
-      neighbourhood: {},
+      neighbourhood: [], // 1: 
+			activeGraph: {
+			"nodes":
+       [
+         {"name": "fruit", "id": 0, "score": 0.99},
+         {"name": "apple", "id": 1, "score": 0.2},
+         {"name": "orange", "id": 2, "score": 0.5},
+         {"name": "banana", "id": 3, "score": 0.5}
+       ],
+     "links": 
+       [
+         {"source": 1, "target": 0},
+         {"source": 1, "target": 3},
+         {"source": 2, "target": 0}
+       ]
+			},
 			activeWordIndex: 1,
-			neighbourGraph: {}
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -397,11 +410,11 @@ class App extends Component {
 
                   <div style={{ width: '80%', margin: '0px auto' }}>
                     <h2>Session</h2>
-				<Sigma graph={this.state.neighbourhood[this.state.activeWordIndex]} settings={{drawEdges: true, clone: false}}>
-				<ForceAtlas2 worker barnesHutOptimize barnesHutTheta={0.6} iterationsPerRender={3} linLogMode timeout={3000}/>
-				<RelativeSize initialSize={15}/>
-				  <RandomizeNodePositions/>
-				</Sigma>
+					<fieldset className="container">
+            <div className="graphContainer" key={new Date().getTime()}>
+                <Graph data={this.state.neighbourhood[this.state.activeWordIndex]} />
+            </div>
+					</fieldset>
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
                               return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index, })}}
@@ -429,8 +442,8 @@ class App extends Component {
                         <div className="row">
                           {this.state.books.map((value, index) => {
                             return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
-                              <div className="card" style={{ borderRadius: 20, height: 200, textAlign: 'left' }}>
-                                <h2 style={{textAlign: 'center'}}>{value.title}</h2><br />
+                              <div className="card" style={{ borderRadius: 20, textAlign: 'left' }}>
+                                <h3 style={{textAlign: 'center'}}>{value.title}</h3><br />
                                 <h5>Author: {value.author}</h5><br />
                                 <h5>Genre: {value.gener}</h5><br />
                                 <h5>Year: {value.year}</h5><br />
