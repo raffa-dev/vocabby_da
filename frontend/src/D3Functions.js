@@ -23,7 +23,7 @@ function color(d) {
 
 export const enterNode = (selection) => {
     selection.select('circle')
-        .attr("r", 10)
+        .attr("r", 5)
         .style("fill", function(d) { return color(d.score) })
 
     selection.select('text')
@@ -38,7 +38,7 @@ export const updateNode = (selection) => {
 };
 
 export const enterLink = (selection) => {
-    selection.attr("stroke-width", 1.5)
+    selection.attr("stroke-width", 0.5)
     .style("stroke","blue")
         .style("opacity",".9")
 };

@@ -74,7 +74,7 @@ class App extends Component {
          {"source": 2, "target": 0}
        ]
 			},
-			activeWordIndex: 1,
+			activeWordIndex: 0,
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -411,14 +411,14 @@ class App extends Component {
                   <div style={{ width: '80%', margin: '0px auto' }}>
                     <h2>Session</h2>
 					<fieldset className="container">
-            <div className="graphContainer" key={new Date().getTime()}>
+            <div className="graphContainer" >
                 <Graph data={this.state.neighbourhood[this.state.activeWordIndex]} />
             </div>
 					</fieldset>
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
-                              return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index, })}}
-                                style={this.state.activeWordIndex === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
+                              return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index+1, })}}
+                                style={this.state.activeWordIndex === index+1 ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
                                   { color: "black", marginRight: 20, textTransform: "uppercase", border: '1 px solid black', background: 'white', }}
                               >
                             <h2>{value}</h2>
