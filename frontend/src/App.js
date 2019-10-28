@@ -357,25 +357,25 @@ class App extends Component {
             <div style={{ width: '80%', margin: '0px auto' }}>
                               <div className="row">
                                 <div className="column">
-                                  <div className="card" style={{borderRadius: 30 }}>
+                                  <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Words</h4><br />
                                     <h2>{this.state.statsResponse.totalWords}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{borderRadius: 30 }}>
+                                  <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Words(freq. > 10)</h4><br />
                                     <h2>{this.state.statsResponse.totalAbove5}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{borderRadius: 30 }}>
+                                  <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Words(freq. > 5)</h4><br />
                                     <h2>{this.state.statsResponse.totalAbove10}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
-                                  <div className="card" style={{borderRadius: 30 }}>
+                                  <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Families</h4><br />
                                     <h2>{this.state.statsResponse.totalFamilies}</h2>
                                   </div>
@@ -383,11 +383,11 @@ class App extends Component {
                               </div>
             
                               <div className="row">
-                                <h2 style={{ marginBottom: 30 }}>Most 20 Frequent words</h2>
+                                <h2 style={{ marginBottom: 30 }}>Frequent words</h2>
                                 {this.state.statsResponse.mostFrequent.map((value, index) => {
                                   return (
                                     <div className="column" key={index}>
-                                      <div className="card" style={{borderRadius: 30}}>
+                                      <div className="card" style={{borderRadius: 10}}>
                                         <h4>{value[1]}</h4>
                                       </div>
                                     </div>
@@ -418,8 +418,8 @@ class App extends Component {
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
                               return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index+1, })}}
-                                style={this.state.activeWordIndex === index+1 ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
-                                  { color: "black", marginRight: 20, textTransform: "uppercase", border: '1 px solid black', background: 'white', }}
+                                style={this.state.activeWordIndex === index+1 ? { color: 'white', background: 'yellow', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
+                                  { color: "black", marginRight: 20, textTransform: "uppercase", border: '1 px solid black', background: 'white'}}
                               >
                             <h2>{value}</h2>
                               </button>

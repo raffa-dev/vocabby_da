@@ -176,9 +176,9 @@ form:after {
 #username { background-position: 10px 10px !important }
 #password { background-position: 10px -53px !important }
 #content form input[type="submit"] {
-    background: rgb(254,231,154);
+    background: #3333cc;
     background: -moz-linear-gradient(top,  rgba(254,231,154,1) 0%, rgba(254,193,81,1) 100%);
-    background: -webkit-linear-gradient(top,  rgba(254,231,154,1) 0%,rgba(254,193,81,1) 100%);
+    background: -webkit-linear-gradient(top,  #9d9de600, #050554FF);
     background: -o-linear-gradient(top,  rgba(254,231,154,1) 0%,rgba(254,193,81,1) 100%);
     background: -ms-linear-gradient(top,  rgba(254,231,154,1) 0%,rgba(254,193,81,1) 100%);
     background: linear-gradient(top,  rgba(254,231,154,1) 0%,rgba(254,193,81,1) 100%);
@@ -193,8 +193,8 @@ form:after {
     -ms-box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
     -o-box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
     box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
-    border: 1px solid #D69E31;
-    color: #85592e;
+    border: 1px solid #141452;
+    color: black;
     cursor: pointer;
     float: left;
     font: bold 15px Helvetica, Arial, sans-serif;
@@ -264,14 +264,14 @@ section{width:100%; max-width:1200px; margin:0px auto; display:table; position:r
 h1{margin:0px auto; display:table; font-size:26px; padding:40px 0px; color:#002e5b; text-align:center;}
 h1 span{font-weight:500;}
 
-header{width:100%; display:table; background-color:#fde428; margin-bottom:50px;}
-#logo{float:left; font-size:24px; text-transform:uppercase; color:#002e5b; font-weight:600; padding:20px 0px;}
+header{width:100%; display:table; background-color:#3333cc; margin-bottom:50px;}
+#logo{float:left; font-size:24px; text-transform:uppercase; color:white; font-weight:600; padding:20px 0px;}
 nav{width:auto; float:right;}
 nav ul{display:table; float:right;}
 nav ul li{float:left;}
 nav ul li:last-child{padding-right:0px;}
-nav ul li a{color:#002e5b; font-size:18px; padding: 25px 20px; display:inline-block; transition: all 0.5s ease 0s;}
-nav ul li a:hover{background-color:#002e5b; color:#fde428; transition: all 0.5s ease 0s;}
+nav ul li a{color:white; font-size:18px; padding: 25px 20px; display:inline-block; transition: all 0.5s ease 0s;}
+nav ul li a:hover{background-color:white; color:#3333cc; transition: all 0.5s ease 0s;}
 nav ul li a:hover i{color:#fde428; transition: all 0.5s ease 0s;}
 nav ul li a i{padding-right:10px; color:#002e5b; transition: all 0.5s ease 0s;}
 
@@ -372,7 +372,7 @@ h1 {padding: 20px 0px;}
     padding: 16px;
     text-align: center;
     background-color: #f1f1f1;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   
   }
 

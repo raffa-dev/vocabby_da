@@ -9,7 +9,7 @@ var green_zone = d3.scaleLinear().domain([1, 100])
       .interpolate(d3.interpolateHcl)
       .range([d3.rgb("#9cff77"), d3.rgb('#32bb00')]);
 
-function color(d) {
+function color(d) {  
 	var margin = (d - 0.5);
 	if (margin === 0) {
 		return "#b7b7b7"
@@ -18,7 +18,7 @@ function color(d) {
 		return green_zone(Math.round(margin/0.005))
 	} else {
 		return red_zone(Math.round(-margin/0.005));
-	}
+	} 
 }
 
 export const enterNode = (selection) => {
@@ -38,9 +38,9 @@ export const updateNode = (selection) => {
 };
 
 export const enterLink = (selection) => {
-    selection.attr("stroke-width", 0.5)
-    .style("stroke","blue")
-        .style("opacity",".9")
+    selection.attr("stroke-width", 2)
+    .style("stroke","grey")
+        .style("opacity", function(x) {return x.weight})
 };
 
 export const updateLink = (selection) => {
