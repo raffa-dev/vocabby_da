@@ -11,6 +11,8 @@ import networkx as nx
 from tqdm import tqdm
 from numpy.linalg import norm
 from spacy.lang.en .stop_words import STOP_WORDS
+from word_forms.word_forms import get_word_forms
+from itertools import chain
 
 
 from vocabby.utils import load_freq_lookup
@@ -74,7 +76,7 @@ class Sentence(object):
         **previous_sentence** is the pointer to previous sentence in the book
         of type :class:`Sentence` class.
         """
-        self.text = self._clean_sentence(sentence_text.text)
+        self.text = Sentence.clean_sentence(sentence_text.text)
         self.next_sent = None
 
         # TODO: Fix sentence repetition
@@ -82,15 +84,12 @@ class Sentence(object):
             self.prev_sent = previous_sentence
             self.prev_sent.next_sent = self
 
-    def _clean_sentence(self, text):
+    def clean_sentence(text):
         clean = text.strip().capitalize()
 
         import re
         pattern = re.compile(r'[\r\n]')
         clean = pattern.sub('', clean)
-        if text != clean:
-            print('Input: %s' % text)
-            print('Output: %s' % clean)
         return clean
 
 
@@ -103,7 +102,7 @@ class Word(object):
         """
         self.text = word.text
         self.pos = word.tag_
-        self.lemma = word.lemma_
+        self.lemma = self._get_lemma(word)
         self.vector = word.vector
         self.sentences = []
 
@@ -124,6 +123,14 @@ class Word(object):
         # TODO: Frequency of the unknown word could be realized as mean of the 
         # distribution instead of a simple mean of the range
         return 2.5
+
+    def _get_lemma(self, word):
+        word_forms = get_word_forms(word.text).values()
+        flat_list_of_forms = list(set(chain.from_iterable(word_forms)))
+        if len(flat_list_of_forms) > 2:
+            return sorted(flat_list_of_forms, key=len)[0]
+        else:
+            return word.lemma_
 
 
 class Vocab:
@@ -165,12 +172,13 @@ class Vocab:
         words = {}
         STOP_WORDS.add('_')
         for sent in tqdm(text_obj.sents):
+            # sent = nlp(Sentence.clean_sentence(sent.text))
             curr_sent = Sentence(sent, prev_sent)
-            for token in tqdm(sent):
+            for token in sent:
                 if token.text in STOP_WORDS or\
                         token.pos_ in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']:
                     continue
-                key = token.text + ' ; ' + token.tag_
+                key = token.text.strip() + ' ; ' + token.tag_
                 if key not in words:
                     words[key] = Word(token)
                 words[key].include_sentence(curr_sent)
@@ -208,7 +216,7 @@ class Vocab:
 
         # Create an adjacency list
         for i, f1 in tqdm(enumerate(families), total=len(families)):
-            for j, f2 in tqdm(enumerate(families[i:]), total=len(families)-i):
+            for j, f2 in enumerate(families[i:]):
                 j = i + j
                 if f1 == f2:
                     continue

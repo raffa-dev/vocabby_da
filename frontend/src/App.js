@@ -364,13 +364,13 @@ class App extends Component {
                                 </div>
                                 <div className="column">
                                   <div className="card" style={{borderRadius: 10 }}>
-                                    <h4>Words(freq. > 10)</h4><br />
+                                    <h4>Words(freq. > 5)</h4><br />
                                     <h2>{this.state.statsResponse.totalAbove5}</h2>
                                   </div>
                                 </div>
                                 <div className="column">
                                   <div className="card" style={{borderRadius: 10 }}>
-                                    <h4>Words(freq. > 5)</h4><br />
+                                    <h4>Words(freq. > 10)</h4><br />
                                     <h2>{this.state.statsResponse.totalAbove10}</h2>
                                   </div>
                                 </div>
