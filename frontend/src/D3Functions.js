@@ -1,5 +1,9 @@
 import * as d3 from 'd3';
 
+
+export var width = 1080;
+export var height = 480;
+
 // const color = d3.scaleOrdinal(d3.schemeCategory10);
 var red_zone = d3.scaleLinear().domain([1, 100])
       .interpolate(d3.interpolateHcl)
@@ -20,6 +24,7 @@ function color(d) {
 		return red_zone(Math.round(-margin/0.005));
 	} 
 }
+
 
 export const enterNode = (selection) => {
     selection.select('circle')

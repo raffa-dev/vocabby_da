@@ -390,6 +390,10 @@ h1 {padding: 20px 0px;}
   }
 
 
+svg {
+	overflow: scroll !important;
+	}
+
 button { 
     background: rgb(254,193,81);
     padding: 15px;

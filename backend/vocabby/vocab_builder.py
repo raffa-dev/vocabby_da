@@ -127,7 +127,7 @@ class Word(object):
     def _get_lemma(self, word):
         word_forms = get_word_forms(word.text).values()
         flat_list_of_forms = list(set(chain.from_iterable(word_forms)))
-        if len(flat_list_of_forms) > 2:
+        if len(flat_list_of_forms) > 3:
             return sorted(flat_list_of_forms, key=len)[0]
         else:
             return word.lemma_
