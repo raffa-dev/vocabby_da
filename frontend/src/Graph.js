@@ -15,20 +15,10 @@ export class Graph extends React.Component {
   constructor(props) {
   	super(props);
 		this.state = {
-			viewBox: "100, 100, 230, 200"
+			viewBox: "100, 100, 3030, 3000"
 		}
-		this.click = this.click.bind(this)
 	}
 
-	click (selection) {
-		var x, y, dx, dy;
-		x = selection.x ;
-		y = selection.y ;
-		console.log(x);
-		console.log(y);
-    console.log(x.toString() + ',' +  y.toString() + ', 200, 200');
-		this.setState({viewBox: x.toString() + ',' +  y.toString() + ', 100, 100'});
-	}
   componentDidMount() {
 
   this.d3Graph = d3.select(ReactDOM.findDOMNode(this));
@@ -37,18 +27,13 @@ export class Graph extends React.Component {
   var force = d3.forceSimulation(this.props.data.nodes)
     .force("charge", d3.forceManyBody().strength(-50))
     .force("link", d3.forceLink(this.props.data.links).distance(90))
-    .force("center", d3.forceCenter().x(width / 2).y(height / 2));
-    //.force("collide", d3.forceCollide([5]).iterations([5]))
-
-	var zoom = d3.zoom()
-	    .scaleExtent([1, 8])
-	    .on("zoom", zoomed);
+    .force("center", d3.forceCenter().x(width / 2).y(height / 2))
+    .force("collide", d3.forceCollide([5]).iterations([5]));
 
   function dragStarted(d) {
       if (!d3.event.active) force.alphaTarget(0.3).restart()
       d.fx = d.x
       d.fy = d.y
-
   }
 
   function dragging(d) {
@@ -62,22 +47,17 @@ export class Graph extends React.Component {
       d.fy = null
   }
 
-	function zoomed() {
-  console.log(d3.event)
-  d3.select(this).style("stroke-width", 1.5 / d3.event.scale + "px");
-  d3.select(this).attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-	}   
-
  function mouseover(selection) {
     d3.select(this).select("circle").transition()
         .duration(250)
-        .attr("r", 10);
+        .attr("r", 30)
+        .style("background-color", 'orange');
     d3.select(this).select("text").transition()
     		.duration(250)
-        .attr("x", 10)
+        .attr("x", 30)
         .style("stroke-width", ".5px")
         .style("fill", "#E34A33")
-        .style("font-size", "17.5px");
+        .style("font-size", "64px");
 } 
 
  function mouseout() {
@@ -92,67 +72,44 @@ export class Graph extends React.Component {
         .style("font-size", '15px');
 	}
 
-//	function reset() {
-//	  active.classed("active", false);
-//	  active = d3.select(null);
-//	
-//	  svg.transition()
-//	      .duration(750)
-//	      .call(zoom.translate([0, 0]).scale(1).event);
-//	}
-//
-//	function clicked(d){
-//	  if (active.node() === this) return reset();
-//	  active.classed("active", false);
-//	  active = d3.select(this).classed("active", true);
-//	
-//	  var bbox = active.node().getBBox(),
-//	      bounds = [[bbox.x, bbox.y],[bbox.x + bbox.width, bbox.y + bbox.height]]; //<-- the bounds from getBBox
-//	
-//	  var dx = bounds[1][0] - bounds[0][0],
-//	      dy = bounds[1][1] - bounds[0][1],
-//	      x = (bounds[0][0] + bounds[1][0]) / 2,
-//	      y = (bounds[0][1] + bounds[1][1]) / 2,
-//	      scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / width, dy / height))),
-//	      translate = [width / 2 - scale * x, height / 2 - scale * y];
-//	
-//	  svg.transition()
-//	      .duration(750)
-//	      .call(zoom.translate(translate).scale(scale).event);
-//	} 
+
+function zoomed() {
+    d3.select('g.canvas').attr("transform", d3.event.transform);
+}
+
+var zoom = d3.zoom()
+    .scaleExtent([1 / 2, 10])
+    .on("zoom", zoomed);
+
+d3.select('g.canvas').call(zoom);
+
+  var centered;
 
 	function clicked(d) {
-
-    if (active.node() === this){
-      active.classed("active", false);
-      return reset();
-    }
-    
-    active = d3.select(this).classed("active", true);
-
-    svg.transition()
-      .duration(750)
-      .call(zoom.transform,
-        d3.zoomIdentity
-        .translate(width / 2, height / 2)
-        .scale(8)
-        .translate(-(+active.attr('cx')), -(+active.attr('cy')))
-      );
-  }
-
-  function reset() {
-    svg.transition()
-      .duration(750)
-      .call(zoom.transform,
-        d3.zoomIdentity
-        .translate(0, 0)
-        .scale(1)
-      );
-  }
-
-//  function zoomed() {
-//    g.attr("transform", d3.event.transform);
-//  }
+	  var x, y, k;
+	
+	  if (d && centered !== d) {
+	    // var centroid = node.centroid(d);
+			console.log(d.x)
+	    x = d.x ; // centroid[0];
+	    y = d.y ; // centroid[1];
+	    k = 6;
+	    centered = d;
+	  } else {
+	    x = width / 2;
+	    y = height / 2;
+	    k = 1;
+	    centered = null;
+	  }
+	
+	  d3.selectAll('g.canvas').selectAll("g.node")
+	      .classed("circleActive", centered && function(d) { return d === centered; });
+	
+		d3.selectAll('g.canvas').transition()
+	      .duration(750)
+	      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
+	      .style("stroke-width", 1.5 / k + "px");
+	}
 
   const node = d3.selectAll('g.node')
     .on("mouseover", mouseover)
@@ -162,12 +119,7 @@ export class Graph extends React.Component {
     .call(d3.drag()
               .on("start", dragStarted)
               .on("drag", dragging)
-              .on("end", dragEnded)
-         );
-
-	const svg = d3.select(".graph");
-//		.call(zoom)
-//		.call(zoom.event);
+              .on("end", dragEnded));
 
     force.on('tick', () => {
         this.d3Graph.call(updateGraph)
@@ -188,11 +140,9 @@ export class Graph extends React.Component {
                 <Link key={link.target+i}	data={link} />);
         });
         return (
-            <svg className="graph" width={width} height={height} viewBox={this.viewBox} >
-                <g>
+            <svg className="graph" width={width} height={height} viewBox="-1500, -1500, 3000, 3000" >
+                <g className="canvas">
                     {links}
-                </g>
-                <g>
                     {nodes}
                 </g>
             </svg>

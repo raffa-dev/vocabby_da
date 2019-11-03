@@ -46,6 +46,19 @@ form:after {
     clear: both;
     visibility: hidden;
 }
+
+.node {
+	background: blue;
+}
+
+.node :active {
+	background: yellow;
+}
+
+active {
+	background: yellow;
+}
+
 .container { margin: 25px auto; position: relative; width: 900px; }
 #content {
     background: #f9f9f9;
