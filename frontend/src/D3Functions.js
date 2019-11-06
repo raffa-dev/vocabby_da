@@ -25,11 +25,20 @@ function color(d) {
 	} 
 }
 
+function child(d){
+  if (d.child === true) {
+    return "orange"
+  } else {
+    return "teal"
+  }
+}
 
 export const enterNode = (selection) => {
     selection.select('circle')
         .attr("r", 5)
         .style("fill", function(d) { return color(d.score) })
+        .style("stroke", function(d) { return child(d)})
+        .style("stroke-width", 3)
 
     selection.select('text')
         .attr("dy", "0.35em")
