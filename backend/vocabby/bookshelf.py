@@ -38,10 +38,59 @@ class Book:
             book = pickle.load(book_file)
         return book
 
+    @staticmethod
+    def get_graph_for_viz(book_code):
+        """Loads the processed book from shelf."""
+
+        book = Book.load(book_code)
+
+        # Building the entire graph for visualization
+        node_list = {name: idx for idx, name in enumerate(book.network.nodes)}
+        sorted_node_list = sorted(node_list.items(), key=lambda x: x[1])
+        print(sorted_node_list[:5])
+        nodes = [{'id': node_list[token],
+                  'name': token,
+                  'score': book.network.node[token]['mastery'],
+                  'child': False}
+                 for token, _ in sorted_node_list]
+        print('Node list:', nodes[:5])
+        edges = []
+        for source, target, attrb in book.network.edges.data():
+            if attrb['weight'] < 0.7:
+                continue
+            edges.append({"source": node_list[source],
+                          "target": node_list[target],
+                          "weight": attrb['weight']})
+
+        children = []
+        families = {}
+        for parent in nodes:
+            families[parent['id']] = set()
+            family = book.families.get(parent['name'], {})
+            if not family:
+                print("No family for ", parent['name'])
+                print(parent)
+                break
+            for child in family.members:
+                child_pos = len(nodes) + len(children)
+                children.append({'id': child_pos,
+                                 'name': child.text,
+                                 'score': parent['score'],
+                                 'child': True})
+                edges.append({"source": parent['id'],
+                              "target": child_pos,
+                              "weight": 1})
+                families[parent['id']].add(child_pos)
+
+        neighbourhood = {"nodes": nodes + children, "links": edges, "families": families}
+        return neighbourhood
+
     def save(self):
         """Save the book for future use."""
         with open('data/books/' + self.code + '.p', 'wb') as book_file:
             pickle.dump(self, book_file)
+
+
 
 
 class Bookshelf:

@@ -58,7 +58,7 @@ class App extends Component {
       scrambledActivity: [],
       selected_answer: "",
       activatedAnswer: "______",
-      neighbourhood: [], // 1: 
+      neighbourhood: {}, // 1: 
 			activeGraph: {
 			"nodes":
        [
@@ -412,7 +412,7 @@ class App extends Component {
                     <h2>Session</h2>
 					<fieldset className="container">
             <div className="graphContainer" >
-                <Graph data={this.state.neighbourhood[this.state.activeWordIndex]} />
+                <Graph data={this.state.neighbourhood} />
             </div>
 					</fieldset>
                     <div className="row">

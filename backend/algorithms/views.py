@@ -49,7 +49,7 @@ class SessionStart(APIView):
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys()),
-                'neighbours': session.candidate_neighbours()}
+                'neighbours': Book.get_graph_for_viz(book_code)}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 

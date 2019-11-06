@@ -81,7 +81,7 @@ var zoom = d3.zoom()
     .scaleExtent([1 / 2, 10])
     .on("zoom", zoomed);
 
-d3.select('g.canvas').call(zoom);
+d3.select('svg.graph').call(zoom);
 
   var centered;
 

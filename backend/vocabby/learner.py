@@ -164,43 +164,6 @@ class Session(object):
                 return word
         return np.random.choice(family.members)
 
-    def candidate_neighbours(self):
-        # Building the entire graph for visualization
-        node_list = {name: idx for idx, name in enumerate(self.network.nodes)}
-        sorted_node_list = sorted(node_list.items(), key=lambda x: x[1])
-        print(sorted_node_list)
-        nodes = [{'id': node_list[token],
-                  'name': token,
-                  'score': self.network.node[token]['mastery']}
-                 for token, _ in sorted_node_list]
-
-        edges = []
-        for source, target, attrb in self.network.edges.data():
-            if attrb['weight'] < 0.7:
-                continue
-            edges.append({"source": node_list[source],
-                          "target": node_list[target],
-                          "weight": attrb['weight']})
-        neighbourhood = [{"nodes": nodes, "links": edges}]
-
-        # Build local graph for visualization
-        for token in self.tokens:
-            edges = []
-            nodes = [{'id': node_list[token], 'name': token,
-                      "score": self.network.node[token]['mastery']}]
-            count = 0
-            for neighbour in self.network[token]:
-                if self.network[token][neighbour]['weight'] < 0.7:
-                    continue
-                count += 1
-                nodes.append({"id": count, "name": neighbour,
-                              "score": self.network.node[token]['mastery']})
-                edges.append({"source": 0, "target": count})
-            neighbourhood.append({"nodes": nodes, "links": edges})
-        print(neighbourhood[1])
-
-        return neighbourhood
-
     def _activity_selector(self, word):
         # TODO: Improve activity selection based on student progress
         if len(word) >= 6:
