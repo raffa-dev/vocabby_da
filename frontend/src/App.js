@@ -34,12 +34,8 @@ class App extends Component {
       file: [],
       bookname: '',
       modalIsOpen: false,
-      index: true,
-      stats: false,
       statsResponse: {},
-      words: false,
       wordList: [],
-      activityPage: false,
       activity: {},
       answer: "",
       username: "",
@@ -51,7 +47,6 @@ class App extends Component {
       showMessage: false,
       feedback: '',
       errorColor: true,
-      bookshelf: false,
       books: [],
       remaining_words: 0,
       scrambledForm: [],
@@ -59,6 +54,7 @@ class App extends Component {
       selected_answer: "",
       activatedAnswer: "______",
       neighbourhood: {}, // 1: 
+      activePage: "index",
 			activeGraph: {
 			"nodes":
        [
@@ -79,6 +75,11 @@ class App extends Component {
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.pages = {"words": this.renderWords.bind(this),
+                  "stats": this.renderStats.bind(this),
+                  "index": this.renderIndex.bind(this),
+                  "activityPage": this.renderActivity.bind(this),
+                  "bookshelf": this.renderBookShelf.bind(this)};
   }
 
   openModal = event => {
@@ -145,11 +146,11 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/posttext', user, config)
       .then(response => {
-        this.setState({
-          index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
-          bookCode: response.data.bookCode, isLoading: false,
-          bookshelf: false
-        })
+        this.setState({activePage: "stats",
+                       statsResponse: response.data.stats,
+                       username: response.data.username,
+                       bookCode: response.data.bookCode,
+                       isLoading: false})
       })
   }
 
@@ -168,7 +169,11 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: true, activityPage: false, wordList: response.data.words, isLoading: false, bookshelf: false, progress: response.data.words.length, neighbourhood: response.data.neighbours})
+        this.setState({activePage:"words",
+                       wordList: response.data.words,
+                       isLoading: false,
+                       progress: response.data.words.length,
+                       neighbourhood: response.data.neighbours})
       })
   }
 
@@ -195,7 +200,9 @@ class App extends Component {
           this.setState({scrambledActivity: total_word})
           }
         
-        this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
+        this.setState({activePage: "activityPage",
+                       activity: response.data.activity,
+                       isLoading: false})
       })
   }
 
@@ -210,7 +217,7 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://localhost:8000/api/v1/getbooks', users, config)
       .then(response => {
-        this.setState({ index: false, stats: false, words: false, activityPage: false, isLoading: false, bookshelf: true, books: response.data })
+        this.setState({isLoading: false, activePage: "bookshelf", books: response.data })
       })
   }
 
@@ -271,7 +278,9 @@ class App extends Component {
           }
           this.setState({scrambledActivity: total_word})
           }
-          this.setState({ index: false, stats: false, words: false, activityPage: true, activity: response.data.activity, isLoading: false, bookshelf: false })
+          this.setState({activePage: "activityPage",
+                         activity: response.data.activity,
+                         isLoading: false})
         })
     }
     else {
@@ -295,9 +304,11 @@ class App extends Component {
     axios.post('http://localhost:8000/api/v1/posttext', user, config)
       .then(response => {
         this.setState({
-          index: false, stats: true, words: false, activityPage: false, statsResponse: response.data.stats, username: response.data.username,
-          bookCode: response.data.bookCode, isLoading: false,
-          bookshelf: false
+          activePage: "stats",
+          statsResponse: response.data.stats,
+          username: response.data.username,
+          bookCode: response.data.bookCode,
+          isLoading: false
         })
       })
   }
@@ -407,10 +418,9 @@ class App extends Component {
 
   renderWords() {
     return (
-
-                  <div style={{ width: '80%', margin: '0px auto' }}>
-                    <h2>Session</h2>
-					<fieldset className="container">
+              <div style={{ width: '80%', margin: '0px auto' }}>
+              <h2>Session</h2>
+					    <fieldset className="container">
             <div className="graphContainer" >
                 <Graph data={this.state.neighbourhood} />
             </div>
@@ -602,13 +612,12 @@ class App extends Component {
       <div>
         <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
       {this.renderHeader()}
-          {
-            this.state.index === true ? this.renderIndex()
-             : this.state.stats === true ? this.renderStats()
-              : this.state.words === true ? this.renderWords()
-                : this.state.activityPage === true ? this.renderActivity()
-                  : this.state.bookshelf === true ? this.renderBookShelf()
-                    : <div>Feature Coming Soon</div>
+          {this.pages[this.state.activePage]()
+           //  : this.state.stats === true ? this.renderStats()
+           //   : this.state.words === true ? 
+           //     : this.state.activityPage === true ? this.renderActivity()
+           //       : this.state.bookshelf === true ? this.renderBookShelf()
+           //         : <div>Feature Coming Soon</div>
           }
           {this.state.isLoading ?
             <div className="overlay">
