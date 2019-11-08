@@ -6,6 +6,7 @@ Methods for collecting and structuring vocabulary
 import logging
 
 import spacy
+import itertools
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
@@ -13,6 +14,7 @@ from numpy.linalg import norm
 from spacy.lang.en .stop_words import STOP_WORDS
 from word_forms.word_forms import get_word_forms
 from itertools import chain
+from collections import defaultdict
 
 
 from vocabby.utils import load_freq_lookup
@@ -58,11 +60,6 @@ class Family(object):
         numerator = np.dot(self.vector, neighbor.vector)
         denominator = norm(self.vector) * norm(neighbor.vector)
         return numerator / denominator
-
-    @property
-    def complexity(self):
-        """Get the complexity of the family."""
-        return np.mean([member.complexity for member in self.members])
 
 
 class Sentence(object):
@@ -120,7 +117,7 @@ class Word(object):
         """Get the complexity of the word."""
         if self.text in FREQ_LUT:
             return 5 - FREQ_LUT[self.text]
-        # TODO: Frequency of the unknown word could be realized as mean of the 
+        # TODO: Frequency of the unknown word could be realized as mean of the
         # distribution instead of a simple mean of the range
         return 2.5
 
@@ -171,6 +168,7 @@ class Vocab:
         prev_sent = Sentence(nlp(''), None)
         words = {}
         STOP_WORDS.add('_')
+        logging.info("Collecting words")
         for sent in tqdm(text_obj.sents):
             # sent = nlp(Sentence.clean_sentence(sent.text))
             curr_sent = Sentence(sent, prev_sent)
@@ -188,6 +186,7 @@ class Vocab:
     def _unite_family(self):
         """Unites words of same family as a single entity."""
         families = {}
+        logging.info("Uniting words into families")
         for word in self.words.values():
             if word.frequency < 4:
                 continue
@@ -199,36 +198,80 @@ class Vocab:
 
     def _build_network(self):
         """Build a network between families based on context similarity."""
-        weighted_adj_list = []
         families = list(self.families.keys())
-        vectors = np.array([self.families[r].vector for r in families])
+
+        min_sim = True
+
+        if min_sim:
+            vectors, mappings = self._setup_min_sim()
+        else:
+            vectors = np.array([self.families[r].vector for r in families])
 
         # n x n cosine similarity
-        logging.debug("Computing similarity")
+        logging.info("Computing similarity")
         norms = np.linalg.norm(vectors, axis=1)
         normalised_vectors = vectors / norms[:, np.newaxis]
-        self.similarity_mat = np.dot(normalised_vectors, normalised_vectors.T)
+        similarity_mat = np.dot(normalised_vectors, normalised_vectors.T)
 
         logging.debug("Shape of vectors {}".format(vectors.shape))
         logging.debug("Shape of norms {}".format(norms.shape))
         logging.debug(
-                "Shape of sim matrix {}".format(self.similarity_mat.shape))
+                "Shape of sim matrix {}".format(similarity_mat.shape))
 
-        # Create an adjacency list
-        for i, f1 in tqdm(enumerate(families), total=len(families)):
-            for j, f2 in enumerate(families[i:]):
-                j = i + j
-                if f1 == f2:
-                    continue
-                if self.similarity_mat[i][j] > 0.30:
-                    weighted_adj_list.append(
-                           (f1, f2, min(1, self.similarity_mat[i][j])))
+        if min_sim:
+            weighted_adj_list = self._settle_min_sim(similarity_mat, mappings)
+        else:
+            weighted_adj_list = self._get_adjacency_list(similarity_mat)
 
         network = nx.Graph()
         network.add_nodes_from(families)
         network.add_weighted_edges_from(weighted_adj_list)
         nx.set_node_attributes(network, 0.5, 'mastery')
         return network
+
+    def _get_adjacency_list(self, similarity_mat):
+        # Create an adjacency list
+        weighted_adj_list = []
+        families = list(self.families.key())
+        for i, f1 in tqdm(enumerate(families), total=len(families)):
+            for j, f2 in enumerate(families[i:]):
+                j = i + j
+                if f1 == f2:
+                    continue
+                if similarity_mat[i][j] > 0.30:
+                    weighted_adj_list.append(
+                           (f1, f2, min(1, similarity_mat[i][j])))
+
+        return weighted_adj_list
+
+    def _setup_min_sim(self):
+        # Make a flat list of vectors of all families
+        relation = defaultdict(list)
+        vectors = []
+        for family in self.families.values():
+            for child in family.members:
+                relation[family.root].append(len(vectors))
+                vectors.append(child.vector)
+        vectors = np.array(vectors)
+        return vectors, relation
+
+    def _settle_min_sim(self, similarity_mat, relation):
+        """
+        Map the member to member similarity to the family.
+        """
+        weighted_adj_list = []
+        family_names = list(self.families.keys())
+        for i, f1 in enumerate(family_names):
+            for f2 in family_names[i:]:
+                if f1 == f2:
+                    continue
+
+                pairs = list(itertools.product(relation[f1], relation[f2]))
+                score = max([similarity_mat[x][y] for x, y in pairs])
+
+                if score > 0.30:
+                    weighted_adj_list.append((f1, f2, min(1, score)))
+        return weighted_adj_list
 
     def stats(self):
         """Get statistics of about the collected vocabulary."""

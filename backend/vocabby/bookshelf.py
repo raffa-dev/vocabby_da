@@ -74,7 +74,7 @@ class Book:
             for child in family.members:
                 child_pos = len(nodes) + len(children)
                 children.append({'id': child_pos,
-                                 'name': child.text,
+                                 'name': child.text + "_" + child.pos,
                                  'score': parent['score'],
                                  'child': True})
                 edges.append({"source": parent['id'],

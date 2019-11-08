@@ -25,7 +25,7 @@ function color(d) {
 	} 
 }
 
-function child(d){
+function stroke(d){
   if (d.child === true) {
     return "orange"
   } else {
@@ -37,7 +37,7 @@ export const enterNode = (selection) => {
     selection.select('circle')
         .attr("r", 5)
         .style("fill", function(d) { return color(d.score) })
-        .style("stroke", function(d) { return child(d)})
+        .style("stroke", function(d) { return stroke(d)})
         .style("stroke-width", 3)
 
     selection.select('text')
@@ -47,8 +47,7 @@ export const enterNode = (selection) => {
 };
 
 export const updateNode = (selection) => {
-    selection.attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
-
+   selection.attr("transform", (d) => "translate(" + d.x + "," + d.y + ")")
 };
 
 export const enterLink = (selection) => {
