@@ -91,8 +91,6 @@ class Book:
             pickle.dump(self, book_file)
 
 
-
-
 class Bookshelf:
     """Organizes book for future learners to fetch."""
 
@@ -144,7 +142,11 @@ class Bookshelf:
 
     def get_index(self):
         """Get details of all book in this shelf"""
-        return [book for book in self.books.values()]
+        index = []
+        for code, book in self.books.items():
+            book.update({'code': code})
+            index.append(book)
+        return index
 
     @staticmethod
     def load(shelf_name):

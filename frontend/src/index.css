@@ -398,8 +398,8 @@ h1 {padding: 20px 0px;}
 
   }
 
-  .card:hover {
-    box-shadow: 0 20px 8px 0 rgba(0, 2, 5, 0.7);
+ .card:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 2, 5, 0.7);
   }
 
 

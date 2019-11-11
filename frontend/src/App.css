@@ -36,3 +36,14 @@
   fill: orange;
 }
 
+.button .round {
+  border-radius: 10px;
+}
+
+.blue {
+  background: #0943c5
+}
+
+.green {
+  background: #01a22b
+}

@@ -40,6 +40,8 @@ class PostText(APIView):
 
 class SessionStart(APIView):
     def post(self, req):
+        print("-------------------------------------")
+        print(json.loads(req.body))
         username = json.loads(req.body)['username']
         book_code = json.loads(req.body)['bookCode']
         learner = Learner.load(username)
@@ -49,6 +51,7 @@ class SessionStart(APIView):
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys()),
+                'stats': Book.load(book_code).get_stats(),
                 'neighbours': Book.get_graph_for_viz(book_code)}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)

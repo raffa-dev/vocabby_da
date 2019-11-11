@@ -55,22 +55,8 @@ class App extends Component {
       activatedAnswer: "______",
       neighbourhood: {}, // 1: 
       activePage: "index",
-			activeGraph: {
-			"nodes":
-       [
-         {"name": "fruit", "id": 0, "score": 0.99},
-         {"name": "apple", "id": 1, "score": 0.2},
-         {"name": "orange", "id": 2, "score": 0.5},
-         {"name": "banana", "id": 3, "score": 0.5}
-       ],
-     "links": 
-       [
-         {"source": 1, "target": 0},
-         {"source": 1, "target": 3},
-         {"source": 2, "target": 0}
-       ]
-			},
-			activeWordIndex: 0,
+      activeBook: {},
+	  activeWordIndex: 0,
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -79,6 +65,8 @@ class App extends Component {
                   "stats": this.renderStats.bind(this),
                   "index": this.renderIndex.bind(this),
                   "activityPage": this.renderActivity.bind(this),
+                  "book": this.renderBook.bind(this),
+                  "model": this.renderModel.bind(this),
                   "bookshelf": this.renderBookShelf.bind(this)};
   }
 
@@ -288,26 +276,28 @@ class App extends Component {
     }
   }
 
-  openBook = (books) => {
+  openBook = (book) => {
     let stateData = this.state;
     const user = {
-      user: stateData.user,
-      author: books.author,
+      username: stateData.user,
+      author: book.author,
+      bookCode: book.code,
       file: [],
-      genre: books.gener,
-      year: books.year,
-      publisher: books.publisher,
-      bookname: books.title,
+      genre: book.gener,
+      year: book.year,
+      publisher: book.publisher,
+      bookname: book.title,
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/posttext', user, config)
+    axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
       .then(response => {
         this.setState({
-          activePage: "stats",
+          activePage: "book",
+          wordList: response.data.words,
+          progress: response.data.words.length,
+          neighbourhood: response.data.neighbours,
           statsResponse: response.data.stats,
-          username: response.data.username,
-          bookCode: response.data.bookCode,
           isLoading: false
         })
       })
@@ -405,26 +395,54 @@ class App extends Component {
                                   )
                                 })}
                               </div>
-                              <form onSubmit={this.getWordList}>
-                                <div style={{ marginBottom: 20 }}>
-                                  <button type="submit" className="button pulse">
-                                    Start Learning
-                                    </button>
-                                </div>
-                              </form>
+                              <div>
+                                  <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
+                                    back 
+                                  </button>
+                              </div>
                             </div>
             
-    );}
+     );}
+
+  renderBook() {
+    return (
+      <div className="container" >
+        <h1>Harry Potter and Philoshopers stone</h1>
+        <div className="column col-md-8">
+          /* <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button> */
+          <button className="button green"> Practice </button>
+          <button className="button Model" onClick={() => {this.setState({activePage: "model"})}}> LearnerModel </button>
+          <button className="button " onClick={() => {this.setState({activePage: "stats"})}}> Details </button>
+        </div>
+        <div >
+        </div>
+      </div>
+    );
+  }
+
+  renderModel() {
+    return (
+        <div>
+		    <fieldset className="container">
+            <div className="graphContainer" >
+                <Graph data={this.state.neighbourhood} />
+            </div>
+			</fieldset>
+            <div className="row">
+                <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
+                    back 
+                </button>
+            </div>
+        </div>
+
+    )
+
+  }
 
   renderWords() {
     return (
               <div style={{ width: '80%', margin: '0px auto' }}>
               <h2>Session</h2>
-					    <fieldset className="container">
-            <div className="graphContainer" >
-                <Graph data={this.state.neighbourhood} />
-            </div>
-					</fieldset>
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
                               return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index+1, })}}
@@ -435,13 +453,14 @@ class App extends Component {
                               </button>
                             })}
                     </div>
-                    <form onSubmit={this.getActivity}>
-                      <div style={{ marginBottom: 20 }}>
-                        <button type="submit" className="button pulse">
-                          Start >>
+                    <div className="row">
+                        <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
+                            back 
                         </button>
-                      </div>
-                    </form>
+                        <button type="submit" className="button pulse" onClick={this.setState({activityPage: "words"})}>
+                          Start
+                        </button>
+                    </div>
                   </div>
     );
   }
@@ -613,18 +632,10 @@ class App extends Component {
         <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
       {this.renderHeader()}
           {this.pages[this.state.activePage]()
-           //  : this.state.stats === true ? this.renderStats()
-           //   : this.state.words === true ? 
-           //     : this.state.activityPage === true ? this.renderActivity()
-           //       : this.state.bookshelf === true ? this.renderBookShelf()
-           //         : <div>Feature Coming Soon</div>
           }
           {this.state.isLoading ?
             <div className="overlay">
               <div className="lds-roller">
-                <div></div>
-                <div></div>
-                <div></div>
                 <div></div>
                 <div></div>
                 <div></div>
