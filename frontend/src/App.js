@@ -41,6 +41,7 @@ class App extends Component {
       neighbourhood: {},
       
       // Session Handling
+	  wordNeighbors: [],
       wordList: [],
       activity: {},
       answer: "",
@@ -285,6 +286,7 @@ class App extends Component {
           wordList: response.data.words,
           progress: response.data.words.length,
           neighbourhood: response.data.neighbours,
+		  wordNeighbors: response.data.wordNeighbors,
           statsResponse: response.data.stats,
           author: book.author,
           genre: book.gener,
@@ -451,11 +453,16 @@ class App extends Component {
   renderWords() {
     return (
               <div style={{ width: '80%', margin: '0px auto' }}>
-              <h2>Session</h2>
+              <h1>Session</h1>
+		    		<fieldset className="container">
+            		<div className="graphContainer" >
+            		    <Graph data={this.state.wordNeighbors[this.state.activeWordIndex]} />
+            		</div>
+					</fieldset>
                     <div className="row">
                       {this.state.wordList.map((value, index) => {
-                              return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index+1, })}}
-                                style={this.state.activeWordIndex === index+1 ? { color: 'white', background: 'yellow', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
+                              return <button key={index} className="card" onClick={() => { this.setState({ activeWordIndex: index, })}}
+                                style={this.state.activeWordIndex === index ? { color: 'white', background: 'yellow', marginRight: 20, textTransform: "uppercase", fontWeight: "bold", borderRadius: 20} :
                                   { color: "black", marginRight: 20, textTransform: "uppercase", border: '1 px solid black', background: 'white'}}
                               >
                             <h2>{value}</h2>

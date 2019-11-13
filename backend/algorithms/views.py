@@ -52,7 +52,8 @@ class SessionStart(APIView):
                 'bookCode': book_code,
                 'words': list(session.tokens.keys()),
                 'stats': Book.load(book_code).get_stats(),
-                'neighbours': Book.get_graph_for_viz(book_code)}
+                'neighbours': Book.get_graph_for_viz(book_code),
+                'wordNeighbors': session.candidate_neighbours()}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 

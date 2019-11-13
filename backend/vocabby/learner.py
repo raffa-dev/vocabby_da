@@ -164,6 +164,26 @@ class Session(object):
                 return word
         return np.random.choice(family.members)
 
+    def candidate_neighbours(self):
+        neighbourhood = []
+        for token in self.tokens:
+            edges = []
+            nodes = [{'id': 0, 'name': token,
+                      "score": self.network.node[token]['mastery']}]
+
+            count = 0
+            for neighbour in self.network[token]:
+                if self.network[token][neighbour]['weight'] < 0.7:
+                    continue
+                count += 1
+                nodes.append({"id": count, "name": neighbour,
+                              "score": self.network.node[token]['mastery']})
+                edges.append({"source": 0, "target": count})
+            neighbourhood.append({"nodes": nodes, "links": edges})
+        print(neighbourhood[0])
+
+        return neighbourhood
+
     def _activity_selector(self, word):
         # TODO: Improve activity selection based on student progress
         if len(word) >= 6:
