@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+# resource file
+# *.txt
+# *.p
+resources/*
+backend/data/*
+
 # C extensions
 *.so
 
