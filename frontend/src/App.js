@@ -27,36 +27,43 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       user: 'learner1',
+      username: "",
+
+      // Current Book
       author: '',
       genre: 'Fiction',
       year: "2000",
       publisher: "ABC",
-      file: [],
       bookname: '',
-      modalIsOpen: false,
+      bookCode: '',
+      file: [],
       statsResponse: {},
+      neighbourhood: {},
+      
+      // Session Handling
       wordList: [],
       activity: {},
       answer: "",
-      username: "",
-      bookCode: "",
-      isLoading: false,
       event: "",
       volume: 0,
       progress: 20,
       showMessage: false,
       feedback: '',
       errorColor: true,
-      books: [],
       remaining_words: 0,
       scrambledForm: [],
       scrambledActivity: [],
       selected_answer: "",
       activatedAnswer: "______",
-      neighbourhood: {}, // 1: 
+
+      // UI Handling
+      isLoading: false,
+      modalIsOpen: false,
       activePage: "index",
-      activeBook: {},
 	  activeWordIndex: 0,
+
+      // Index
+      books: [],
     }
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
@@ -64,7 +71,7 @@ class App extends Component {
     this.pages = {"words": this.renderWords.bind(this),
                   "stats": this.renderStats.bind(this),
                   "index": this.renderIndex.bind(this),
-                  "activityPage": this.renderActivity.bind(this),
+                  "activity": this.renderActivity.bind(this),
                   "book": this.renderBook.bind(this),
                   "model": this.renderModel.bind(this),
                   "bookshelf": this.renderBookShelf.bind(this)};
@@ -146,25 +153,6 @@ class App extends Component {
     this.setState({ file: files })
   }
 
-  getWordList = event => {
-    event.preventDefault();
-    let stateData = this.state;
-    const user = {
-      username: stateData.user,
-      bookCode: stateData.bookCode,
-    };
-    this.setState({ isLoading: true })
-    let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
-      .then(response => {
-        this.setState({activePage:"words",
-                       wordList: response.data.words,
-                       isLoading: false,
-                       progress: response.data.words.length,
-                       neighbourhood: response.data.neighbours})
-      })
-  }
-
   getActivity = event => {
     event.preventDefault();
     let stateData = this.state;
@@ -188,7 +176,7 @@ class App extends Component {
           this.setState({scrambledActivity: total_word})
           }
         
-        this.setState({activePage: "activityPage",
+        this.setState({activePage: "activity",
                        activity: response.data.activity,
                        isLoading: false})
       })
@@ -266,7 +254,7 @@ class App extends Component {
           }
           this.setState({scrambledActivity: total_word})
           }
-          this.setState({activePage: "activityPage",
+          this.setState({activePage: "activity",
                          activity: response.data.activity,
                          isLoading: false})
         })
@@ -298,6 +286,12 @@ class App extends Component {
           progress: response.data.words.length,
           neighbourhood: response.data.neighbours,
           statsResponse: response.data.stats,
+          author: book.author,
+          genre: book.gener,
+          year: book.year,
+          publisher: book.publisher,
+          bookname: book.title,
+          bookCode: book.code,
           isLoading: false
         })
       })
@@ -407,7 +401,11 @@ class App extends Component {
   renderBook() {
     return (
       <div className="container" >
-        <h1>Harry Potter and Philoshopers stone</h1>
+        <h1 className="booktitle">{this.state.bookname}</h1>
+        <h4 className="subtitle">by {this.state.author}</h4>
+        <div id="progressbar" >
+          <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
+        </div>
         <div className="column col-md-8">
           <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button>
           <button className="button green"> Practice </button>
@@ -457,7 +455,7 @@ class App extends Component {
                         <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
                             back 
                         </button>
-                        <button type="submit" className="button pulse" onClick={() => {this.setState({activityPage: "words"})}}>
+                        <button className="button pulse" onClick={this.getActivity}>
                           Start
                         </button>
                     </div>
@@ -630,9 +628,8 @@ class App extends Component {
     return (
       <div>
         <div style={{ opacity: this.state.showMessage ? 0.4 : 1, pointerEvents: this.state.showMessage ? 'none' : 'auto' }}>
-      {this.renderHeader()}
-          {this.pages[this.state.activePage]()
-          }
+          {this.renderHeader()}
+          {this.pages[this.state.activePage]()}
           {this.state.isLoading ?
             <div className="overlay">
               <div className="lds-roller">
@@ -644,14 +641,10 @@ class App extends Component {
               </div>
             </div> : null
           }
-        {this.renderModal() }
+          {this.renderModal() }
         </div>
-        {
-          this.renderFeedback()
-        }
-
-
-      </div>
+        {this.renderFeedback()}
+     </div>
     );
   }
 }
