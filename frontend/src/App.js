@@ -409,7 +409,7 @@ class App extends Component {
       <div className="container" >
         <h1>Harry Potter and Philoshopers stone</h1>
         <div className="column col-md-8">
-          /* <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button> */
+          <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button>
           <button className="button green"> Practice </button>
           <button className="button Model" onClick={() => {this.setState({activePage: "model"})}}> LearnerModel </button>
           <button className="button " onClick={() => {this.setState({activePage: "stats"})}}> Details </button>
@@ -457,7 +457,7 @@ class App extends Component {
                         <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
                             back 
                         </button>
-                        <button type="submit" className="button pulse" onClick={this.setState({activityPage: "words"})}>
+                        <button type="submit" className="button pulse" onClick={() => {this.setState({activityPage: "words"})}}>
                           Start
                         </button>
                     </div>
