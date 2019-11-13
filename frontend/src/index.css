@@ -584,12 +584,8 @@ ul li ul li {
 }
 
 #progressbar {
-  background-color: gray;
-  border-radius: 13px;
-  /* (height of inner div) / 2 + padding */
-  padding: 3px;
-  width: 60%;
-  margin:0 auto;
+  background: linear-gradient(45deg, #f5525252, #33ff8e3d);
+  border-radius: 5px;
 }
 
 #progressbar>div {

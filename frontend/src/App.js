@@ -406,11 +406,22 @@ class App extends Component {
         <div id="progressbar" >
           <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
         </div>
-        <div className="column col-md-8">
-          <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button>
-          <button className="button green"> Practice </button>
-          <button className="button Model" onClick={() => {this.setState({activePage: "model"})}}> LearnerModel </button>
-          <button className="button " onClick={() => {this.setState({activePage: "stats"})}}> Details </button>
+        <div className="col-md-12">
+          <div className="row card_ctr">
+            <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button>
+            <button className="button green" onClick={() => {this.setState({activePage: "words"})}}> Practice </button>
+          </div>
+		  <br />
+		  <br />
+		  <br />
+		  <div className="row card_ctr">
+          	<div className="index_card card_content" onClick={() => {this.setState({activePage: "model"})}}>
+				<div className="card_label"> LearnerModel</div>
+			</div>
+          	<div className="index_card card_content" onClick={() => {this.setState({activePage: "stats"})}}>
+				<div className="card_label"> Details </div>
+			</div>
+		  </div>
         </div>
         <div >
         </div>
@@ -468,9 +479,11 @@ class App extends Component {
                       <div style={{ width: '80%', margin: '0 auto' }}>
                         <div className="row">
                           {this.state.books.map((value, index) => {
-                            return <div className="column" key={index} onClick={() => { this.openBook(value) }}>
-                              <div className="card" style={{ borderRadius: 20, textAlign: 'left' }}>
-                                <h3 style={{textAlign: 'center'}}>{value.title}</h3><br />
+                            return <div className="col-md-3" key={index} onClick={() => { this.openBook(value) }}>
+                              <div className="index_card card" style={{ borderRadius: 20, textAlign: 'left' }}>
+								<div className="index_card_title">
+                                	<h3 style={{textAlign: 'center', color: 'white', fontWeight: '700'}}>{value.title}</h3><br />
+								</div>
                                 <h5>Author: {value.author}</h5><br />
                                 <h5>Genre: {value.gener}</h5><br />
                                 <h5>Year: {value.year}</h5><br />
