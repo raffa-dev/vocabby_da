@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
 import Graph from '../src/Graph.js';
 
-var LOCALHOST = '192.168.3.184'
+var LOCALHOST = '192.168.23.222'
 const customStyles = {
   content: {
     top: '50%',
@@ -87,7 +87,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/getlevel', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/getlevel', user, config)
       .then(response => {
         this.setState({
           volume: response.data.level,
@@ -116,7 +116,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/postlevel', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/postlevel', user, config)
       .then(response => {
         this.setState({ isLoading: false })
       })
@@ -140,7 +140,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/posttext', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/posttext', user, config)
       .then(response => {
         this.setState({activePage: "stats",
                        statsResponse: response.data.stats,
@@ -165,7 +165,7 @@ class App extends Component {
     this.setState({scrambledActivity: []})
     this.setState({scrambledForm: []})
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/getactivity', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/getactivity', user, config)
       .then(response => {
         let total_word = [];
         if (response.data.activity.activityType === 1) {
@@ -192,7 +192,7 @@ class App extends Component {
     this.setState({ isLoading: true })
 
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/getbooks', users, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/getbooks', users, config)
       .then(response => {
         this.setState({isLoading: false, activePage: "bookshelf", books: response.data })
       })
@@ -224,7 +224,7 @@ class App extends Component {
       activityId: stateData.activity
     };
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/postactivity', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/postactivity', user, config)
       .then(response => {
         this.setState({ feedback: response.data.result.feedback, errorColor: response.data.result.isCorrect })
         this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
@@ -244,7 +244,7 @@ class App extends Component {
       this.setState({scrambledActivity: []})
       this.setState({scrambledForm: []})
       let config = { "Content-Type": "application/json" };
-      axios.post('http://' + LOCALHOST + ':8000/api/v1/getactivity', user, config)
+      axios.post('http://' + LOCALHOST + ':8080/api/v1/getactivity', user, config)
         .then(response => {
           let total_word = [];
         if (response.data.activity.activityType === 1) {
@@ -279,7 +279,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://' + LOCALHOST + ':8000/api/v1/getwordlist', user, config)
+    axios.post('http://' + LOCALHOST + ':8080/api/v1/getwordlist', user, config)
       .then(response => {
         this.setState({
           activePage: "book",
@@ -421,10 +421,10 @@ class App extends Component {
 		  <br />
 		  <br />
 		  <div className="row card_ctr">
-          	<div className="index_card card_content" onClick={() => {this.setState({activePage: "model"})}}>
+          	<div className="book_card card_content" onClick={() => {this.setState({activePage: "model"})}}>
 				<div className="card_label"> LearnerModel</div>
 			</div>
-          	<div className="index_card card_content" onClick={() => {this.setState({activePage: "stats"})}}>
+          	<div className="book_card card_content" onClick={() => {this.setState({activePage: "stats"})}}>
 				<div className="card_label"> Details </div>
 			</div>
 		  </div>
