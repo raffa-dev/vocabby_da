@@ -48,11 +48,13 @@ class SessionStart(APIView):
         tutor = learner.get_tutor(book_code)
         session = tutor.get_session()
         print (session.tokens.keys())
+        neighbourhood, neighbourhoodwc = Book.get_graph_for_viz(book_code)
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys()),
                 'stats': Book.load(book_code).get_stats(),
-                'neighbours': Book.get_graph_for_viz(book_code),
+                'neighbours': neighbourhood,
+                'neighboursWc': neighbourhoodwc,
                 'wordNeighbors': session.candidate_neighbours()}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)

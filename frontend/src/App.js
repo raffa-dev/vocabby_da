@@ -39,6 +39,7 @@ class App extends Component {
       file: [],
       statsResponse: {},
       neighbourhood: {},
+      neighbourhoodWc: {},
       
       // Session Handling
 	  wordNeighbors: [],
@@ -75,6 +76,7 @@ class App extends Component {
                   "activity": this.renderActivity.bind(this),
                   "book": this.renderBook.bind(this),
                   "model": this.renderModel.bind(this),
+                  "modelWc": this.renderModelWc.bind(this),
                   "bookshelf": this.renderBookShelf.bind(this)};
   }
 
@@ -286,6 +288,7 @@ class App extends Component {
           wordList: response.data.words,
           progress: response.data.words.length,
           neighbourhood: response.data.neighbours,
+          neighbourhoodWc: response.data.neighboursWc,
 		  wordNeighbors: response.data.wordNeighbors,
           statsResponse: response.data.stats,
           author: book.author,
@@ -424,6 +427,9 @@ class App extends Component {
           	<div className="book_card card_content" onClick={() => {this.setState({activePage: "model"})}}>
 				<div className="card_label"> LearnerModel</div>
 			</div>
+          	<div className="book_card card_content" onClick={() => {this.setState({activePage: "modelWc"})}}>
+				<div className="card_label"> LearnerModel without children</div>
+			</div>
           	<div className="book_card card_content" onClick={() => {this.setState({activePage: "stats"})}}>
 				<div className="card_label"> Details </div>
 			</div>
@@ -452,6 +458,25 @@ class App extends Component {
 
     )
 
+  }
+
+
+  renderModelWc() {
+    return (
+        <div className="container">
+		    <fieldset className="container">
+            <div className="graphContainer" >
+                <Graph data={this.state.neighbourhoodWc} />
+            </div>
+			</fieldset>
+            <div className="row">
+                <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
+                    back 
+                </button>
+            </div>
+        </div>
+
+    )
   }
 
   renderWords() {

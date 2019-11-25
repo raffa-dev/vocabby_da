@@ -63,6 +63,7 @@ class Book:
                           "weight": attrb['weight']})
 
         children = []
+        child_edges = []
         families = {}
         for parent in nodes:
             families[parent['id']] = set()
@@ -77,13 +78,14 @@ class Book:
                                  'name': child.text + "_" + child.pos,
                                  'score': parent['score'],
                                  'child': True})
-                edges.append({"source": parent['id'],
-                              "target": child_pos,
-                              "weight": 1})
+                child_edges.append({"source": parent['id'],
+                                    "target": child_pos,
+                                    "weight": 1})
                 families[parent['id']].add(child_pos)
 
-        neighbourhood = {"nodes": nodes + children, "links": edges, "families": families}
-        return neighbourhood
+        neighbourhood = {"nodes": nodes + children, "links": edges + child_edges, "families": families}
+        neighbourhoodwc = {"nodes": nodes, "links": edges, "families": families}
+        return neighbourhood, neighbourhoodwc
 
     def save(self):
         """Save the book for future use."""
