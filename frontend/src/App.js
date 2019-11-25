@@ -26,7 +26,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'learner1',
+      user: 'Kavin',
       username: "",
 
       // Current Book
@@ -204,6 +204,7 @@ class App extends Component {
     event.preventDefault();
     this.setState({ event: event })
     let stateData = this.state;
+    this.setState({ isLoading: true })
     let selection;
     if (stateData.answer === "") {
       selection = 0
