@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
 import Graph from '../src/Graph.js';
 
-
+var LOCALHOST = '192.168.3.184'
 const customStyles = {
   content: {
     top: '50%',
@@ -87,7 +87,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/getlevel', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/getlevel', user, config)
       .then(response => {
         this.setState({
           volume: response.data.level,
@@ -116,7 +116,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/postlevel', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/postlevel', user, config)
       .then(response => {
         this.setState({ isLoading: false })
       })
@@ -140,7 +140,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/posttext', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/posttext', user, config)
       .then(response => {
         this.setState({activePage: "stats",
                        statsResponse: response.data.stats,
@@ -165,7 +165,7 @@ class App extends Component {
     this.setState({scrambledActivity: []})
     this.setState({scrambledForm: []})
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/getactivity', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/getactivity', user, config)
       .then(response => {
         let total_word = [];
         if (response.data.activity.activityType === 1) {
@@ -192,7 +192,7 @@ class App extends Component {
     this.setState({ isLoading: true })
 
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/getbooks', users, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/getbooks', users, config)
       .then(response => {
         this.setState({isLoading: false, activePage: "bookshelf", books: response.data })
       })
@@ -224,7 +224,7 @@ class App extends Component {
       activityId: stateData.activity
     };
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/postactivity', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/postactivity', user, config)
       .then(response => {
         this.setState({ feedback: response.data.result.feedback, errorColor: response.data.result.isCorrect })
         this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
@@ -244,7 +244,7 @@ class App extends Component {
       this.setState({scrambledActivity: []})
       this.setState({scrambledForm: []})
       let config = { "Content-Type": "application/json" };
-      axios.post('http://localhost:8000/api/v1/getactivity', user, config)
+      axios.post('http://' + LOCALHOST + ':8000/api/v1/getactivity', user, config)
         .then(response => {
           let total_word = [];
         if (response.data.activity.activityType === 1) {
@@ -279,7 +279,7 @@ class App extends Component {
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
-    axios.post('http://localhost:8000/api/v1/getwordlist', user, config)
+    axios.post('http://' + LOCALHOST + ':8000/api/v1/getwordlist', user, config)
       .then(response => {
         this.setState({
           activePage: "book",
@@ -355,6 +355,14 @@ class App extends Component {
                               <div className="row">
                                 <div className="column">
                                   <div className="card" style={{borderRadius: 10 }}>
+                                    <h4>Families</h4><br />
+                                    <h2>{this.state.statsResponse.totalFamilies}</h2>
+                                  </div>
+                                </div>
+							 </div>
+                             <div className="row">
+                                <div className="column">
+                                  <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Words</h4><br />
                                     <h2>{this.state.statsResponse.totalWords}</h2>
                                   </div>
@@ -371,15 +379,11 @@ class App extends Component {
                                     <h2>{this.state.statsResponse.totalAbove10}</h2>
                                   </div>
                                 </div>
-                                <div className="column">
-                                  <div className="card" style={{borderRadius: 10 }}>
-                                    <h4>Families</h4><br />
-                                    <h2>{this.state.statsResponse.totalFamilies}</h2>
-                                  </div>
-                                </div>
                               </div>
             
                               <div className="row">
+								<br />
+								<br />
                                 <h2 style={{ marginBottom: 30 }}>Frequent words</h2>
                                 {this.state.statsResponse.mostFrequent.map((value, index) => {
                                   return (
@@ -433,7 +437,7 @@ class App extends Component {
 
   renderModel() {
     return (
-        <div>
+        <div className="container">
 		    <fieldset className="container">
             <div className="graphContainer" >
                 <Graph data={this.state.neighbourhood} />
