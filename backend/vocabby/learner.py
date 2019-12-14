@@ -71,11 +71,12 @@ class Tutor(object):
         candidates = []
         for node in self.network:
             extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
-            intrensic_score = self.book.families[node].complexity
-            candidates.append((node, extrensic_score * intrensic_score))
+            # intrensic_score = self.book.families[node].complexity
+            # candidates.append((node, extrensic_score * intrensic_score))
+            candidates.append((node, extrensic_score))
 
         # n_choice = np.random.choice(len(families), 20)
-        n_choice = sorted(candidates, key=lambda x: -x[1])[:10]
+        n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
         return [self.book.families[i[0]] for i in n_choice]
 
     def get_session(self):
