@@ -20,6 +20,7 @@
 \usepackage{subfig}
 \usepackage[most]{tcolorbox}
 \usepackage{lipsum}
+\usepackage{hyperref}
 
 \graphicspath{ {./images/} }
 \aclfinalcopy % Uncomment this line for the final submission
@@ -111,41 +112,26 @@ This is the problem that we overcome in our system so that learner can use own t
 according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.
 
 \section{Building vocabulary}
-One of the key feature of our application is to allow custom learner input. The learner can choose their favourite text from which and the context in which they want to learn vocabulary. The text should be uploaded as a plain text (\textit{.txt}), which contains no formatting, only line breaks and spacing. This raw input text is further structured into a meaningful form as described in upcoming sections. We recomment the text to be longer, as we use some statistical feature to process the learner text, the quality of structured data is directly proportional to the size of the learner text.
-The process of building the vocabulary with respect to the learner text is independent of the learner. We focus to capture the underlying vocabulary structure of the text. Each text input is considered as a book, all the processed books are stored as a library. So any new learner can pick a pre-processed book from a library of books.
-Also this could help us to easily analyse the learning progress across the user.
+One of the key feature of our application is to allow custom learner input. The learner can choose their favourite text from which and the context in which they want to learn vocabulary. The text should be uploaded as a plain text (\textit{.txt}), which contains no formatting, only line breaks and spacing. This raw input text is further structured into a meaningful form as described in upcoming sections. We recommend the text to be longer, as we use statistical features to process the learner text. Thus the quality of structured data is directly proportional to the size of the learner text.
+
+The process of building the vocabulary is independent of the learner. We focus to capture the underlying vocabulary structure of the text. Each learner text input is considered as a book entry, all the processed books are stored as a library. So any new learner can pick a pre-processed book from a library. This could also help us in compare and contrast the progression of learning of learners with different profile in future.
 
 \subsection{Candidates}
 
-All the words in the language are not equally important. Given that the learners
-already know some basics of the language, we could eliminate the most frequent, 
-functional words (the, of, in, on etc...), rare/very less frequent words and
-improperly parsed words. So the words occurring below the frequency of 10 and
-the stop words \footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}
-are eliminated to handle the above cases.
+Given that these learners already know some basics of the language, we could eliminate the most frequent such as functional words (the, of, in, on etc...) and the stop words (commonly used words)\footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}. Another major category that is usually eliminated are rare/less frequent words. 
+This also includes the improperly extracted words introduced due to the unregulated learner structure. Which tends to be rare. We eliminate the words with frequency less than 10. As we need to have variety of evidences to generate better activity, which is discussed in \autoref{sec:activity}. 
+
+\subsection{Disambiguation}
 
 The words that occur in different parts of the speech could posses different sense.
-In-order to differentiate between them. We represent each candidate word as a
-pair of word and its POS tag.
+In-order to differentiate between them, we preserve the words of same orthography associated with different parts of speech (POS). We represent each candidate word as a pair of word and its POS tag.
 \begin{center}\emph{(word, POS tag)}\end{center}
 
-\subsection{Sentences}
-
-All the sentences in which the candidate words occur are cleaned and mapped to
-the corresponding candidate word. So each candidate word is mapped to all the sentences
-in which it occur and also each sentence is mapped to all the candidate
-words it contains.
-
 \subsection{Complexity}
-There are lot of methods to measure the complexity of a word. We choose frequency.
-In a language, we consider the words that are less frequently used are as
-more complex / uncommon and the words that occurs more frequent are as easier / well known.
-We use the frequencies obtained from SUBTLEX-US~\citet{brysbaert2009moving}, a database of 50 million
-words from various English-US movies and TV series subtitles.
+All the words in the language are not equally difficult to learn. The word frequency captures the difficulty the word than the word length which are frequently used and the word frequency also shown a correlation with whether learner know the definition of a word (Leroy and Kauchak, 2013). We use the frequencies obtained from SUBTLEX-US~\citet{brysbaert2009moving}, a database of 50 million words from various English-US movies and TV series subtitles as reference.
 \begin{equation}
   C_w = \frac{1}{\log_{10}(freq_w)}
 \end{equation}
-
 Where ${freq_w}$ is the average frequency of word $w$ per million words in the
 database.
 
@@ -173,17 +159,13 @@ family with a different affinity to another. The affinity is a measure of
 contextual similarity between the families. We compute cosine similarity 
 between the mean of word vectors of all the members of the family to similar
 mean vector representation of another family.
-
 \begin{equation}
   V_{F_i} = \frac{1}{n} \sum_{k}^{n} V_{w_k}
 \end{equation}
-
 where ${n}$ is the number of elements of the family ${F_i}$.
-
 \begin{equation}
   S_{ij} = \frac{V_{F_i} * V_{F_j}}{\|V_{F_i}\|  \|V_{F_j}\|}
 \end{equation}
-
 where, ${S_{ij}}$ is the cosine similarity between the vector representations of
 families ${F_i}$ and ${F_j}$.
 
@@ -228,6 +210,13 @@ tracking each word in the vocabulary individually.
 
 \section{Content organization}
 
+\subsection{Sentences}
+
+All the sentences in which the candidate words occur are cleaned and mapped to
+the corresponding candidate word. So each candidate word is mapped to all the sentences
+in which it occur and also each sentence is mapped to all the candidate
+words it contains.
+
 \subsection{Books}
 All the processed data such as vocabulary, families, network, sample sentences
 are packed into a book instance. This also tracks the meta information such as
@@ -266,11 +255,9 @@ capture the un-visited nodes in the network.
 contextual similarity. We can incorporate this into our update rule to update
 the mastery scores. When we get some outcome for an activity involving a member
 from the family ${F_i}$.
-
 \begin{equation}
   M_j = M_j * (1 + (\alpha * sign * S_{ij}))
 \end{equation}
-
 Where ${M_i}$ is the mastery of the family ${F_i}$. ${\alpha}$ is a tunable parameter
 for the magnitude of an update. ${sign \epsilon \{-1, +1\}}$ is the direction 
 of the update. It depends on the correctness of learner response to the corresponding
@@ -290,6 +277,8 @@ nature of the node.
 
 
 \section{Activity}
+\label{sec:activity}
+
 Since our motive is to reduce the effort for content creation. We generate the
 activities on the fly. In this work we generate two type of activities. 
 
