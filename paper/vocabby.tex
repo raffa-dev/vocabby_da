@@ -33,12 +33,12 @@
 
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
-\title{Vocabulary learning with in the context of learner domain}
+\title{Structured vocabulary learning with in the context of learner domain}
 
 \author{Haemanth Santhi Ponnusamy \qquad Himanshu Bansal \\\\
   International Studies of Computational Linguistics(ISCL) \\
-  Eberhard karls university of Tuebingen\\
-  Tuebingen, 72074, Germany \\\\ \tt \small \{haemanth.santhi-ponnusamy,himanshu.bansal\}@student.uni-tuebingen.de}
+  Eberhard Karls Universität Tübingen\\
+  Germany \\\\ \tt \small \{haemanth.santhi-ponnusamy,himanshu.bansal\}@student.uni-tuebingen.de}
 
 \date{}
 
@@ -53,19 +53,21 @@
   It also provides a great advantage in auto-generating the content
   for the entire learning process with almost zero human effort. We allow the
   learner to choose the text of their own interest. Then all the activities and
-  feedbacks are generated only from the chosen text.
+  feedback are generated only from the chosen text.
 \end{abstract}
 
 \section{Introduction}
 Vocabulary learning is an open ended task as the languages are vast and still
-evolving with the addition of new words now and then. This makes it hard for the
-learner to get a sense of progress. Many of the vocabulary learning application 
-starts from very basic words of the language. Which makes more sense for the 
-beginners, but not for our target learners. They might want to start at an intermediate level.
+evolving with the addition of new words now and then. This makes it hard for the vocabulary learners to sense the progress. Popular vocabulary learning applications such as Duolingo, Memrise, LingoDeer, Drops starts from very basic words of the language. Which are suitable for the beginners, but not for our target learners. They might want to start at an intermediate level. 
+
+Though the application like Vocabulary.com allows the learner to choose the selected set of words they want to learn and applications like busuu allows the learner to choose the level competency at which they want to learn words, 	they don't allow them to choose the context in which they want to learn them. 
+
 Even an adaptive systems that tries to adopt to the learner, needs a lots of interactions
-to get a sense of learner's vocabulary knowledge. Another major issue of these tools are the
+to get a sense of learner's vocabulary knowledge.
+
+Another major issue of these tools are the
 example sentences used as context. They are mostly very generic and some time unnatural.
-This nature is due to the fact that those application are designed to support learners irrespective of their
+This nature is due to the fact that those application are designed to support learners with wide range of
 language competence, background, area of interest, learning goals. Also, it is
 hard for a developers to manually create contents aligned with different domain to satisfy all kind of learners.
 
@@ -108,19 +110,13 @@ But in any of research learner is not able to learn vocabulary from uploaded tex
 This is the problem that we overcome in our system so that learner can use own text
 according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.
 
-\section{Our application}
+\section{Building vocabulary}
+One of the key feature of our application is to allow custom learner input. The learner can choose their favourite text from which and the context in which they want to learn vocabulary. The text should be uploaded as a plain text (\textit{.txt}), which contains no formatting, only line breaks and spacing. This raw input text is further structured into a meaningful form as described in upcoming sections. We recomment the text to be longer, as we use some statistical feature to process the learner text, the quality of structured data is directly proportional to the size of the learner text.
+The process of building the vocabulary with respect to the learner text is independent of the learner. We focus to capture the underlying vocabulary structure of the text. Each text input is considered as a book, all the processed books are stored as a library. So any new learner can pick a pre-processed book from a library of books.
+Also this could help us to easily analyse the learning progress across the user.
 
-\subsection{Building vocabulary}
-The raw input text from the learner is structured into a meaningful form that is
-convenient for vocabulary learning. As we use some statistical feature to
-process the learner text, the quality of structured data is directly
-proportional to the size of the learner text. The process of building the
-vocabulary with respect to the learner text is independent of the learner. We focus
-to capture the entire vocabulary structure of the text. So any new learner can
-pick a pre-processed book from a library of books. Also this could help us to easily
-analyse the learning progress across the user.
+\subsection{Candidates}
 
-\subsubsection{Candidates}
 All the words in the language are not equally important. Given that the learners
 already know some basics of the language, we could eliminate the most frequent, 
 functional words (the, of, in, on etc...), rare/very less frequent words and
@@ -133,13 +129,14 @@ In-order to differentiate between them. We represent each candidate word as a
 pair of word and its POS tag.
 \begin{center}\emph{(word, POS tag)}\end{center}
 
-\subsubsection{Sentences}
+\subsection{Sentences}
+
 All the sentences in which the candidate words occur are cleaned and mapped to
 the corresponding candidate word. So each candidate word is mapped to all the sentences
 in which it occur and also each sentence is mapped to all the candidate
 words it contains.
 
-\subsubsection{Complexity}
+\subsection{Complexity}
 There are lot of methods to measure the complexity of a word. We choose frequency.
 In a language, we consider the words that are less frequently used are as
 more complex / uncommon and the words that occurs more frequent are as easier / well known.
@@ -152,16 +149,14 @@ words from various English-US movies and TV series subtitles.
 Where ${freq_w}$ is the average frequency of word $w$ per million words in the
 database.
 
-\subsubsection{Vector representation}
+\section{Creating structure}
 Also each of the candidate is mapped with a semantic vector representation which
 is obtained from the pre trained model \emph{en\_web\_core\_lg} of \emph{spaCy}
 \footnote{\url{https://spacy.io/}}, a natural language processing library. The main
 drawback is that it cannot address the out of vocabulary(OOV) words. Which
 could be rectified by training a custom word vectors over a decently sized learner content.
 
-\subsection{Creating structure}
-
-\subsubsection{Family}
+\subsection{Family}
 We group the words into families, similar to ~\citet{bauer1993word} work on word
 families but instead of seven sub-groups we form a single group for all the types.
 The main intuition of grouping the words into families is that the learner can
@@ -171,7 +166,7 @@ can extrapolate the mastery of one the member to the entire family. Which could
 drastically reduce the number of interaction that the system need to estimate
 the learner's vocabulary.
 
-\subsubsection{Network}
+\subsection{Network}
 Now the families has to co-exist in the space of language(limited by the
 learner text) as a network like a society. It is a fully connected network with each
 family with a different affinity to another. The affinity is a measure of
@@ -231,31 +226,31 @@ relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
 
-\subsection{Content organization}
+\section{Content organization}
 
-\subsubsection{Books}
+\subsection{Books}
 All the processed data such as vocabulary, families, network, sample sentences
 are packed into a book instance. This also tracks the meta information such as
 Title, Author, Genre, Year and Publisher. This help any future learner to select
 the processed book directly. This also could help in comparing the performance
 of different learners on the same book.
 
-\subsubsection{Bookshelf}
+\subsection{Bookshelf}
 All such processed book are organized in multiple bookshelves specific to each
 domain similar to the gutenberg project\footnote{\url{http://www.gutenberg.org}}.
 
-\subsection{Models}
+\section{Models}
 In this work we maintain multiple models to track and update different aspect
 of the application.
 
-\subsubsection{Learner}
+\subsection{Learner}
 The learner instance maintain the personal information of the learner and tracks
 the list of instance of books the learner has choose to improve vocabulary and the
 progress in them. This also could maintain overall vocabulary knowledge of
 the learner and customize the activity type, feedback and book suggestions based
 on individual needs.
 
-\subsubsection{Tutor}
+\subsection{Tutor}
 For each book the learner selects, a tutor instance will be created. The main
 activities of the tutor are to design a learning session, evaluate the
 performance and track the mastery level of the learner w.r.t all the vocabulary
@@ -282,7 +277,7 @@ of the update. It depends on the correctness of learner response to the correspo
 activity. And ${S_{ij}}$ is the measure of contextual similarity between the two
 families ${F_i}$ and ${F_j}$.
 
-\subsubsection{Session}
+\subsection{Session}
 An instance of session is created by the tutor. Which decided list of word
 families to be practiced. The key functions of this model are to deciding the
 interaction type (teaching, testing, feedback), compose an interaction with all
@@ -294,7 +289,7 @@ based on the intrinsic(complexity) and extrinsic(degree, quality of connection)
 nature of the node.
 
 
-\subsection{Activity}
+\section{Activity}
 Since our motive is to reduce the effort for content creation. We generate the
 activities on the fly. In this work we generate two type of activities. 
 
@@ -368,9 +363,7 @@ answer word to make all the distractors coherent.
 \end{figure}
 
 
-
-
-\subsection{System Architecture}
+\section{System Architecture}
 Our plan for system was to create interactive and single page application so we used React.js with Redux as frontend for our system. We used CSS for creating animations or user interface. For backend we used Python-Django. We used Rest framework for the interaction between frontend and backend. Controllers in Django handled the request from frontend and then redirected to appropriate API. Django system was also interacting with our proposed vocabulary learning algorithms. We used NoSQL-MongoDB for storing sessions.   
 
 
@@ -380,14 +373,14 @@ The first screen of system is the form in which learner will fill some details l
 The next screen is the list of 20 words that will be used in activities. In the mean time learner can click on various menu items like "Books" for opening library and changing the book or learner can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of learner and showing for motivation and also showing learner appropriate error or success message and also giving correct explanation in the case of wrong answer selected. 
 
 
-\section{Future Works}
+\section{Future Work}
 The system has limitation on operating on the words that does not have a learned
 representation on the vector space. Which could be rectified by learning a
 custom word vector specific to the domain. This feature could create new use case
 like a tool to learn jargon specifics to a new domain.
 
 Teaching the word in a session.
-Control over the complexity (tuneable complexity)
+Control over the complexity (tune-able complexity)
 Tracking words at learner level across books (to have a warm start for new book)
 
 On the user interface mobile application can used to attract for learners. The number activity types are limited for now but future work can be implementation of other activity types. Currently this system is one learner limited but after implementation of login screen and maintaining the database of learners with sessions can also be a helpful feature. Use of text to speech can improve learner's pronunciation. 
