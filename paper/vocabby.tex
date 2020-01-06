@@ -22,6 +22,9 @@
 \usepackage{lipsum}
 \usepackage{hyperref}
 
+\renewcommand{\arraystretch}{1.75}
+\setlength{\arrayrulewidth}{1mm}
+\setlength{\tabcolsep}{18pt}
 \graphicspath{ {./images/} }
 \aclfinalcopy % Uncomment this line for the final submission
 \def\aclpaperid{***} %  Enter the acl Paper ID here
@@ -86,7 +89,7 @@ down to a smaller and self defined milestones.
 \section{Related works}
 There are many vocabulary learning tools available in the market.
 We gone through many of them to compare the advantages and disadvantages of each.
-The study by ~\citet{chen2008personalized} presents a personalised mobile application for
+The study by ~\cite{chen2008personalized} presents a personalised mobile application for
 learning English vocabulary based on learning memory cycle and item response theory.
 Which helps in selecting appropriate vocabulary according to individual.
 After that this group also presented another paper for English vocabulary
@@ -109,142 +112,102 @@ They adopted a dependency grammar link for this model.
 
 But in any of research learner is not able to learn vocabulary from uploaded text.
 This is the problem that we overcome in our system so that learner can use own text
-according to level of knowledge or interest. This type of system also helps to reduce biased learning mechanisms.
+according to level of knowledge or interest. This type of system also helps to prevent predefined selected vocabulary by developers.  
 
 \section{Building vocabulary}
-One of the key feature of our application is to allow custom learner input. The learner can choose their favourite text from which and the context in which they want to learn vocabulary. The text should be uploaded as a plain text (\textit{.txt}), which contains no formatting, only line breaks and spacing. This raw input text is further structured into a meaningful form as described in upcoming sections. We recommend the text to be longer, as we use statistical features to process the learner text. Thus the quality of structured data is directly proportional to the size of the learner text.
+One of the key feature of our application is to allow learners to choose their preferred text for learning vocabulary. This provides the freedom to choose the context in which they enjoy learning and to choose a sub space of the language, which they desire to master instead of approaching it as an open ended problem. The text should be uploaded as a plain text (\textit{.txt}), which contains no formatting, only line breaks and spacing. This raw input text is further structured into a meaningful form as described in upcoming sections. We recommend the text to be longer, as we use statistical features (which are discussed in the later sections) to structure the learner text. Thus the quality of structured data is directly proportional to the size of the learner text.
 
-The process of building the vocabulary is independent of the learner. We focus to capture the underlying vocabulary structure of the text. Each learner text input is considered as a book entry, all the processed books are stored as a library. So any new learner can pick a pre-processed book from a library. This could also help us in compare and contrast the progression of learning of learners with different profile in future.
+The process of building the vocabulary is independent of the learner. We focus to capture the underlying vocabulary structure of the text. Each learner text input is considered as a book entry, all the processed books are stored as a '\textit{library}'. So any new learner can pick a pre-processed book from the library. This could also help us to compare and contrast the progression of learning of learners from different background in future.
 
 \subsection{Candidates}
 
-Given that these learners already know some basics of the language, we could eliminate the most frequent such as functional words (the, of, in, on etc...) and the stop words (commonly used words)\footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}}. Another major category that is usually eliminated are rare/less frequent words. 
-This also includes the improperly extracted words introduced due to the unregulated learner structure. Which tends to be rare. We eliminate the words with frequency less than 10. As we need to have variety of evidences to generate better activity, which is discussed in \autoref{sec:activity}. 
+Given that these learners already know some basics of the language, we could eliminate the stop words (commonly used words)\footnote{\url{https://github.com/explosion/spaCy/blob/master/spacy/lang/en/stop_words.py}} that includes the most frequent ly used words and functional words (the, of, in, on etc...). Another major category that is usually eliminated are rare/less frequent words. We eliminate the words with frequency less than 10. As we need to have variety of evidences to generate better activity, which is discussed in \autoref{sec:activity}. 
+This also includes the improperly extracted words introduced due to the unregulated learner input structure.
 
 \subsection{Disambiguation}
+The candidate words extracted for learning could contain homographs, the set of words that are spelled the same but have different meaning. An initial step toward disambiguation of the candidate word could be done using parts of speech tags ~\cite{wilks1998grammar}. The same words that occur in different parts of the speech could posses different sense. We represent each candidate word as a pair of word and its POS tag.
 
-The words that occur in different parts of the speech could posses different sense.
-In-order to differentiate between them, we preserve the words of same orthography associated with different parts of speech (POS). We represent each candidate word as a pair of word and its POS tag.
 \begin{center}\emph{(word, POS tag)}\end{center}
 
 \subsection{Complexity}
-All the words in the language are not equally difficult to learn. The word frequency captures the difficulty the word than the word length which are frequently used and the word frequency also shown a correlation with whether learner know the definition of a word (Leroy and Kauchak, 2013). We use the frequencies obtained from SUBTLEX-US~\citet{brysbaert2009moving}, a database of 50 million words from various English-US movies and TV series subtitles as reference.
+All the words in the language are not equally difficult to learn. 
+Thought the words with simple grapheme-to-phoneme ratios
+were easier to learn than more phonetically complex words ~\cite{rosa2011effect}. The word frequency captures the difficulty of the word than the word length which are frequently used and the word frequency also shows a correlation with whether learner know the definition of a word ~\cite{leroy2013effect}. We use the frequencies obtained from SUBTLEX-US ~\cite{brysbaert2009moving}, a database of 50 million words from various English-US movies and TV series subtitles as reference.
+
 \begin{equation}
   C_w = \frac{1}{\log_{10}(freq_w)}
 \end{equation}
-Where ${freq_w}$ is the average frequency of word $w$ per million words in the
-database.
+
+Where ${freq_w}$ is the average frequency of word $w$ per million words in the database.
 
 \section{Creating structure}
-Also each of the candidate is mapped with a semantic vector representation which
-is obtained from the pre trained model \emph{en\_web\_core\_lg} of \emph{spaCy}
-\footnote{\url{https://spacy.io/}}, a natural language processing library. The main
-drawback is that it cannot address the out of vocabulary(OOV) words. Which
-could be rectified by training a custom word vectors over a decently sized learner content.
+There are two major approach to clustering the vocabularies. Semantic relationship, association established by common topic. For example, words such as tiger, lion, elephant, crocodile, deer, bison are associated by a common topic 'wild animals'. Thematic relationship associates the words with a specific theme. For example, words such as sweater, changing room, tries on, wool, striped are associated by a theme. Though ~\cite{tinkham1997effects} suggests that semantic approach hinders while thematic approach facilitates L2 vocabulary learning. ~\cite{gholami2014semantic} highlights the benefits of semantic approach over thematic approach in the perspective of a tutor. As we a building a system that acts as a tutor to track, evaluate and remediate the learner's vocabulary knowledge, we adopt semantic approach to cluster the vocabulary.
+
+Each of the candidate is associated with a semantic vector representation which is obtained from the pre-trained model \emph{en\_web\_core\_lg} of \emph{spaCy} \footnote{\url{https://spacy.io/}}, a natural language processing library. The main drawback is that it cannot address the out of vocabulary (OOV) words. Which could be rectified by training a custom word vectors over a larger learner input text.
 
 \subsection{Family}
-We group the words into families, similar to ~\citet{bauer1993word} work on word
-families but instead of seven sub-groups we form a single group for all the types.
-The main intuition of grouping the words into families is that the learner can
-extrapolate their knowledge of inflections of a language to understand/predict
-all the possible forms of an unseen word. Similarly with this setup our system
-can extrapolate the mastery of one the member to the entire family. Which could 
-drastically reduce the number of interaction that the system need to estimate
-the learner's vocabulary.
+Each word is not alone in the vocabulary space. There set of words that are associated through different morphological operations of the language. So we consider all those words belong to this set as an entity called \textit{family}.
+We group the words into families, similar to ~\cite{bauer1993word} work on word families but instead of seven sub-groups we form a single group. The main intuition of grouping the words into families is that the learner can extrapolate their knowledge of inflections of a language to understand/predict all the possible forms of a known word. Similarly with this setup our system can extrapolate the mastery of one word to the entire word family with respect to a learner. Which could drastically reduce the number of interaction that the system need to estimate the learner's vocabulary.
 
 \subsection{Network}
-Now the families has to co-exist in the space of language(limited by the
-learner text) as a network like a society. It is a fully connected network with each
-family with a different affinity to another. The affinity is a measure of
-contextual similarity between the families. We compute cosine similarity 
-between the mean of word vectors of all the members of the family to similar
-mean vector representation of another family.
+The families has to co-exist like a society in the language space to be functional. As we explained earlier, we choose semantic approach to cluster the families. It forms a fully connected network with each family with a varying affinity to another family. The affinity here is a cosine similarity between the mean of semantic vectors of all the members of the family to similar mean vector representation of another family.
 \begin{equation}
   V_{F_i} = \frac{1}{n} \sum_{k}^{n} V_{w_k}
 \end{equation}
-where ${n}$ is the number of elements of the family ${F_i}$.
+where ${n}$ is the number of elements of the family ${F_i}$, ${w_k}$ is the ${k^{th}}$ word of the family ${F}$ and ${V_{w_{k}}}$ is its semantics word vector. And ${V_{F_{i}}}$ is the mean semantic vector of the ${i^{th}}$ family.
 \begin{equation}
   S_{ij} = \frac{V_{F_i} * V_{F_j}}{\|V_{F_i}\|  \|V_{F_j}\|}
 \end{equation}
-where, ${S_{ij}}$ is the cosine similarity between the vector representations of
-families ${F_i}$ and ${F_j}$.
+where, ${S_{ij}}$ is the cosine similarity between the semantic vectors of families ${F_i}$ and ${F_j}$.
 
-
-By this way we create more structure in the space of vocabulary. Which come
-handy in many situations like activity creation, updating mastery of each
-vocabulary and analysis. This structure helps in further reducing the search space
-by allowing the model to get a better inference about learners level with
-relatively very less and effective interactions compared to a method of
+By this way we create more structure in the space of vocabulary. Which come handy in many situations like activity creation, updating mastery of each
+candidate and family, feedback generation and analysis. This structure helps in further reducing the search space
+by allowing the model to get a better inference about learners level with relatively very less and effective interactions compared to a method of
 tracking each word in the vocabulary individually.
 
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{network_1}
+\caption{A sample of families and its members in a network}
+\end{tcbraster}
+\label{fig:neighbor}
+\end{figure}
 
-\begin{figure*}[hbt!]
-  \centering
-  \subfloat[neighbors of \emph{width}]{
-    \includegraphics[width=.4\linewidth]{network_1}
-  }
-  \subfloat[neighbors of \emph{color}]{
-    \includegraphics[width=.4\linewidth]{network_2}
-  }
-  \hspace{0mm}
-  \subfloat[neighbors of \emph{noon}]{
-    \includegraphics[width=.4\linewidth]{network_3}
-  }
-  \subfloat[neighbors of \emph{analysis}]{
-    \includegraphics[width=.4\linewidth]{network_4}
-  }
-  \caption{A figure with two sub-figures}
-  \label{fig:network}
-\end{figure*}
-
-As we can see in the figure \ref{fig:network} the neighbors of the terms in the
-graph are tightly bound with the neighbors that are contextually closer.
-
-By this way we create more structure in the space of vocabulary. Which come
-handy in many situations like activity creation, updating mastery of each
-vocabulary and analysis. This structure helps in further reducing the search space
-by allowing the model to get a better inference about learners level with
-relatively very less and effective interactions compared to a method of
-tracking each word in the vocabulary individually.
-
+As we can see in the figure \ref{fig:neighbor} the neighbors of the terms in the
+graph are tightly bound with the families that are semantically closer.
 
 \section{Content organization}
+Content creation for a vocabulary learning task in general is a labour intensive task as it requires to collect multiple good quality example sentences for each of candidates in vocabulary. At the same time they have to be acceptable by a wide variety of learners.
+One of the key advantage of our proposed application is the fully automated extraction of content from the learner's text to satisfy a wide variety of learners. The process of content extraction and organisation is described in the rest of this section.
 
-\subsection{Sentences}
+\subsection{Candidate Sentence}
+The candidate sentences are the example use cases of the candidate words. So all the sentences in which the candidate word occur are cleaned and stored. Also the sentences before and after the candidate sentences are extracted to preserved the context of the usage. Which provides some freedom in creating different types of activities.
 
-All the sentences in which the candidate words occur are cleaned and mapped to
-the corresponding candidate word. So each candidate word is mapped to all the sentences
-in which it occur and also each sentence is mapped to all the candidate
-words it contains.
+The sentences used for vocabulary learning has to be concise. But all the candidate sentences does not obey this constraint due to the unregulated source of learn input. Each candidate word has more than 10 candidate sentences as we filter all the rare words. In-order to use the best candidate sentence among them we use GDEX proposed by ~\cite{kilgarriff2008gdex} to rank them
 
 \subsection{Books}
-All the processed data such as vocabulary, families, network, sample sentences
-are packed into a book instance. This also tracks the meta information such as
-Title, Author, Genre, Year and Publisher. This help any future learner to select
-the processed book directly. This also could help in comparing the performance
-of different learners on the same book.
+
+All the processed data such as vocabulary, families, network, candidate sentences
+are packed as a \textit{book}. The book also records the meta information such as
+Title, Author, Genre, Year and Publisher. This would help any future learner to select a pre-processed book. Which will create a platform to compare and contrast the progression of learners with varying background.
 
 \subsection{Bookshelf}
 All such processed book are organized in multiple bookshelves specific to each
-domain similar to the gutenberg project\footnote{\url{http://www.gutenberg.org}}.
+domain similar to the Gutenberg project\footnote{\url{http://www.gutenberg.org}}. Figure 6 shows the UI of library page in which preloaded books can be used for activities without processing that book again.
 
 \section{Models}
-In this work we maintain multiple models to track and update different aspect
-of the application.
+Though we have built the vocabulary and organised the content, we need to models to curate the them, track the performance, evaluate and update the progression of learning. Learning in this application conducted in \textit{sessions} defined based on the \textit{learner} performance by a \textit{tutor} assigned for each book.
 
 \subsection{Learner}
-The learner instance maintain the personal information of the learner and tracks
-the list of instance of books the learner has choose to improve vocabulary and the
-progress in them. This also could maintain overall vocabulary knowledge of
-the learner and customize the activity type, feedback and book suggestions based
-on individual needs.
+A learner model maintains the vocabulary knowledge, session performances and other meta information of a learner. Learner model is nothing but an instance of the network associated with a book. Each node in the network (which is a family) is attributed with a mastery score ranging from 0 to 1.
 
 \subsection{Tutor}
 For each book the learner selects, a tutor instance will be created. The main
 activities of the tutor are to design a learning session, evaluate the
 performance and track the mastery level of the learner w.r.t all the vocabulary
 in the book. Then again generate a new session based on the updated mastery
-levels in the network.
+levels in the network. Figure 7 shows the UI to in which learner can select the word 
+complexity according to knowledge level. By default it is ?Average?.
 
 \textbf{Mastery Score:} The value ranges between 0 and 1. Initially it is
 assigned to 0.5 to indicate the uncertainty. Based on the performance of the
@@ -259,7 +222,7 @@ from the family ${F_i}$.
   M_j = M_j * (1 + (\alpha * sign * S_{ij}))
 \end{equation}
 Where ${M_i}$ is the mastery of the family ${F_i}$. ${\alpha}$ is a tunable parameter
-for the magnitude of an update. ${sign \epsilon \{-1, +1\}}$ is the direction 
+for the magnitude of an update. ${sign \epsilon  \{-1, +1\}}$ is the direction 
 of the update. It depends on the correctness of learner response to the corresponding
 activity. And ${S_{ij}}$ is the measure of contextual similarity between the two
 families ${F_i}$ and ${F_j}$.
@@ -270,8 +233,8 @@ families to be practiced. The key functions of this model are to deciding the
 interaction type (teaching, testing, feedback), compose an interaction with all
 required data and handles the flow and closure of the session.
 
-In order to make the learning more efficient the most critical nodes of the
-graph are selected for a session. Here, The criticality of a node is decided
+In order to make the learning more efficient the most important nodes of the
+graph are selected for a session. Here, The importance of a node is decided
 based on the intrinsic(complexity) and extrinsic(degree, quality of connection)
 nature of the node.
 
@@ -282,12 +245,12 @@ nature of the node.
 Since our motive is to reduce the effort for content creation. We generate the
 activities on the fly. In this work we generate two type of activities. 
 
-\textbf{fit to context:} The learner is prompted to complete 3-4 incomplete
+\textbf{fit to context:} As we can see in  Figure 3, One of activity in which learner has to select one correct answer that satisfies the all given three sentences. The learner is prompted to complete 3-4 incomplete
 sentences with one among the given list of word suggestions. The options are
 chosen to be contextually tight to improve the quality of the activity and
 learning outcome.
 
-\textbf{scrambled word:} The learner is prompted to come up with a word from the
+\textbf{scrambled word:} Figure 4 showing an example of this type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.  The learner is prompted to come up with a word from the
 set of characters to complete an incomplete sentence. The words with word length
 less than 6 characters are allowed to generate this activity. Since the larger
 answer words makes it more ambiguous for the learner to solve.
@@ -304,6 +267,25 @@ interactions.
 \end{tcbraster}
 \end{figure}
 
+
+\begin{figure}
+\begin{tcbraster}[raster columns=1, enhanced, blankest]
+\tcbincludegraphics{1}
+\caption{One of activity type}
+
+\tcbincludegraphics{8}
+\caption{Other activity type}
+
+\tcbincludegraphics{5}
+\caption{Stats user interface}
+
+
+\tcbincludegraphics{4}
+\caption{Book shelf}
+
+\end{tcbraster}
+\end{figure}
+
 \subsection{Distractor selection}
 The distractors plays an important role in deciding the quality of the activities.
 We take advantage of the network of families we built based on the contextual
@@ -314,40 +296,20 @@ answer word to make all the distractors coherent.
 
 
 
-\begin{figure}
-\begin{tcbraster}[raster columns=1, enhanced, blankest]
-\tcbincludegraphics{1}
-\caption{One of activity in which learner has to select one correct answer that satisfies the all given three sentences}
 
-\tcbincludegraphics{8}
-\caption{This is the another type of activity in which learner is given a sentence with scrambled characters as options. Learner has to rearrange them to make correct word that fits that sentence.}
-
-\tcbincludegraphics{5}
-\caption{This page shows the stats of uploaded book. Number of families, total number of words, most frequent 20 words.}
-
-
-\tcbincludegraphics{4}
-\caption{This is the library page in which preloaded books can be used for activities without processing that book again.}
-
-\end{tcbraster}
-\end{figure}
 
 
 
 \begin{figure}
 \begin{tcbraster}[raster columns=1, enhanced, blankest]
 \tcbincludegraphics{7}
-\caption{Learner can select the word complexity according to knowledge level. By default it is "Average".}
-
-
+\caption{Knowledge level selector}
 \tcbincludegraphics{6}
-\caption{This is the list of words that will be used for creating activities. Learner can go through these words for getting insight of words.}
-
+\caption{Words to be used in exercise}
 \tcbincludegraphics{3}
-\caption{If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity.}
-
+\caption{Correct answer notification}
 \tcbincludegraphics{2}
-\caption{If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.}
+\caption{Wrong answer notification}
 \end{tcbraster}
 \end{figure}
 
@@ -359,18 +321,75 @@ Our plan for system was to create interactive and single page application so we 
 
 \subsection{System Flow}
 The first screen of system is the form in which learner will fill some details like name of author, name of book, publisher, etc. and also upload the book. The next step is to process the book and assign an ID for library reference. Learner can see the stats of book with details like number of families, total number of words, most frequent 20 words. 
-The next screen is the list of 20 words that will be used in activities. In the mean time learner can click on various menu items like "Books" for opening library and changing the book or learner can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of learner and showing for motivation and also showing learner appropriate error or success message and also giving correct explanation in the case of wrong answer selected. 
+The next screen is the list of 20 words that will be used in activities. In the mean time learner can click on various menu items like "Books" for opening library and changing the book or learner can change the complexity level of words by clicking on profile name. The next screen after stats is activity page. There are currently two types of activities which are coming from backend randomly. We are keeping the progress of learner and showing for motivation and also showing learner appropriate error or success message and also giving correct explanation in the case of wrong answer selected. Figure 9 and 10 shows the UI in case of wrong answer or right answer for particular question. If learner gave correct answer this notification bar will be shown on screen with button to proceed for next question. In the meantime learner can also see the progress by progress bar above activity and If learner gave wrong answer, this type of notification bar will be shown with another sentence that includes the selected option for actual activity to show how can we use the selected option in future activities.
 
+\section{Evaluation}
+
+This work is mainly focused on proposing methods to automate a customised vocabulary learning. Extrinsic evaluation of the system is out of scope of this current work. We mainly targeted to evaluate the feasibility of this system. The following are the consolidation of observation independently performed by two persons on same set of books.
+
+We have selected 3 heterogeneous books from different sources. Books: (A) \textit{Medieval People} by \textit{Eileen Edna Power},  (B) \textit{Astronomy for Amateurs} by \textit{Camille Flammarion}  and (C) \textit{Harry Potter and the Sorcerer's Stone} by \textit{J. K. Rowling}. The lexical properties of these books have been shown in detail in the Table \ref{tab:book profile}. We could also see that the mean sentence length of C is half of other two books. Since C is a novel with more conversation and narration which tends to have shorter sentences.
+
+\begin{table*}{\textwidth}
+\begin{tabular}[hbt!]{| p{5cm} | p{2cm} p{2cm} p{2cm} | }
+\hline
+   & A & B & C  \\
+ \hline
+ Sentences & 4067 & 2917 & 7612 \\ 
+ Words & 97360 & 75146 & 96148 \\ 
+Unique words & 7727  & 12402 & 6628 \\ 
+ Unique words (frequency $>$ 5) & 1098 & 1399 & 1247 \\ 
+ Word families & 1247 & 940 & 1023 \\ 
+ 5 Most frequent words & Great, Thomas, Wool, Good, House & Sun, Earth, Star, Distance, Moon & Harry, Said, Ron, Hagrid, Snape \\ 
+ \hline
+\end{tabular}
+\caption{Profile of the books. A - Medieval people, B - Astronomy for Amateurs, C - Harry Potter and the Philosopher's Stone}
+\label{tab:book profile}
+\end{table*}
+
+\subsection{Network Quality}
+We found meaningful cluster being formed in the network created by our application, as we threshold the connections between families. For visualisation, empirically we found a sweet spot of similarity score around 0.7 to threshold. Which preserves both synonymous and semantically related neighbours. The threshold is subjective to the underlying vector embedding space we used. We observed the clusters capturing temporal, geographical, human relationship, body parts etc... These clusters are shown in the figure \ref{fig:clusters}.
+
+On other hand there are many families in each network forms a very week connection with its neighbors. The major factors we observed are the absence of vector representation for the words (mostly proper nouns) of the family in our vector space or the set of words from a diverse sub-section of the book. Which doesn't seem to go well with the context of the rest of the book.
+
+\subsection{Processing time}
+Processing each book takes less than a minute even in a machine with average specification of processor: 7th Gen Intel® Core™ i3 Processor and memory: 16GB DDR4. Using machines with higher specification could drastically reduce the processing time.
+\begin{figure*}[p!]
+  \centering
+  \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_16}
+  }
+  \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_15}
+  }
+  \hspace{0mm}
+   \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_13}
+  }
+  \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_12}
+  }
+  \hspace{0mm}
+   \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_6}
+  }
+  \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_9}
+  }
+  \hspace{0mm}
+   \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_8}
+  }
+  \subfloat[]{
+    \includegraphics[width=.4\linewidth]{cluster_7}
+  }
+  \caption{Clusters formed at a threshold of similarity score greater than 0.7}
+  \label{fig:clusters}
+\end{figure*}
 
 \section{Future Work}
-The system has limitation on operating on the words that does not have a learned
-representation on the vector space. Which could be rectified by learning a
-custom word vector specific to the domain. This feature could create new use case
-like a tool to learn jargon specifics to a new domain.
+The system has limitation on operating on the words that does not have a learned representation on the vector space. Which could be rectified by learning a custom word vector specific to the domain. This feature could create new use case like a tool to learn jargon specifics to a new domain.
 
-Teaching the word in a session.
-Control over the complexity (tune-able complexity)
-Tracking words at learner level across books (to have a warm start for new book)
+The current design of the application is to learn by practice. The sessions can be redesigned to teach new words. Another aspect of extending this work would be to add more learning activities and evaluating their impact on learning.
 
 On the user interface mobile application can used to attract for learners. The number activity types are limited for now but future work can be implementation of other activity types. Currently this system is one learner limited but after implementation of login screen and maintaining the database of learners with sessions can also be a helpful feature. Use of text to speech can improve learner's pronunciation. 
 
