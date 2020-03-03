@@ -74,6 +74,7 @@ class Sentence(object):
         of type :class:`Sentence` class.
         """
         self.text = Sentence.clean_sentence(sentence_text.text)
+        self.word_count = len(sentence_text)
         self.next_sent = None
 
         # TODO: Fix sentence repetition
@@ -120,6 +121,17 @@ class Word(object):
         # TODO: Frequency of the unknown word could be realized as mean of the
         # distribution instead of a simple mean of the range
         return 2.5
+
+    @property
+    def sentences(self):
+        """Return a ranked sentence"""
+        # FIXME: Add a better ranking function
+        # Optimise for sentence with number of words 10
+        try:
+            return sorted(self.sentences, key=lambda x: abs(10 - x.word_count))
+        except AttributeError:
+            # Old syntax will deprecated soon
+            return self.sentences
 
     def _get_lemma(self, word):
         word_forms = get_word_forms(word.text).values()
@@ -188,7 +200,7 @@ class Vocab:
         families = {}
         logging.info("Uniting words into families")
         for word in self.words.values():
-            if word.frequency < 4:
+            if word.frequency < 5:
                 continue
             key = word.lemma
             if key not in families:
