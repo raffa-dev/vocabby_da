@@ -76,6 +76,7 @@ class Tutor(object):
             candidates.append((node, extrensic_score))
 
         # n_choice = np.random.choice(len(families), 20)
+        # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
         n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
         return [self.book.families[i[0]] for i in n_choice]
 
@@ -187,7 +188,7 @@ class Session(object):
 
     def _activity_selector(self, word):
         # TODO: Improve activity selection based on student progress
-        if len(word) >= 6:
+        if len(word) >= 5:
             return 0
         else:
             return random.choice([0, 1])
