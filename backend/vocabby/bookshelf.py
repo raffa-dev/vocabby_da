@@ -117,8 +117,14 @@ class Bookshelf:
                         'publisher': publisher}})
         book = Book(text, title, author, gener, year, publisher, code)
         book.save()
-
         return code
+
+    def remove_book(self, code):
+        # Remove the book from the index
+        self.books.pop(code)
+        
+        # Remove the book file from the storage space
+        os.remove('data/books/' + code + '.p')
 
     def _generate_code(self, title, author, year):
         """Generate a unique code for the book."""
