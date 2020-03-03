@@ -27,8 +27,10 @@ class PostText(APIView):
         book_code = book_shelf.add_book(
                 text, book_name, author, genre, year, publisher)
         new_book = Book.load(book_code)
-        learner = Learner(username)
-        learner.add_book(new_book)
+        learner = Learner.load(username)
+
+        # Loads the book if it doesnt  exist
+        _ = learner.get_tutor(new_book)
 
         data = {'username': username,
                 'bookCode': book_code,
