@@ -22,8 +22,11 @@ class Learner(object):
 
     @staticmethod
     def load(learner_id):
-        with open('data/learners/' + learner_id + '.p', 'rb') as learner_file:
-            learner = pickle.load(learner_file)
+        try:
+            with open('data/learners/' + learner_id + '.p', 'rb') as learner_file:
+                learner = pickle.load(learner_file)
+        except FileNotFoundError:
+            learner = Learner.load(learner_id)
         return learner
 
     def save(self):
@@ -77,7 +80,7 @@ class Tutor(object):
 
         # n_choice = np.random.choice(len(families), 20)
         # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
-        n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
+        n_choice = sorted(candidates, key=lambda x: -x[1])[:20]
         return [self.book.families[i[0]] for i in n_choice]
 
     def get_session(self):

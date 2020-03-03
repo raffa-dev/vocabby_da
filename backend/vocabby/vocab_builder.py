@@ -102,16 +102,16 @@ class Word(object):
         self.pos = word.tag_
         self.lemma = self._get_lemma(word)
         self.vector = word.vector
-        self.sentences = []
+        self._sentences = []
 
     def include_sentence(self, sentence):
         """Include the sentence to the list of evidences for the word."""
-        self.sentences.append(sentence)
+        self._sentences.append(sentence)
 
     @property
     def frequency(self):
         """Get the document frequency of the word."""
-        return len(self.sentences)
+        return len(self._sentences)
 
     @property
     def complexity(self):
@@ -127,11 +127,7 @@ class Word(object):
         """Return a ranked sentence"""
         # FIXME: Add a better ranking function
         # Optimise for sentence with number of words 10
-        try:
-            return sorted(self.sentences, key=lambda x: abs(10 - x.word_count))
-        except AttributeError:
-            # Old syntax will deprecated soon
-            return self.sentences
+        return sorted(self._sentences, key=lambda x: abs(10 - x.word_count))
 
     def _get_lemma(self, word):
         word_forms = get_word_forms(word.text).values()
