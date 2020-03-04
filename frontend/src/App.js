@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
 import Graph from '../src/Graph.js';
 
-var LOCALHOST = '192.168.23.222'
+var LOCALHOST = '192.168.4.244'
 const customStyles = {
   content: {
     top: '50%',
@@ -42,7 +42,7 @@ class App extends Component {
       neighbourhoodWc: {},
       
       // Session Handling
-	  wordNeighbors: [],
+  	  wordNeighbors: [],
       wordList: [],
       activity: {},
       answer: "",
@@ -62,7 +62,7 @@ class App extends Component {
       isLoading: false,
       modalIsOpen: false,
       activePage: "index",
-	  activeWordIndex: 0,
+  	  activeWordIndex: 0,
 
       // Index
       books: [],
@@ -75,6 +75,7 @@ class App extends Component {
                   "index": this.renderIndex.bind(this),
                   "activity": this.renderActivity.bind(this),
                   "book": this.renderBook.bind(this),
+                  // ""
                   "model": this.renderModel.bind(this),
                   "modelWc": this.renderModelWc.bind(this),
                   "bookshelf": this.renderBookShelf.bind(this)};
@@ -181,6 +182,7 @@ class App extends Component {
         
         this.setState({activePage: "activity",
                        activity: response.data.activity,
+                       progress: response.data.progress,
                        isLoading: false})
       })
   }
@@ -260,6 +262,7 @@ class App extends Component {
           }
           this.setState({activePage: "activity",
                          activity: response.data.activity,
+                         progress: response.data.progress,
                          isLoading: false})
         })
     }
@@ -537,7 +540,7 @@ class App extends Component {
     return (
                     <div style={{ width: '80%', margin: '0 auto' }}>
                       <div id="progressbar" >
-                        <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
+                        <div style={{ width: this.state.progress + "%" }}></div>
                       </div>
                       <br />
                       {this.state.activity.activityType === 0 ?

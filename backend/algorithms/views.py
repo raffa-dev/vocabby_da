@@ -96,7 +96,8 @@ class GetActivity(APIView):
         session = tutor.get_session()
         data = {'username': username,
                 'bookCode': book_code,
-                'activity': session.next_acitivity()}
+                'activity': session.next_acitivity(),
+                'progress': (len(session.tokens) - len(session.queue)) * 100 / len(session.tokens)}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)
 

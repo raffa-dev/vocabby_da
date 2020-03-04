@@ -26,7 +26,7 @@ class Learner(object):
             with open('data/learners/' + learner_id + '.p', 'rb') as learner_file:
                 learner = pickle.load(learner_file)
         except FileNotFoundError:
-            learner = Learner.load(learner_id)
+            learner = Learner(learner_id)
         return learner
 
     def save(self):
@@ -80,8 +80,8 @@ class Tutor(object):
 
         # n_choice = np.random.choice(len(families), 20)
         # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
-        n_choice = sorted(candidates, key=lambda x: -x[1])[:20]
-        return [self.book.families[i[0]] for i in n_choice]
+        n_choice = sorted(candidates, key=lambda x: -x[1])
+        return [self.book.families[node] for node, score in n_choice if self.network.node[node]['mastery'] < 0.8][:20]
 
     def get_session(self):
         """Returns a active/incomplete session or a new session."""
@@ -170,6 +170,7 @@ class Session(object):
         return np.random.choice(family.members)
 
     def candidate_neighbours(self):
+        # TODO: Get 2 level neighbours
         neighbourhood = []
         for token in self.tokens:
             edges = []
