@@ -53,6 +53,11 @@ class Tutor(object):
         # self.mastery = {w: 0.5 for w in self.book.words}
         self.network = self.book.network
 
+    @property
+    def progress(self):
+        mastered_count = sum([1 for node in self.network if self.network.node[node]["mastery"] > 0.8])
+        return (mastered_count *100) / len(self.network)
+
     def new_session(self):
         critical_nodes = self.get_critical_nodes()
         self.sessions.append(Session(self, critical_nodes))

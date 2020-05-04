@@ -14,7 +14,7 @@ import base64
 class PostText(APIView):
     def post(self, req):
         if not json.loads(req.body)['file'] == []:
-                text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('windows-1252')
+                text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf8')
         else:
                 text = ""
         username = json.loads(req.body)['user']
@@ -27,10 +27,8 @@ class PostText(APIView):
         book_code = book_shelf.add_book(
                 text, book_name, author, genre, year, publisher)
         new_book = Book.load(book_code)
-        learner = Learner.load(username)
-
-        # Loads the book if it doesnt  exist
-        _ = learner.get_tutor(new_book)
+        learner = Learner(username)
+        learner.add_book(new_book)
 
         data = {'username': username,
                 'bookCode': book_code,
@@ -57,6 +55,7 @@ class SessionStart(APIView):
                 'stats': Book.load(book_code).get_stats(),
                 'neighbours': neighbourhood,
                 'neighboursWc': neighbourhoodwc,
+                'progress': tutor.progress,
                 'wordNeighbors': session.candidate_neighbours()}
         learner.save()
         return Response(data=data, status=status.HTTP_200_OK)

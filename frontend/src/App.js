@@ -7,7 +7,7 @@ import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
 import Graph from '../src/Graph.js';
 
-var LOCALHOST = '192.168.4.244'
+var LOCALHOST = '192.168.0.17'
 const customStyles = {
   content: {
     top: '50%',
@@ -26,7 +26,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'Kavin',
+      user: 'HP',
       username: "",
 
       // Current Book
@@ -191,7 +191,7 @@ class App extends Component {
     event.preventDefault();
     let stateData = this.state;
     const users = {
-
+      username: stateData.user,
     }
     this.setState({ isLoading: true })
 
@@ -267,7 +267,7 @@ class App extends Component {
         })
     }
     else {
-      alert("Hey you answered all questions for day 1")
+      alert("Hey you answered all questions for the day")
     }
   }
 
@@ -293,7 +293,7 @@ class App extends Component {
           progress: response.data.words.length,
           neighbourhood: response.data.neighbours,
           neighbourhoodWc: response.data.neighboursWc,
-		  wordNeighbors: response.data.wordNeighbors,
+		      wordNeighbors: response.data.wordNeighbors,
           statsResponse: response.data.stats,
           author: book.author,
           genre: book.gener,
@@ -301,6 +301,7 @@ class App extends Component {
           publisher: book.publisher,
           bookname: book.title,
           bookCode: book.code,
+          overallProgress: response.data.progress,
           isLoading: false
         })
       })
@@ -417,7 +418,7 @@ class App extends Component {
         <h1 className="booktitle">{this.state.bookname}</h1>
         <h4 className="subtitle">by {this.state.author}</h4>
         <div id="progressbar" >
-          <div style={{ width: (this.state.wordList.length - this.state.progress) * 5 + "%" }}></div>
+          <div style={{ width: this.state.overallProgress + "%" }}></div>
         </div>
         <div className="col-md-12">
           <div className="row card_ctr">
@@ -521,14 +522,14 @@ class App extends Component {
                           {this.state.books.map((value, index) => {
                             return <div className="col-md-3" key={index} onClick={() => { this.openBook(value) }}>
                               <div className="index_card card" style={{ borderRadius: 20, textAlign: 'left' }}>
-								<div className="index_card_title">
+								                <div className="index_card_title">
                                 	<h3 style={{textAlign: 'center', color: 'white', fontWeight: '700'}}>{value.title}</h3><br />
 								</div>
-                                <h5>Author: {value.author}</h5><br />
-                                <h5>Genre: {value.gener}</h5><br />
-                                <h5>Year: {value.year}</h5><br />
-                                <h5>Publisher: {value.publisher}</h5>
-                              </div>
+                                  <h5>Author: {value.author}</h5><br />
+                                  <h5>Genre: {value.gener}</h5><br />
+                                  <h5>Year: {value.year}</h5><br />
+                                  <h5>Publisher: {value.publisher}</h5>
+                                </div>
                             </div>
                           })}
                         </div>
@@ -540,7 +541,8 @@ class App extends Component {
     return (
                     <div style={{ width: '80%', margin: '0 auto' }}>
                       <div id="progressbar" >
-                        <div style={{ width: this.state.progress + "%" }}></div>
+                        <div style={{ width: (this.state.wordList.length / this.state.progress) * 100 + "%" }}></div>
+                        {/* <div style={{ width: this.state.progress + "%" }}></div> */}
                       </div>
                       <br />
                       {this.state.activity.activityType === 0 ?
@@ -555,7 +557,7 @@ class App extends Component {
                             {this.state.activity.options.map((value, index) => {
                               return <button key={index} name="answer" onClick={() => { this.setState({ answer: index, selected_answer: value, activatedAnswer: value }) }}
                                 style={this.state.answer === index ? { color: "white", background: 'blue', marginRight: 20, textTransform: "uppercase", fontWeight: "bold" } :
-                                  { color: "red", marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
+                                  { marginRight: 20, textTransform: "uppercase", fontWeight: "bold", border: '1 px solid black', color: "blue", background: 'white', }}
                               >
                                 {value}
                               </button>

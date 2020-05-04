@@ -171,7 +171,7 @@ class Vocab:
         """Collects all the unique word and pos_tag pairs from the text."""
         nlp = spacy.load("en_core_web_lg")
 
-        # nlp.max_length = len(self.text)
+        nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
         prev_sent = Sentence(nlp(''), None)
         words = {}
