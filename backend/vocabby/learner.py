@@ -7,6 +7,7 @@ Module to model the user learning and logic around it.
 import pickle
 import random
 import numpy as np
+import networkx as nx
 
 from vocabby.bookshelf import Book
 
@@ -71,16 +72,21 @@ class Tutor(object):
 
     def get_critical_nodes(self):
         # TODO: Update with proper implementation
+        print("\n\n\nNew mode of gettig critical nodes \n\n\n")
         candidates = []
-        for node in self.network:
-            extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
+        centrality_scores = list(nx.betweenness_centrality(self.network, k= int(len(self.network.nodes)/10), weight="weight").items())
+        # centrality_scores = list(nx.betweenness_centrality(self.network, weight="weight").items())
+
+        # for node in self.network:
+            # extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
             # intrensic_score = self.book.families[node].complexity
             # candidates.append((node, extrensic_score * intrensic_score))
-            candidates.append((node, extrensic_score))
+            # candidates.append((node, extrensic_score))
 
         # n_choice = np.random.choice(len(families), 20)
         # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
-        n_choice = sorted(candidates, key=lambda x: -x[1])
+        # n_choice = sorted(candidates, key=lambda x: -x[1])
+        n_choice = sorted(centrality_scores, key=lambda x: -x[1])
         return [self.book.families[node] for node, score in n_choice if self.network.node[node]['mastery'] < 0.8][:20]
 
     def get_session(self):
