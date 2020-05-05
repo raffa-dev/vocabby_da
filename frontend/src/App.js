@@ -26,7 +26,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'HP1',
+      user: 'HP2',
       username: "",
 
       // Current Book
