@@ -258,18 +258,21 @@ class Vocab:
         vectors = []
         for family in self.families.values():
             for child in family.members:
+                # Create a look up table for family and child index
                 relation[family.root].append(len(vectors))
                 vectors.append(child.vector)
         vectors = np.array(vectors)
         return vectors, relation
 
-    def _settle_min_sim(self, similarity_mat, relation):
+    def _settle_min_sim(self, similarity_mat, relation, k=5):
         """
         Map the member to member similarity to the family.
         """
         weighted_adj_list = []
         family_names = list(self.families.keys())
+        relatives = {}
         for i, f1 in enumerate(family_names):
+            buffer = []
             for f2 in family_names[i:]:
                 if f1 == f2:
                     continue
@@ -278,7 +281,24 @@ class Vocab:
                 score = max([similarity_mat[x][y] for x, y in pairs])
 
                 if score > 0.30:
-                    weighted_adj_list.append((f1, f2, min(1, score)))
+                    # weighted_adj_list.append((f1, f2, min(1, score)))
+                    buffer.append((f1, f2, min(1, score)))
+
+            relatives[f1] = sorted(buffer, key=lambda x: -x[2])
+
+            
+        # Restricting degree to K
+        degree = defaultdict(int)
+        for f, edges in relatives.items():
+            for e in edges:
+                if k - degree[f] > 0:
+                    if k - degree[e[1]] > 0:
+                        weighted_adj_list.append(e)
+                        degree[e[0]] += 1
+                        degree[e[1]] += 1
+                else:
+                    break
+                        
         return weighted_adj_list
 
     def stats(self):
