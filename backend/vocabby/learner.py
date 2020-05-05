@@ -100,6 +100,54 @@ class Tutor(object):
             self.new_session()
         return self.sessions[-1]
 
+    def get_graph_for_viz(self):
+        """Loads the processed book from shelf."""
+
+        # Building the entire graph for visualization
+        node_list = {name: idx for idx, name in enumerate(self.network.nodes)}
+        sorted_node_list = sorted(node_list.items(), key=lambda x: x[1])
+        active_session = self.get_session()
+        print(sorted_node_list[:5])
+        nodes = [{'id': node_list[token],
+                  'name': token,
+                  'score':self.network.node[token]['mastery'],
+                  'child': False,
+                  'critical': token in list(active_session.tokens.keys())}
+                 for token, _ in sorted_node_list]
+        print('Node list:', nodes[:5])
+        edges = []
+        for source, target, attrb in self.network.edges.data():
+            if attrb['weight'] < 0.7:
+                continue
+            edges.append({"source": node_list[source],
+                          "target": node_list[target],
+                          "weight": attrb['weight']})
+
+        children = []
+        child_edges = []
+        families = {}
+        for parent in nodes:
+            families[parent['id']] = set()
+            family = self.book.families.get(parent['name'], {})
+            if not family:
+                print("No family for ", parent['name'])
+                print(parent)
+                break
+            for child in family.members:
+                child_pos = len(nodes) + len(children)
+                children.append({'id': child_pos,
+                                 'name': child.text + "_" + child.pos,
+                                 'score': parent['score'],
+                                 'child': True})
+                child_edges.append({"source": parent['id'],
+                                    "target": child_pos,
+                                    "weight": 1})
+                families[parent['id']].add(child_pos)
+
+        neighbourhood = {"nodes": nodes + children, "links": edges + child_edges, "families": families}
+        neighbourhoodwc = {"nodes": nodes, "links": edges, "families": families}
+        return neighbourhood, neighbourhoodwc
+
 
 class Session(object):
     def __init__(self, tutor, tokens):

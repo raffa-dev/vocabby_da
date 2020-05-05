@@ -14,7 +14,9 @@ import base64
 class PostText(APIView):
     def post(self, req):
         if not json.loads(req.body)['file'] == []:
+                # text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('windows-1252')
                 text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf8')
+ 
         else:
                 text = ""
         username = json.loads(req.body)['user']
@@ -48,7 +50,7 @@ class SessionStart(APIView):
         tutor = learner.get_tutor(book_code)
         session = tutor.get_session()
         print (session.tokens.keys())
-        neighbourhood, neighbourhoodwc = Book.get_graph_for_viz(book_code)
+        neighbourhood, neighbourhoodwc = tutor.get_graph_for_viz()
         data = {'username': username,
                 'bookCode': book_code,
                 'words': list(session.tokens.keys()),
