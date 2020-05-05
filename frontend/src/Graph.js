@@ -63,13 +63,13 @@ export class Graph extends React.Component {
  function mouseout() {
     d3.select(this).select("circle").transition()
         .duration(250)
-        .attr("r", 5);
+        .attr("r", 10);
     d3.select(this).select("text").transition()
     		.duration(250)   
-        .attr("x", 5)
-    		.attr("dy", ".35em")
+        .attr("x", 10)
+    		.attr("dy", ".45em")
 				.style("fill", "black")
-        .style("font-size", '15px');
+        .style("font-size", '20px');
 	}
 
 

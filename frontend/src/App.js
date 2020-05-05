@@ -26,7 +26,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'HP',
+      user: 'HP1',
       username: "",
 
       // Current Book
@@ -231,9 +231,11 @@ class App extends Component {
     let config = { "Content-Type": "application/json" };
     axios.post('http://' + LOCALHOST + ':8080/api/v1/postactivity', user, config)
       .then(response => {
-        this.setState({ feedback: response.data.result.feedback, errorColor: response.data.result.isCorrect })
-        this.setState({ answer: "", progress: response.data.result.remaining, showMessage: true })
-        this.setState({ remaining_words: response.data.result.remaining, answer: selection })
+        this.setState({ feedback: response.data.result.feedback,
+                        errorColor: response.data.result.isCorrect,
+                        answer: "", showMessage: true,
+                        remaining_words: response.data.result.remaining,
+                        answer: selection })
       })
   }
 
@@ -245,9 +247,7 @@ class App extends Component {
         username: stateData.user,
         bookCode: stateData.bookCode,
       };
-      this.setState({ isLoading: true, activatedAnswer: "______" })
-      this.setState({scrambledActivity: []})
-      this.setState({scrambledForm: []})
+      this.setState({ isLoading: true, activatedAnswer: "______", scrambledActivity: [], scrambledForm: []})
       let config = { "Content-Type": "application/json" };
       axios.post('http://' + LOCALHOST + ':8080/api/v1/getactivity', user, config)
         .then(response => {
@@ -541,7 +541,8 @@ class App extends Component {
     return (
                     <div style={{ width: '80%', margin: '0 auto' }}>
                       <div id="progressbar" >
-                        <div style={{ width: (this.state.wordList.length / this.state.progress) * 100 + "%" }}></div>
+                        <div style={{ width: this.state.progress + "%" }}></div>
+                        {/* <div style={{ width: (this.state.progress / this.state.wordList.length) * 100 + "%" }}></div> */}
                         {/* <div style={{ width: this.state.progress + "%" }}></div> */}
                       </div>
                       <br />

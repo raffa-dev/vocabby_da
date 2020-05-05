@@ -26,24 +26,41 @@ function color(d) {
 }
 
 function stroke(d){
-  if (d.child === true) {
-    return "orange"
+  if (d.critical === true) {
+    return "blue"
   } else {
-    return "teal"
+    if (d.child === true) {
+      return "orange"
+    } else {
+      return "teal"
+    }
+  }
+}
+
+function radius(d){
+  if (d.critical === true) {
+    return 30
+  }
+  else {
+    return 10
   }
 }
 
 export const enterNode = (selection) => {
     selection.select('circle')
-        .attr("r", 5)
+        .attr("r", function(d) {return radius(d)})
         .style("fill", function(d) { return color(d.score) })
         .style("stroke", function(d) { return stroke(d)})
-        .style("stroke-width", 3)
+        .style("stroke-width", 2)
 
     selection.select('text')
-        .attr("dy", "0.35em")
-        .style("transform", "translateX(-50%,-50%")
+        // .attr("dy", "0.45em")
+        // .style("transform", "translateX(-50%,-50%")
+				// .style("fill", "black")
+        .attr("x", 10)
+    		.attr("dy", ".45em")
 				.style("fill", "black")
+        .style("font-size", '20px');
 };
 
 export const updateNode = (selection) => {
