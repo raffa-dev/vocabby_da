@@ -47,3 +47,7 @@ cd frontend
 npm install
 npm start
 ```
+
+# App
+
+Access the application at http://localhost:3000
