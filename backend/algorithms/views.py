@@ -14,8 +14,10 @@ import base64
 class PostText(APIView):
     def post(self, req):
         if not json.loads(req.body)['file'] == []:
-                # text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('windows-1252')
+            try:
                 text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('utf8')
+            except UnicodeDecodeError:
+                text = base64.b64decode(json.loads(req.body)['file']['base64'].split(",")[1]).decode('windows-1252')
  
         else:
                 text = ""
