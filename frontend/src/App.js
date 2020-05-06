@@ -608,7 +608,7 @@ class App extends Component {
               <nav>
                 <ul>
                   <li><a href="#books" onClick={this.openBookShelf}><i className="icon-gear"></i>Books</a></li>
-                  <li><a href="#upload" onClick={() => { this.setState({ index: true }) }}><i className="icon-home"></i>Upload</a></li>
+                  <li><a href="#upload" onClick={() => { this.setState({ activePage: "index"}) }}><i className="icon-home"></i>Upload</a></li>
                   <li><a href="#graph" onClick={this.openBookShelf}><i className="icon-picture"></i>Graph</a></li>
                   <li><a href="#user"><i className="icon-picture"></i>{this.state.user}</a>
                     <ul className="dropdown">
