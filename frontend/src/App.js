@@ -7,7 +7,8 @@ import Modal from 'react-modal';
 import Highlight from 'react-highlighter';
 import Graph from '../src/Graph.js';
 
-var LOCALHOST = '192.168.0.17'
+// var LOCALHOST = '192.168.0.17'
+var LOCALHOST = '127.0.0.1'
 const customStyles = {
   content: {
     top: '50%',
@@ -26,7 +27,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'HP2',
+      user: 'Kavin2',
       username: "",
 
       // Current Book
