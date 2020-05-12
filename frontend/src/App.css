@@ -135,3 +135,64 @@
     display: table-cell;
     vertical-align: middle;	
 }
+
+.option {
+    margin: 15px 35px;
+    padding: 15px 40px;
+}
+
+.button {
+    background: linear-gradient(45deg, #337ab7, transparent);
+    border: none;
+    text-align: center;
+    font-family: 'Open Sans' , 'Quicksand', sans-serif;
+    font-weight: 700;
+    /* font-size: 19px; */
+    padding: 15px 20px;
+    /* min-width: 150px; */
+    border-radius: 20px;
+    /* min-height: 150px; */
+    color: #fff;
+    cursor: pointer;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+	display: table-cell;
+}
+
+.button .round {
+  border-radius: 10px;
+
+}
+
+.grey {
+  background: #737373;
+}
+
+.blue {
+  background: #0943c5
+}
+
+.red{
+  background: #c51a09;
+}
+
+
+.green {
+  background: #01a22b
+}
+
+.word {
+  text-align: center;
+  font-size: 135px;
+  margin: 50px;
+  display: block;
+}
+
+.card_ctr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}

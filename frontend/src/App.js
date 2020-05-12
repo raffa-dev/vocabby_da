@@ -63,7 +63,10 @@ class App extends Component {
       isLoading: false,
       modalIsOpen: false,
       activePage: "index",
-  	  activeWordIndex: 0,
+      activeWordIndex: 0,
+      
+      // Prelim
+      activePrelimIndex: 0,
 
       // Index
       books: [],
@@ -75,6 +78,8 @@ class App extends Component {
                   "stats": this.renderStats.bind(this),
                   "index": this.renderIndex.bind(this),
                   "activity": this.renderActivity.bind(this),
+                  "prelim": this.renderPreliminaryTest.bind(this),
+                  "learn": this.renderLearning.bind(this),
                   "book": this.renderBook.bind(this),
                   // ""
                   "model": this.renderModel.bind(this),
@@ -423,7 +428,7 @@ class App extends Component {
         </div>
         <div className="col-md-12">
           <div className="row card_ctr">
-            <button className="button blue" onClick={() => {this.setState({activePage: "words"})}}> Learn </button>
+            <button className="button blue" onClick={() => {this.setState({activePage: "prelim"})}}> Learn </button>
             <button className="button green" onClick={() => {this.setState({activePage: "words"})}}> Practice </button>
           </div>
 		  <br />
@@ -464,6 +469,58 @@ class App extends Component {
 
     )
 
+  }
+
+  prelimResponse(choice) {
+    if (choice === 'yes') {
+      // this.update()
+      this.setState({activePrelimIndex: (this.state.activePrelimIndex + 1 === this.state.wordList.length) ? 0 : this.state.activePrelimIndex + 1 })
+    }
+    else {
+      this.setState({activePage: "learn"})
+    }
+
+  }
+
+
+  renderLearning() {
+    return (
+      <div className="container">
+        <div className="word">{this.state.wordList[this.state.activePrelimIndex]}</div>
+        <div className="row">
+            <button className="button pulse" onClick={() => {this.setState({activePrelimIndex: (this.state.activePrelimIndex + 1 === this.state.wordList.length) ? 0 : this.state.activePrelimIndex + 1, activePage: "prelim"})}}>
+                back 
+            </button>
+        </div>
+      </div>
+    )
+  }
+
+  renderPreliminaryTest () {
+    return (
+      <div className="container">
+        <div id="progressbar" >
+          {/* <div style={{ width: this.state.progress + "%" }}></div> */}
+          <div style={{ width: (this.state.activePrelimIndex / this.state.wordList.length) * 100 + "%" }}></div>
+        </div>
+		    <div className="content">
+            <h1 className="word"> {this.state.wordList[this.state.activePrelimIndex]} </h1>
+            <div className="col-md-12">
+              <div className="row card_ctr">
+                <button className="button option green" onClick={() => {this.prelimResponse("yes")}}> Known </button>
+                <button className="button option grey" onClick={() => {this.prelimResponse("no")}}> Unknown </button>
+              </div>
+
+
+        <div className="row">
+            <button className="button pulse" onClick={() => {this.setState({activePage: "book"})}}>
+                back 
+            </button>
+        </div>
+            </div>
+        </div>
+      </div>
+    )
   }
 
 
