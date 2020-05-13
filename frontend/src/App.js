@@ -67,6 +67,7 @@ class App extends Component {
       
       // Prelim
       activePrelimIndex: 0,
+      dictionary: [("test", "1")],
 
       // Index
       books: [],
@@ -477,16 +478,46 @@ class App extends Component {
       this.setState({activePrelimIndex: (this.state.activePrelimIndex + 1 === this.state.wordList.length) ? 0 : this.state.activePrelimIndex + 1 })
     }
     else {
-      this.setState({activePage: "learn"})
-    }
+      let stateData = this.state;
+      const users = {
+        username: stateData.user,
+        word: this.state.wordList[this.state.activePrelimIndex]
+      }
+      this.setState({ isLoading: true })
 
+      let config = { "Content-Type": "application/json" };
+      axios.post('http://' + LOCALHOST + ':8080/api/v1/dictionary', users, config)
+        .then(response => {
+          this.setState({dictionary: response.data.dictionary, activePage: "learn", isLoading: false})
+      })
+    }
   }
 
 
   renderLearning() {
     return (
       <div className="container">
-        <div className="word">{this.state.wordList[this.state.activePrelimIndex]}</div>
+        <div className="card dict_card">
+        <div className="dict_title_block">
+        <div className="dict_title">{this.state.wordList[this.state.activePrelimIndex]}</div>
+        </div>
+        <div className="dict_content">
+        {this.state.dictionary.map((value, index) => {
+          return (
+            <div>
+            <h3 className="dict_pos">{value[0]}</h3> <br />
+            {value[1].map((valueX, indexX) => {
+              return (
+                <div className="dict_sense"> {valueX} </div>
+              )})}
+            <br />
+            <br />
+            </div>
+          )
+        })}
+        </div>
+        </div>
+
         <div className="row">
             <button className="button pulse" onClick={() => {this.setState({activePrelimIndex: (this.state.activePrelimIndex + 1 === this.state.wordList.length) ? 0 : this.state.activePrelimIndex + 1, activePage: "prelim"})}}>
                 back 
@@ -718,7 +749,7 @@ class App extends Component {
               {this.state.errorColor === true ? "" :
                 <React.Fragment>
                   {
-                    this.state.feedback.length > 3 ? <h4>The word you chose is generaly used in following context.</h4>: null
+                    this.state.feedback.length > 3 ? <h4>The word you chose is generally used in following context.</h4>: null
                   }
                   
                   <br />

@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^api/v1/getlevel$', views.GetLevel.as_view(), name='get level'),
     url(r'^api/v1/postlevel$', views.PostLevel.as_view(), name='post level'),
     url(r'^api/v1/getbooks$', views.GetBooks.as_view(), name='get books'),
+    url(r'^api/v1/dictionary$', views.DictionaryLookUp.as_view(), name='get dictionary lookup'),
 ]

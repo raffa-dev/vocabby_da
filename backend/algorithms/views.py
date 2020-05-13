@@ -1,14 +1,16 @@
+import os
+import sys
 import json
+import base64
 from rest_framework import status
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
-import sys
-import os
+
+import vocabby.utils as ut
 from vocabby.learner import Learner
 from vocabby.bookshelf import Bookshelf, Book
-import base64
 
 
 class PostText(APIView):
@@ -118,4 +120,15 @@ class PostActivity(APIView):
                 'bookCode': book_code,
                 'result': session.evaluate(activity_id, selection)}
         learner.save()
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class DictionaryLookUp(APIView):
+    def post(self, req):
+        username = json.loads(req.body)['username']
+        word = json.loads(req.body)['word']
+        data = {'username': username,
+                'dictionary': ut.dictionary_lookup(word)}
+
+        print("Output of Dict look up %s" % (data))
         return Response(data=data, status=status.HTTP_200_OK)

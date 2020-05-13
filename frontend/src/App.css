@@ -196,3 +196,22 @@
   align-items: center;
   margin-top: 40px;
 }
+
+
+/* dict */
+.dict_card {
+  text-align: left;
+  padding: 25px;
+}
+
+.dict_title_block {
+  margin-bottom: 40px;
+}
+
+.dict_content {
+  margin-left: 40px;
+}
+
+.dict_title {
+  font-size: 48px;
+}
