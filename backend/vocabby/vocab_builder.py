@@ -10,6 +10,7 @@ import itertools
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
+import neuralcoref as coref
 from numpy.linalg import norm
 from spacy.lang.en .stop_words import STOP_WORDS
 from word_forms.word_forms import get_word_forms
@@ -170,9 +171,17 @@ class Vocab:
     def _collect_words(self):
         """Collects all the unique word and pos_tag pairs from the text."""
         nlp = spacy.load("en_core_web_lg")
+        coref = neuralcoref.NeuralCoref(nlp.vocab)
+        nlp.add_pipe(coref, name='neuralcoref')
 
         nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
+
+        # Resolve co-reference using neuralcoref
+        self.text = text_obj._.coref_resolved
+        nlp.remove_pipe("neuralcoref")
+        text_obj = nlp(str(self.text.lower()), disable=['NER'])
+        
         prev_sent = Sentence(nlp(''), None)
         words = {}
         STOP_WORDS.add('_')
