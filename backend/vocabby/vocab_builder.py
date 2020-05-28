@@ -10,7 +10,7 @@ import itertools
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
-import neuralcoref as coref
+from neuralcoref import NeuralCoref
 from numpy.linalg import norm
 from spacy.lang.en .stop_words import STOP_WORDS
 from word_forms.word_forms import get_word_forms
@@ -68,27 +68,32 @@ class Sentence(object):
     Maintains the attributes of a sentence and also points to the adjacent
     sentences in the book.
     """
-    def __init__(self, sentence_text, previous_sentence):
+    def __init__(self, sentence_obj, previous_sentence):
         """
         **sentence_text** is the raw of a sentence of type `str`.
         **previous_sentence** is the pointer to previous sentence in the book
         of type :class:`Sentence` class.
         """
-        self.text = Sentence.clean_sentence(sentence_text.text)
-        self.word_count = len(sentence_text)
+        self.text = Sentence.clean(sentence_obj.text)
+        self.word_count = len(sentence_obj)
         self.next_sent = None
+        self.pos_tags = [tok.pos_ for tok in sentence_obj if not tok.pos_ in ["SPACE"]]
+        self.tokens = [tok.text for tok in sentence_obj]
+        self.lemmas = [Word.get_lemma(tok) for tok in sentence_obj
+                       if tok.text not in STOP_WORDS and tok.pos_ not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']]
 
         # TODO: Fix sentence repetition
         if previous_sentence:
             self.prev_sent = previous_sentence
             self.prev_sent.next_sent = self
 
-    def clean_sentence(text):
+    @staticmethod
+    def clean(text):
         clean = text.strip().capitalize()
 
         import re
         pattern = re.compile(r'[\r\n]')
-        clean = pattern.sub('', clean)
+        clean = pattern.sub(' ', clean)
         return clean
 
 
@@ -101,12 +106,31 @@ class Word(object):
         """
         self.text = word.text
         self.pos = word.tag_
-        self.lemma = self._get_lemma(word)
+        self.lemma = self.get_lemma(word)
         self.vector = word.vector
         self._sentences = []
+        self._sent_errs = []
 
     def include_sentence(self, sentence):
         """Include the sentence to the list of evidences for the word."""
+
+        has_PRON = 1 if 'PRON' in sentence.pos_tags else 0
+        is_regular = 0 if ((sentence.tokens[0].isalpha() or sentence.tokens[0] in ['"', '“']) and sentence.pos_tags[-1] == 'PUNCT') else 1
+        
+        # Length penalty
+        length = sum(1 for pos in sentence.pos_tags if pos not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM'])
+        a, b, c = 10, 20, 10.0
+        length_err = min(max(a-length, 0, length-b)/c, 1)
+
+        # Distance to end
+        target_pos = float(sentence.tokens.index(self.text) + 1)
+        position_err = 1 - (target_pos/len(sentence.tokens))
+
+        self._sent_errs.append({"length": length_err,
+                               "known":0,
+                               "position": position_err,
+                               "punctuation": is_regular,
+                               "anaphora": has_PRON})
         self._sentences.append(sentence)
 
     @property
@@ -123,14 +147,28 @@ class Word(object):
         # distribution instead of a simple mean of the range
         return 2.5
 
-    @property
-    def sentences(self):
-        """Return a ranked sentence"""
-        # FIXME: Add a better ranking function
-        # Optimise for sentence with number of words 10
-        return sorted(self._sentences, key=lambda x: abs(10 - x.word_count))
+    @staticmethod 
+    def sent_err(err):
+        return (0.4 * err["length"] + 0.3 * err["known"] + 0.1 * err["position"] + 0.05 * err["anaphora"] + 0.15 * err["punctuation"])
 
-    def _get_lemma(self, word):
+    def get_sentences(self, network=None):
+        """Return a ranked sentence"""
+        if network:
+            for idx, sent in enumerate(self._sentences):
+                mean_mastery = np.mean([network.node[lemma]["mastery"] for  lemma in sent.lemmas if lemma in network])
+                self._sent_errs[idx].update({"known": 1 - mean_mastery})
+
+        # Rank
+        ranked_sentences = sorted(set((Word.sent_err(y), str(y), x.text) for x, y in zip(self._sentences, self._sent_errs)))
+        # ranked_sentences = [x for x,_ in sorted(zip(self._sentences, self._sent_errs), key=lambda pair: Word.sent_err(pair[1]))]
+
+        for score, attrb, sent in ranked_sentences[::-1]:
+            print("%s\n%s\t%s\n\n" % (str(attrb), score, sent))
+        
+        return [x for _,_,x in ranked_sentences]
+
+    @staticmethod
+    def get_lemma(word):
         word_forms = get_word_forms(word.text).values()
         flat_list_of_forms = list(set(chain.from_iterable(word_forms)))
         if len(flat_list_of_forms) > 3:
@@ -171,16 +209,18 @@ class Vocab:
     def _collect_words(self):
         """Collects all the unique word and pos_tag pairs from the text."""
         nlp = spacy.load("en_core_web_lg")
-        coref = neuralcoref.NeuralCoref(nlp.vocab)
-        nlp.add_pipe(coref, name='neuralcoref')
+        # coref = NeuralCoref(nlp.vocab)
+        # nlp.add_pipe(coref, name='neuralcoref')
 
+        print("Preparing Spacy object")
         nlp.max_length = len(self.text)
         text_obj = nlp(str(self.text.lower()), disable=['NER'])
 
+        print("Preparing Spacy object")
         # Resolve co-reference using neuralcoref
-        self.text = text_obj._.coref_resolved
-        nlp.remove_pipe("neuralcoref")
-        text_obj = nlp(str(self.text.lower()), disable=['NER'])
+        # self.text = text_obj._.coref_resolved
+        # nlp.remove_pipe("neuralcoref")
+        # text_obj = nlp(str(self.text.lower()), disable=['NER'])
         
         prev_sent = Sentence(nlp(''), None)
         words = {}

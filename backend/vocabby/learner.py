@@ -167,9 +167,10 @@ class Session(object):
         if activity_type == 0:
             word = np.random.choice(family.members)
             all_sentences = list(
-                set(s.text.replace(word.text, '______') for s in word.sentences))
-            random.shuffle(all_sentences)
+                s.replace(word.text, '______') for s in word.get_sentences())
+            # random.shuffle(all_sentences)
             sentences = all_sentences[:3]
+        
             distractor_objs = self._get_distractors(family, word.pos) + [word]
             np.random.shuffle(distractor_objs)
             distractors = [d.text for d in distractor_objs]
@@ -188,8 +189,8 @@ class Session(object):
         elif activity_type == 1:
             word = np.random.choice(family.members)
             sentences = [random.choice(list(
-                    set(s.text.replace(word.text, '______')
-                        for s in word.sentences)))]
+                    set(s.replace(word.text, '______')
+                        for s in word.get_sentences()[:3])))]
             character_mix = list(word.text)
             random.shuffle(character_mix)
             activity_id = random.randint(1000, 100000)
@@ -292,6 +293,7 @@ class Session(object):
             if activity_type == 0:
                 wrong_word = self.answers[
                         activity_id]['distractors'][selection]
-                feedback_sentence = random.choice(wrong_word.sentences).text
+                # feedback_sentence = random.choice(wrong_word.get_sentences())
+                feedback_sentence = wrong_word.get_sentences()[0]
             result.update({'feedback': feedback_sentence})
         return result
