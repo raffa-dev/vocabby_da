@@ -8,6 +8,7 @@ import pickle
 import random
 import numpy as np
 import networkx as nx
+from tqdm import tqdm
 
 from vocabby.bookshelf import Book
 
@@ -76,15 +77,17 @@ class Tutor(object):
                 0.99,  self.network.node[neigh]['mastery'] * factor)
 
     def get_critical_nodes(self):
+        import scipy.sparse
+        import scipy.sparse.csgraph
         # TODO: Update with proper implementation
         print("\n\n\nNew mode of gettig critical nodes \n\n\n")
         candidates = []
         # centrality_scores = list(nx.betweenness_centrality(self.network, k= int(len(self.network.nodes)/10), weight="weight").items())
         # centrality_scores = list(nx.betweenness_centrality(self.network, weight="weight").items())
 
-        for node in self.network:
-            extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
-            candidates.append((node, extrensic_score))
+        # for node in self.network:
+            # extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
+            # candidates.append((node, extrensic_score))
 
             # Use internsic measure to decide a critical node
             # intrensic_score = self.book.families[node].complexity
@@ -92,10 +95,62 @@ class Tutor(object):
 
         # n_choice = np.random.choice(len(families), 20)
         # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
-        n_choice = sorted(candidates, key=lambda x: -x[1])
+        # n_choice = sorted(candidates, key=lambda x: -x[1])
         # n_choice = sorted(centrality_scores, key=lambda x: -x[1])
-        return [self.book.families[node] for node, score in n_choice if self.network.node[node]['mastery'] < 0.8][:20]
 
+        
+        # Closeness centrality
+        # A = nx.adjacency_matrix(self.network).tolil()
+        # D = scipy.sparse.csgraph.floyd_warshall(A, directed=False, unweighted=False)
+# 
+        # node_list_x = self.network.nodes
+        # node_list_y = self.network.nodes
+        # assert list(node_list_x) == list(node_list_y)
+        # n = D.shape[0]
+        # closeness_centrality = {}
+        # for r, node in enumerate(node_list_x):
+# 
+            # cc = 0.0
+# 
+            # possible_paths = list(enumerate(D[r, :]))
+            # shortest_paths = dict(filter( \
+                # lambda x: not x[1] == np.inf, possible_paths))
+# 
+            # total = sum(shortest_paths.values())
+            # n_shortest_paths = len(shortest_paths) - 1.0
+            # if total > 0.0 and n > 1:
+                # s = n_shortest_paths / (n - 1)
+                # cc = (n_shortest_paths / total) * s
+            # closeness_centrality[node] = cc
+        # 
+        # closeness_centrality = list(closeness_centrality.items())
+        G = self.network.copy()
+        print("Transforming graph")
+        for n, v in tqdm(self.network.edges()):
+            G[n][v]['weight'] = 1 - G[n][v]['weight']
+#       
+        n, v = list(self.network.edges())[0]
+        print("weight", self.network[n][v]['weight'])
+        print("distance", G[n][v]['weight'])
+        closeness_centrality = list(nx.closeness_centrality(G, distance="weight").items())
+        n_choice = sorted(closeness_centrality, key=lambda x: -x[1])
+        print("To nodes from closeness centrality")
+        print(n_choice[:30])
+
+        blacklist = set() 
+        whitelist = []
+        for node, _ in n_choice:
+            print("Prevented %s" % (node))
+            if self.network.node[node]['mastery'] < 0.8 and node not in blacklist:
+                blacklist.update(set(self.network.neighbors(node)))
+                whitelist.append(self.book.families[node])
+                if len(whitelist) >= 20:
+                    break
+
+                
+        return whitelist
+
+                
     def get_session(self):
         """Returns a active/incomplete session or a new session."""
         if not(self.sessions and len(self.sessions[-1].queue)):
@@ -118,12 +173,22 @@ class Tutor(object):
                  for token, _ in sorted_node_list]
         print('Node list:', nodes[:5])
         edges = []
-        for source, target, attrb in self.network.edges.data():
-            if attrb['weight'] < 0.7:
+        linkNodes = []
+        for idx, (source, target, attrb) in enumerate(self.network.edges.data(), len(nodes)):
+            if attrb['weight'] < 0.6:
                 continue
-            edges.append({"source": node_list[source],
-                          "target": node_list[target],
-                          "weight": attrb['weight']})
+            edges.extend([{"source": node_list[source],
+                          "target": idx,
+                          "weight": attrb['weight']},
+                          {"source": idx,
+                           "target": node_list[target],
+                           "weight": attrb['weight']}
+                          ])
+            linkNodes.append({'id': idx,
+                              'name': '',
+                              'score': 0,
+                              'child': False,
+                              'critical': False})
 
         children = []
         child_edges = []
@@ -136,7 +201,7 @@ class Tutor(object):
                 print(parent)
                 break
             for child in family.members:
-                child_pos = len(nodes) + len(children)
+                child_pos = len(nodes) + len(linkNodes) + len(children)
                 children.append({'id': child_pos,
                                  'name': child.text + "_" + child.pos,
                                  'score': parent['score'],
@@ -146,8 +211,8 @@ class Tutor(object):
                                     "weight": 1})
                 families[parent['id']].add(child_pos)
 
-        neighbourhood = {"nodes": nodes + children, "links": edges + child_edges, "families": families}
-        neighbourhoodwc = {"nodes": nodes, "links": edges, "families": families}
+        neighbourhood = {"nodes": nodes + children + linkNodes, "links": edges + child_edges, "families": families}
+        neighbourhoodwc = {"nodes": nodes + linkNodes, "links": edges, "families": families}
         return neighbourhood, neighbourhoodwc
 
 
