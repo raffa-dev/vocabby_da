@@ -27,7 +27,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'Kavin2',
+      user: 'Kavin5',
       username: "",
 
       // Current Book
@@ -372,6 +372,12 @@ class App extends Component {
                                   <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Families</h4><br />
                                     <h2>{this.state.statsResponse.totalFamilies}</h2>
+                                  </div>
+                                </div>
+                                <div className="column">
+                                  <div className="card" style={{borderRadius: 10 }}>
+                                    <h4>Number of relations</h4><br />
+                                    <h2>{this.state.statsResponse.relations}</h2>
                                   </div>
                                 </div>
 							 </div>
