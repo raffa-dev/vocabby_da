@@ -5,6 +5,7 @@ This is a vocabulary learning tool, which analyses the vocabulary structure in t
 # Clone repo
 ```bash
 git clone https://github.com/HaemanthSP/Vocabby.git
+git checkout 583af3c58ed526c762a103246d491e86f7bd8dfa
 ```
 
 # Setup venv
