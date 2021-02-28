@@ -53,6 +53,7 @@ class Tutor(object):
         self.sessions = []
         # self.mastery = {w: 0.5 for w in self.book.words}
         self.network = self.book.network
+        self.closeness_centrality = self.get_closeness_centrality()
 
     @property
     def progress(self):
@@ -76,11 +77,18 @@ class Tutor(object):
             self.network.node[neigh]['mastery'] = min(
                 0.99,  self.network.node[neigh]['mastery'] * factor)
 
+    def get_closeness_centrality(self):
+        G = self.network.copy()
+        print("Transforming graph")
+        for n, v in tqdm(self.network.edges()):
+            G[n][v]['weight'] = 1 - G[n][v]['weight']
+        return list(nx.closeness_centrality(G, distance="weight").items())
+
     def get_critical_nodes(self):
         import scipy.sparse
         import scipy.sparse.csgraph
         # TODO: Update with proper implementation
-        print("\n\n\nNew mode of gettig critical nodes \n\n\n")
+        # print("\n\n\nNew mode of gettig critical nodes \n\n\n")
         candidates = []
         # centrality_scores = list(nx.betweenness_centrality(self.network, k= int(len(self.network.nodes)/10), weight="weight").items())
         # centrality_scores = list(nx.betweenness_centrality(self.network, weight="weight").items())
@@ -102,20 +110,18 @@ class Tutor(object):
         # Closeness centrality
         # A = nx.adjacency_matrix(self.network).tolil()
         # D = scipy.sparse.csgraph.floyd_warshall(A, directed=False, unweighted=False)
-# 
         # node_list_x = self.network.nodes
         # node_list_y = self.network.nodes
         # assert list(node_list_x) == list(node_list_y)
         # n = D.shape[0]
         # closeness_centrality = {}
         # for r, node in enumerate(node_list_x):
-# 
             # cc = 0.0
-# 
+
             # possible_paths = list(enumerate(D[r, :]))
             # shortest_paths = dict(filter( \
                 # lambda x: not x[1] == np.inf, possible_paths))
-# 
+
             # total = sum(shortest_paths.values())
             # n_shortest_paths = len(shortest_paths) - 1.0
             # if total > 0.0 and n > 1:
@@ -124,23 +130,17 @@ class Tutor(object):
             # closeness_centrality[node] = cc
         # 
         # closeness_centrality = list(closeness_centrality.items())
-        G = self.network.copy()
-        print("Transforming graph")
-        for n, v in tqdm(self.network.edges()):
-            G[n][v]['weight'] = 1 - G[n][v]['weight']
-#       
-        n, v = list(self.network.edges())[0]
-        print("weight", self.network[n][v]['weight'])
-        print("distance", G[n][v]['weight'])
-        closeness_centrality = list(nx.closeness_centrality(G, distance="weight").items())
-        n_choice = sorted(closeness_centrality, key=lambda x: -x[1])
-        print("To nodes from closeness centrality")
-        print(n_choice[:30])
+        # n, v = list(self.network.edges())[0]
+        # print("weight", self.network[n][v]['weight'])
+        # print("distance", G[n][v]['weight'])
+        n_choice = sorted(self.closeness_centrality, key=lambda x: -x[1])
+        # print("To nodes from closeness centrality")
+        # print(n_choice[:30])
 
         blacklist = set() 
         whitelist = []
         for node, _ in n_choice:
-            print("Prevented %s" % (node))
+            # print("Prevented %s" % (node))
             if self.network.node[node]['mastery'] < 0.8 and node not in blacklist:
                 blacklist.update(set(self.network.neighbors(node)))
                 whitelist.append(self.book.families[node])
