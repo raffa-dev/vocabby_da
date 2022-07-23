@@ -10,7 +10,7 @@ import itertools
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
-from neuralcoref import NeuralCoref
+# from neuralcoref import NeuralCoref
 from numpy.linalg import norm
 from spacy.lang.en .stop_words import STOP_WORDS
 from word_forms.word_forms import get_word_forms
@@ -116,7 +116,7 @@ class Word(object):
 
         has_PRON = 1 if 'PRON' in sentence.pos_tags else 0
         is_regular = 0 if ((sentence.tokens[0].isalpha() or sentence.tokens[0] in ['"', '“']) and sentence.pos_tags[-1] == 'PUNCT') else 1
-        
+
         # Length penalty
         length = sum(1 for pos in sentence.pos_tags if pos not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM'])
         a, b, c = 10, 20, 10.0
@@ -147,7 +147,7 @@ class Word(object):
         # distribution instead of a simple mean of the range
         return 2.5
 
-    @staticmethod 
+    @staticmethod
     def sent_err(err):
         return (0.4 * err["length"] + 0.3 * err["known"] + 0.1 * err["position"] + 0.05 * err["anaphora"] + 0.15 * err["punctuation"])
 
@@ -164,7 +164,7 @@ class Word(object):
 
         for score, attrb, sent in ranked_sentences[::-1]:
             print("%s\n%s\t%s\n\n" % (str(attrb), score, sent))
-        
+
         return [x for _,_,x in ranked_sentences]
 
     @staticmethod
@@ -221,7 +221,7 @@ class Vocab:
         # self.text = text_obj._.coref_resolved
         # nlp.remove_pipe("neuralcoref")
         # text_obj = nlp(str(self.text.lower()), disable=['NER'])
-        
+
         prev_sent = Sentence(nlp(''), None)
         words = {}
         STOP_WORDS.add('_')
@@ -335,7 +335,7 @@ class Vocab:
 
             relatives[f1] = sorted(buffer, key=lambda x: -x[2])
 
-            
+
         # Restricting degree to K
         degree = defaultdict(int)
         for f, edges in relatives.items():
@@ -347,7 +347,7 @@ class Vocab:
                         degree[e[1]] += 1
                 else:
                     break
-                        
+
         return weighted_adj_list
 
     def stats(self):
