@@ -27,7 +27,7 @@ class App extends Component {
      super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      user: 'Kavin5',
+      user: 'Kavin2',
       username: "",
 
       // Current Book
@@ -37,6 +37,8 @@ class App extends Component {
       publisher: "ABC",
       bookname: '',
       bookCode: '',
+      vectors: '',
+      vectors_file: '',
       file: [],
       statsResponse: {},
       neighbourhood: {},
@@ -136,6 +138,15 @@ class App extends Component {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
+
+   /*getFileData = evt => {
+    console.log("test");
+    var fu1 = document.getElementById("ph1");
+    console.log(fu1.value);
+    this.setState({["vector_path"]: fu1.value});
+ }*/
+
+
   uploadText = event => {
     event.preventDefault();
     let stateData = this.state;
@@ -147,6 +158,7 @@ class App extends Component {
       year: stateData.year,
       publisher: stateData.publisher,
       bookname: stateData.bookname,
+      vectors: stateData.vectors,
     };
     this.setState({ isLoading: true })
     let config = { "Content-Type": "application/json" };
@@ -336,6 +348,7 @@ class App extends Component {
                   <form onSubmit={this.uploadText}>
                     <h1>Upload Text File:</h1>
 
+
                     <div >
                       <input type="text" id="password" onChange={this.handleChange} name="bookname" placeholder="Book Name" required />
                     </div>
@@ -348,9 +361,28 @@ class App extends Component {
                     <div >
                       <input type="text" id="password" onChange={this.handleChange} name="year" placeholder="Year (Optional)" />
                     </div>
-                    <div >
+              <div >
                       <input type="text" id="password" onChange={this.handleChange} name="publisher" placeholder="Publisher (Optional)" />
                     </div>
+                    
+ 
+
+
+                  <div>
+                    <input type="text" id="password" onChange={this.handleChange} name="vectors" placeholder="Domain for Vectors (Optional)"/>
+                    </div>                    
+                          
+                    <div>
+                    <input type="checkbox" id="password" name="scales" checked/>
+                    </div>
+
+         
+
+                      
+
+
+                    
+
                     <FileBase64
                       multiple={false}
                       onDone={this.getFiles.bind(this)}
@@ -372,12 +404,6 @@ class App extends Component {
                                   <div className="card" style={{borderRadius: 10 }}>
                                     <h4>Families</h4><br />
                                     <h2>{this.state.statsResponse.totalFamilies}</h2>
-                                  </div>
-                                </div>
-                                <div className="column">
-                                  <div className="card" style={{borderRadius: 10 }}>
-                                    <h4>Number of relations</h4><br />
-                                    <h2>{this.state.statsResponse.relations}</h2>
                                   </div>
                                 </div>
 							 </div>
