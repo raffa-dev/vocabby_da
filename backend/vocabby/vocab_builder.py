@@ -4,24 +4,31 @@ Methods for collecting and structuring vocabulary
 :author: Haemanth Santhi Ponnusamy <haemanthsp@gmail.com>
 """
 import logging
+from nltk import text
 
 import spacy
 import itertools
 import numpy as np
 import networkx as nx
 from tqdm import tqdm
-# from neuralcoref import NeuralCoref
+#from neuralcoref import NeuralCoref
 from numpy.linalg import norm
-from spacy.lang.en .stop_words import STOP_WORDS
+from spacy.lang.de .stop_words import STOP_WORDS
 from word_forms.word_forms import get_word_forms
 from itertools import chain
 from collections import defaultdict
-
+import pickle
+from gensim.models import KeyedVectors
+import gensim
 
 from vocabby.utils import load_freq_lookup
 
 logging.basicConfig(level='INFO')
 FREQ_LUT = load_freq_lookup()
+
+
+global use_custom_vectors
+use_custom_vectors = False
 
 
 class Family(object):
@@ -46,7 +53,9 @@ class Family(object):
     @property
     def vector(self):
         """Get collective vector representation of the family."""
+                
         return np.mean([member.vector for member in self.members], axis=0)
+    
 
     @property
     def complexity(self):
@@ -80,7 +89,7 @@ class Sentence(object):
         self.pos_tags = [tok.pos_ for tok in sentence_obj if not tok.pos_ in ["SPACE"]]
         self.tokens = [tok.text for tok in sentence_obj]
         self.lemmas = [Word.get_lemma(tok) for tok in sentence_obj
-                       if tok.text not in STOP_WORDS and tok.pos_ not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']]
+                        if tok.text not in STOP_WORDS and tok.pos_ not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']]
 
         # TODO: Fix sentence repetition
         if previous_sentence:
@@ -89,11 +98,16 @@ class Sentence(object):
 
     @staticmethod
     def clean(text):
-        clean = text.strip().capitalize()
+
+        clean = text.strip()
+        
+        if len(clean) > 1:
+            clean = clean.replace(clean[0], clean[0].upper(), 1) # replace first letter with capital
 
         import re
         pattern = re.compile(r'[\r\n]')
         clean = pattern.sub(' ', clean)
+
         return clean
 
 
@@ -107,7 +121,13 @@ class Word(object):
         self.text = word.text
         self.pos = word.tag_
         self.lemma = self.get_lemma(word)
+
+     
+
+        # ORIGINAL
         self.vector = word.vector
+       
+
         self._sentences = []
         self._sent_errs = []
 
@@ -116,7 +136,7 @@ class Word(object):
 
         has_PRON = 1 if 'PRON' in sentence.pos_tags else 0
         is_regular = 0 if ((sentence.tokens[0].isalpha() or sentence.tokens[0] in ['"', '“']) and sentence.pos_tags[-1] == 'PUNCT') else 1
-
+        
         # Length penalty
         length = sum(1 for pos in sentence.pos_tags if pos not in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM'])
         a, b, c = 10, 20, 10.0
@@ -132,6 +152,7 @@ class Word(object):
                                "punctuation": is_regular,
                                "anaphora": has_PRON})
         self._sentences.append(sentence)
+        print(sentence)
 
     @property
     def frequency(self):
@@ -147,7 +168,7 @@ class Word(object):
         # distribution instead of a simple mean of the range
         return 2.5
 
-    @staticmethod
+    @staticmethod 
     def sent_err(err):
         return (0.4 * err["length"] + 0.3 * err["known"] + 0.1 * err["position"] + 0.05 * err["anaphora"] + 0.15 * err["punctuation"])
 
@@ -164,10 +185,15 @@ class Word(object):
 
         for score, attrb, sent in ranked_sentences[::-1]:
             print("%s\n%s\t%s\n\n" % (str(attrb), score, sent))
-
+        
         return [x for _,_,x in ranked_sentences]
 
     @staticmethod
+   
+   
+    
+    #TODO: REPLACE WITH  curstom get_lemma function
+    
     def get_lemma(word):
         word_forms = get_word_forms(word.text).values()
         flat_list_of_forms = list(set(chain.from_iterable(word_forms)))
@@ -180,15 +206,48 @@ class Word(object):
 class Vocab:
     """Collect and organize the vocabulary from the book."""
 
-    def __init__(self, text):
+    def __init__(self, text, vectors):
         """
         **text** is the book text for which the vocabulary has to be extracted.
         Which is of type `str`.
         """
+
+
+
+        with open("./models/domain_to_filenames.txt", encoding="utf-8") as fi:
+            lines = fi.readlines()
+
+        domain_to_file_names = dict()
+        for line in lines:
+            domain, filename = line.split(",")
+            domain_to_file_names[domain] = filename.strip()
+        
+
+
+        global use_custom_vectors
+
+
+
+        if vectors == None or vectors == "":
+            use_custom_vectors = False
+        else:
+            print(vectors)
+            if vectors in domain_to_file_names:
+                use_custom_vectors = True
+                self.vector_filename = "./models/" + domain_to_file_names[vectors]
+            else:
+                print("Domain is not known. Proceeding with standard model")
+                use_custom_vectors = False
+            
+        
         self.text = text
+
         self.words = self._collect_words()
         self.families = self._unite_family()
+        
         self.network = self._build_network()
+                
+        
         self.stats()
 
     def fetch_word(self, word, pos_tag):
@@ -203,25 +262,40 @@ class Vocab:
         **Returns** :class:`Word` instance w.r.t the orthographic form and
         the parts of speech tag.
         """
-        key = word.lower() + ' ; ' + pos_tag.upper()
+        key = word + ' ; ' + pos_tag.upper()
+        #key = word.lower() + ' ; ' + pos_tag.upper()
         return self.words.get(key, None)
+
 
     def _collect_words(self):
         """Collects all the unique word and pos_tag pairs from the text."""
-        nlp = spacy.load("en_core_web_lg")
-        # coref = NeuralCoref(nlp.vocab)
-        # nlp.add_pipe(coref, name='neuralcoref')
-
+        
         print("Preparing Spacy object")
+        nlp = spacy.load("de_core_news_lg")
+
+
+        if use_custom_vectors:
+
+                
+            domain_vectors = KeyedVectors.load_word2vec_format(self.vector_filename, binary=False)
+
+            #  replace standard vectors with domain-adapted ones 
+            for word in domain_vectors.index_to_key:
+                nlp.vocab.set_vector(word, domain_vectors[word])
+
+
+
+        
         nlp.max_length = len(self.text)
-        text_obj = nlp(str(self.text.lower()), disable=['NER'])
 
-        print("Preparing Spacy object")
+        text_obj = nlp(str(self.text), disable=['NER'])
+
+
         # Resolve co-reference using neuralcoref
         # self.text = text_obj._.coref_resolved
         # nlp.remove_pipe("neuralcoref")
         # text_obj = nlp(str(self.text.lower()), disable=['NER'])
-
+        
         prev_sent = Sentence(nlp(''), None)
         words = {}
         STOP_WORDS.add('_')
@@ -231,11 +305,15 @@ class Vocab:
             curr_sent = Sentence(sent, prev_sent)
             for token in sent:
                 if token.text in STOP_WORDS or\
-                        token.pos_ in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM']:
+                        token.pos_ in ['PART', 'PUNCT', 'SPACE', 'NUM', 'SYM'] or not\
+                        token.is_alpha or token.tag_=="ART" or len(token.text)==1 or not token.tag_.startswith("N")  or token.text.lower() in ['die', 'der', 'das']:
                     continue
                 key = token.text.strip() + ' ; ' + token.tag_
+                
+
                 if key not in words:
-                    words[key] = Word(token)
+                     words[key] = Word(token)
+
                 words[key].include_sentence(curr_sent)
 
         return words
@@ -256,6 +334,9 @@ class Vocab:
     def _build_network(self):
         """Build a network between families based on context similarity."""
         families = list(self.families.keys())
+
+        with open("families.pickle", 'wb') as fi:
+            pickle.dump(families, fi)
 
         min_sim = True
 
@@ -284,10 +365,16 @@ class Vocab:
         network.add_nodes_from(families)
         network.add_weighted_edges_from(weighted_adj_list)
         nx.set_node_attributes(network, 0.5, 'mastery')
+
+        with open('graph_maerkte_wiki_biologie.pickle', 'wb') as pickle_file:
+            pickle.dump(network, pickle_file, protocol=2)
         return network
 
     def _get_adjacency_list(self, similarity_mat):
         # Create an adjacency list
+        threshold = 0.3
+        if use_custom_vectors:
+            threshold = 0.15
         weighted_adj_list = []
         families = list(self.families.key())
         for i, f1 in tqdm(enumerate(families), total=len(families)):
@@ -295,7 +382,7 @@ class Vocab:
                 j = i + j
                 if f1 == f2:
                     continue
-                if similarity_mat[i][j] > 0.30:
+                if similarity_mat[i][j] > threshold:   # orig 0.30, domain vectors use 0.15
                     weighted_adj_list.append(
                            (f1, f2, min(1, similarity_mat[i][j])))
 
@@ -329,13 +416,18 @@ class Vocab:
                 pairs = list(itertools.product(relation[f1], relation[f2]))
                 score = max([similarity_mat[x][y] for x, y in pairs])
 
-                if score > 0.30:
+
+                score_max = 0.3
+                if use_custom_vectors:
+                    score_max = 0.15
+
+                if score > score_max:
                     # weighted_adj_list.append((f1, f2, min(1, score)))
                     buffer.append((f1, f2, min(1, score)))
 
             relatives[f1] = sorted(buffer, key=lambda x: -x[2])
 
-
+            
         # Restricting degree to K
         degree = defaultdict(int)
         for f, edges in relatives.items():
@@ -347,7 +439,7 @@ class Vocab:
                         degree[e[1]] += 1
                 else:
                     break
-
+                        
         return weighted_adj_list
 
     def stats(self):
@@ -380,4 +472,5 @@ class Vocab:
 
     def save_network(self, result_path):
         """Save the family network as gexf file to disk."""
+        print("SAVED AS ",result_path)
         nx.write_gexf(self.network, result_path)
