@@ -1,6 +1,11 @@
 # Vocabby
-This is a vocabulary learning tool, which analyses the vocabulary structure in text and creates learning activities on the fly. This provides freedom for the learner who has some basic skills in English and wants to improve their vocabulary to learn words from their targeted area.
+This is a vocabulary learning tool, which analyses the vocabulary structure in text and creates learning activities on the fly. This version is an adapted one, for the original one please refer to https://github.com/HaemanthSP/Vocabby. This adaption works on German texts and enables the learner to analyze domain-specific texts. Additionally the domain can be stated which changes the word vectors used in the process.
 
+# Add Domain Vocabular
+
+To add domain vocabular, navigate to Vocabby --> backend --> models and edit the domain_to_filenames.txt to map a keyword to the filename which it should refer to.
+
+To create adapted models refer to the TrainModels directory
 
 # Clone repo
 ```bash
