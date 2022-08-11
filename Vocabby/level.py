@@ -10,4 +10,4 @@ def difficulty(word):
 words = ['use', 'using', 'used', 'usable', 'user', 'pun']
 
 for word in words:
-    print difficulty(word), word
+    print(difficulty(word), word)

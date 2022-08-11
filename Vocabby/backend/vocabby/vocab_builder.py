@@ -152,7 +152,6 @@ class Word(object):
                                "punctuation": is_regular,
                                "anaphora": has_PRON})
         self._sentences.append(sentence)
-        print(sentence)
 
     @property
     def frequency(self):

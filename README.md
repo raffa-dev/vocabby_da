@@ -15,14 +15,15 @@ git checkout 583af3c58ed526c762a103246d491e86f7bd8dfa
 
 # Setup venv
 ```bash
-virtualenv -p /usr/bin/python3 ~/envs/vocab
-source /home/hp/envs/vocab/bin/activate
+cd backend
+conda create -n vocabby python=3.7.13
+conda activate vocabby
 ```
 
 Install dependencies,
 ```bash
 pip install -r requirements.txt
-python -m spacy download en_core_web_lg
+python -m spacy download de_core_news_lg
 ```
 
 

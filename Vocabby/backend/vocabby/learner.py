@@ -8,7 +8,6 @@ import pickle
 import random
 import numpy as np
 import networkx as nx
-from tqdm import tqdm
 
 from vocabby.bookshelf import Book
 
@@ -53,11 +52,10 @@ class Tutor(object):
         self.sessions = []
         # self.mastery = {w: 0.5 for w in self.book.words}
         self.network = self.book.network
-        self.closeness_centrality = self.get_closeness_centrality()
 
     @property
     def progress(self):
-        mastered_count = sum([1 for node in self.network if self.network.node[node]["mastery"] > 0.8])
+        mastered_count = sum([1 for node in self.network if self.network.nodes[node]["mastery"] > 0.8])
         return (mastered_count *100) / len(self.network)
 
     def new_session(self):
@@ -68,34 +66,25 @@ class Tutor(object):
         sign = 1 if response else -1
         step = 0.3
         factor = 1 + (sign * step)
-        self.network.node[token.root]['mastery'] = min(
-                0.99, self.network.node[token.root]['mastery'] * factor)
+        self.network.nodes[token.root]['mastery'] = min(
+                0.99, self.network.nodes[token.root]['mastery'] * factor)
 
         for neigh in self.network.neighbors(token.root):
             weight = self.network[token.root][neigh]['weight']
             factor = 1 + (sign * step * 0.5 * weight)
-            self.network.node[neigh]['mastery'] = min(
-                0.99,  self.network.node[neigh]['mastery'] * factor)
-
-    def get_closeness_centrality(self):
-        G = self.network.copy()
-        print("Transforming graph")
-        for n, v in tqdm(self.network.edges()):
-            G[n][v]['weight'] = 1 - G[n][v]['weight']
-        return list(nx.closeness_centrality(G, distance="weight").items())
+            self.network.nodes[neigh]['mastery'] = min(
+                0.99,  self.network.nodes[neigh]['mastery'] * factor)
 
     def get_critical_nodes(self):
-        import scipy.sparse
-        import scipy.sparse.csgraph
         # TODO: Update with proper implementation
-        # print("\n\n\nNew mode of gettig critical nodes \n\n\n")
+        print("\n\n\nNew mode of gettig critical nodes \n\n\n")
         candidates = []
         # centrality_scores = list(nx.betweenness_centrality(self.network, k= int(len(self.network.nodes)/10), weight="weight").items())
         # centrality_scores = list(nx.betweenness_centrality(self.network, weight="weight").items())
 
-        # for node in self.network:
-            # extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
-            # candidates.append((node, extrensic_score))
+        for node in self.network:
+            extrensic_score = sum([v['weight'] for k, v in self.network[node].items()])
+            candidates.append((node, extrensic_score))
 
             # Use internsic measure to decide a critical node
             # intrensic_score = self.book.families[node].complexity
@@ -103,54 +92,10 @@ class Tutor(object):
 
         # n_choice = np.random.choice(len(families), 20)
         # n_choice = sorted(candidates, key=lambda x: -x[1])[20:35]
-        # n_choice = sorted(candidates, key=lambda x: -x[1])
+        n_choice = sorted(candidates, key=lambda x: -x[1])
         # n_choice = sorted(centrality_scores, key=lambda x: -x[1])
+        return [self.book.families[node] for node, score in n_choice if self.network.nodes[node]['mastery'] < 0.8][:20]
 
-        
-        # Closeness centrality
-        # A = nx.adjacency_matrix(self.network).tolil()
-        # D = scipy.sparse.csgraph.floyd_warshall(A, directed=False, unweighted=False)
-        # node_list_x = self.network.nodes
-        # node_list_y = self.network.nodes
-        # assert list(node_list_x) == list(node_list_y)
-        # n = D.shape[0]
-        # closeness_centrality = {}
-        # for r, node in enumerate(node_list_x):
-            # cc = 0.0
-
-            # possible_paths = list(enumerate(D[r, :]))
-            # shortest_paths = dict(filter( \
-                # lambda x: not x[1] == np.inf, possible_paths))
-
-            # total = sum(shortest_paths.values())
-            # n_shortest_paths = len(shortest_paths) - 1.0
-            # if total > 0.0 and n > 1:
-                # s = n_shortest_paths / (n - 1)
-                # cc = (n_shortest_paths / total) * s
-            # closeness_centrality[node] = cc
-        # 
-        # closeness_centrality = list(closeness_centrality.items())
-        # n, v = list(self.network.edges())[0]
-        # print("weight", self.network[n][v]['weight'])
-        # print("distance", G[n][v]['weight'])
-        n_choice = sorted(self.closeness_centrality, key=lambda x: -x[1])
-        # print("To nodes from closeness centrality")
-        # print(n_choice[:30])
-
-        blacklist = set() 
-        whitelist = []
-        for node, _ in n_choice:
-            # print("Prevented %s" % (node))
-            if self.network.node[node]['mastery'] < 0.8 and node not in blacklist:
-                blacklist.update(set(self.network.neighbors(node)))
-                whitelist.append(self.book.families[node])
-                if len(whitelist) >= 20:
-                    break
-
-                
-        return whitelist
-
-                
     def get_session(self):
         """Returns a active/incomplete session or a new session."""
         if not(self.sessions and len(self.sessions[-1].queue)):
@@ -167,28 +112,18 @@ class Tutor(object):
         print(sorted_node_list[:5])
         nodes = [{'id': node_list[token],
                   'name': token,
-                  'score':self.network.node[token]['mastery'],
+                  'score':self.network.nodes[token]['mastery'],
                   'child': False,
                   'critical': token in list(active_session.tokens.keys())}
                  for token, _ in sorted_node_list]
         print('Node list:', nodes[:5])
         edges = []
-        linkNodes = []
-        for idx, (source, target, attrb) in enumerate(self.network.edges.data(), len(nodes)):
-            if attrb['weight'] < 0.6:
+        for source, target, attrb in self.network.edges.data():
+            if attrb['weight'] < 0.4:  ######!!!!! ORIGINAL 0.6 ############
                 continue
-            edges.extend([{"source": node_list[source],
-                          "target": idx,
-                          "weight": attrb['weight']},
-                          {"source": idx,
-                           "target": node_list[target],
-                           "weight": attrb['weight']}
-                          ])
-            linkNodes.append({'id': idx,
-                              'name': '',
-                              'score': 0,
-                              'child': False,
-                              'critical': False})
+            edges.append({"source": node_list[source],
+                          "target": node_list[target],
+                          "weight": attrb['weight']})
 
         children = []
         child_edges = []
@@ -201,7 +136,7 @@ class Tutor(object):
                 print(parent)
                 break
             for child in family.members:
-                child_pos = len(nodes) + len(linkNodes) + len(children)
+                child_pos = len(nodes) + len(children)
                 children.append({'id': child_pos,
                                  'name': child.text + "_" + child.pos,
                                  'score': parent['score'],
@@ -211,8 +146,31 @@ class Tutor(object):
                                     "weight": 1})
                 families[parent['id']].add(child_pos)
 
-        neighbourhood = {"nodes": nodes + children + linkNodes, "links": edges + child_edges, "families": families}
-        neighbourhoodwc = {"nodes": nodes + linkNodes, "links": edges, "families": families}
+        neighbourhood = {"nodes": nodes + children, "links": edges + child_edges, "families": families}
+        neighbourhoodwc = {"nodes": nodes, "links": edges, "families": families}
+
+        # Raffael: Save neighborhood dict for analysis
+        with open("C:/Users/raffa/Desktop/Masterarbeit_Vocabby/Vocabby/backend/neighbourhood_biologie.pickle", 'wb') as fi:
+            pickle.dump(neighbourhood, fi)
+
+        with open("C:/Users/raffa/Desktop/Masterarbeit_Vocabby/Vocabby/backend/neighbourhood_biologie_wc.pickle", 'wb') as fi:
+            pickle.dump(neighbourhoodwc, fi)
+
+        # Generate Graph
+
+        G = nx.Graph() 
+
+        # iterate through nodes and corresponding edges
+        for link in neighbourhood['links']:
+            
+            node = neighbourhood['nodes'][link['source']]['name'] # gives us name of node from id
+            edge = neighbourhood['nodes'][link['target']]['name']
+            G.add_edge(node, edge, weight=link['weight']) # This is the final graph
+
+        with open("C:/Users/raffa/Desktop/Masterarbeit_Vocabby/Vocabby/backend/graph_spacyff.pickle", 'wb') as fi:
+            pickle.dump(G, fi)
+
+
         return neighbourhood, neighbourhoodwc
 
 
@@ -231,8 +189,15 @@ class Session(object):
         """"""
         if activity_type == 0:
             word = np.random.choice(family.members)
+
+            # For German the words have to be matched in upper case;
+            # TODO: Look at families and upper/lower case distinction
             all_sentences = list(
                 s.replace(word.text, '______') for s in word.get_sentences())
+
+            for s in word.get_sentences():
+                print("Sentence: ", s)
+                print(word.text)
             # random.shuffle(all_sentences)
             sentences = all_sentences[:3]
         
@@ -287,7 +252,8 @@ class Session(object):
         # Sort the neighbor based on context similarity
         neighbors = sorted(candidates.items(), key=lambda x: -x[1])
         return [self._select_family_member(self.book.families[w], pos)
-                for w, wt in neighbors if wt < 0.8][:3]
+                for w, wt in neighbors if wt < 0.65][:3]
+                #for w, wt in neighbors if wt < 0.8][:3] original
 
     def _select_family_member(self, family, pos):
         """Select a word of given POS tag from family if any."""
@@ -302,7 +268,7 @@ class Session(object):
         for token in self.tokens:
             edges = []
             nodes = [{'id': 0, 'name': token,
-                      "score": self.network.node[token]['mastery']}]
+                      "score": self.network.nodes[token]['mastery']}]
 
             count = 0
             for neighbour in self.network[token]:
@@ -310,7 +276,7 @@ class Session(object):
                     continue
                 count += 1
                 nodes.append({"id": count, "name": neighbour,
-                              "score": self.network.node[token]['mastery']})
+                              "score": self.network.nodes[token]['mastery']})
                 edges.append({"source": 0, "target": count})
             neighbourhood.append({"nodes": nodes, "links": edges})
         print(neighbourhood[0])

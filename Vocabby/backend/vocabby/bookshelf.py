@@ -6,6 +6,8 @@ Module to prepare and maintain book for vocabulary learning.
 import os
 import pickle
 from random import randint
+from os import listdir
+from os.path import isfile, join
 
 from vocabby.vocab_builder import Vocab
 
@@ -13,7 +15,7 @@ from vocabby.vocab_builder import Vocab
 class Book:
     """Prepare a book for reading."""
 
-    def __init__(self, text, title, author, gener, year, publisher, code):
+    def __init__(self, text, title, author, gener, year, publisher, code, vectors):
         self.text = text
         self.title = title
         self.author = author
@@ -21,7 +23,7 @@ class Book:
         self.year = year
         self.publisher = publisher
         self.code = code
-        self.vocab = Vocab(text)
+        self.vocab = Vocab(text, vectors)
         self.words = self.vocab.words
         self.families = self.vocab.families
         self.network = self.vocab.network
@@ -100,7 +102,7 @@ class Bookshelf:
         self.name = name
         self.books = {}
 
-    def add_book(self, text, title, author, gener, year, publisher):
+    def add_book(self, text, title, author, gener, year, publisher, vectors):
         """Add a new book to the shelf."""
         code = self._generate_code(title, author, year)
 
@@ -115,7 +117,7 @@ class Bookshelf:
                         'gener': gener,
                         'year': year,
                         'publisher': publisher}})
-        book = Book(text, title, author, gener, year, publisher, code)
+        book = Book(text, title, author, gener, year, publisher, code, vectors)
         book.save()
         return code
 
@@ -165,6 +167,17 @@ class Bookshelf:
                 shelf = pickle.load(shelf_file)
         else:
             shelf = Bookshelf(shelf_name)
+
+        books = {}
+        onlyfiles = [f for f in listdir('data/books/') if isfile(join('data/books/', f))]
+        for file in onlyfiles:
+            if  not file.endswith('.p') or file == "Library.p":
+                continue
+            try:
+                books[file[:-2]] = shelf.books[file[:-2]]
+            except:
+                continue
+        shelf.books = books
         return shelf
 
     def save(self):

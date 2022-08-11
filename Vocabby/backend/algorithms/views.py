@@ -30,8 +30,15 @@ class PostText(APIView):
         year = json.loads(req.body)['year']
         publisher = json.loads(req.body)['publisher']
         book_shelf = Bookshelf.load('Library')
+        vectors = json.loads(req.body)['vectors']
+
+
         book_code = book_shelf.add_book(
-                text, book_name, author, genre, year, publisher)
+                text, book_name, author, genre, year, publisher, vectors)
+
+
+        book_code = book_shelf.add_book(
+                text, book_name, author, genre, year, publisher, vectors)
         new_book = Book.load(book_code)
         learner = Learner(username)
         learner.add_book(new_book)
